@@ -1,13 +1,13 @@
 package dev.octogene.pooly.server
 
 import arrow.raise.ktor.server.routing.getOrRaise
-import arrow.raise.ktor.server.routing.postOrRaise
 import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
 import com.sksamuel.cohort.cpu.ProcessCpuHealthCheck
 import com.sksamuel.cohort.memory.FreememHealthCheck
 import dev.octogene.pooly.server.config.AppConfig
 import dev.octogene.pooly.server.config.Metrics
+import dev.octogene.pooly.server.di.persistenceModule
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.server.application.Application
