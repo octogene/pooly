@@ -1,0 +1,82 @@
+openapi: 3.1.0
+info:
+  title: Pooly API
+  description: |-
+    This is an API for the Pooly mobile application.
+  contact:
+    email: me@octogene.dev
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 0.0.1
+paths:
+  /wallets:
+    get:
+      description: Display registered wallets added to your tracking list
+    post:
+      description: Add a wallet to your tracking list.
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Wallet'
+          application/protobuf:
+            schema:
+              $ref: '#/components/schemas/Wallet'
+        required: true
+    delete:
+      description: Delete a wallet for the tracking list
+  /prizes:
+    get:
+      description: Display all known prizes for tracked wallets
+      responses:
+        '200':
+          description: A list of prizes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prize'
+  /prizes/latest:
+    get:
+      description: Display latest prizes for tracked wallets
+      responses:
+        '200':
+          description: A list of prizes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prize'
+components:
+  schemas:
+    Wallet:
+      type: object
+      required:
+        - address
+        - name
+      properties:
+        address:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+    Prize:
+      type: object
+      properties:
+        winner:
+          description: The wallet address of the winner
+          type: string
+        payout:
+          description: The winning amount
+          type: string
+        vault:
+          description: Originating vault address of the draw
+          type: string
+        timestamp:
+          description: Timestamp of the draw
+          type: string
