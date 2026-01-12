@@ -1,0 +1,4235 @@
+type Account {
+  id: Bytes!
+
+  prizeVault: PrizeVault!
+
+  user: User!
+
+  delegate: Account
+
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  balanceUpdates(skip: Int = 0, first: Int = 100, orderBy: AccountBalanceUpdate_orderBy, orderDirection: OrderDirection, where: AccountBalanceUpdate_filter): [AccountBalanceUpdate!]!
+
+  observations(skip: Int = 0, first: Int = 100, orderBy: AccountObservation_orderBy, orderDirection: OrderDirection, where: AccountObservation_filter): [AccountObservation!]!
+
+  delegators(skip: Int = 0, first: Int = 100, orderBy: Account_orderBy, orderDirection: OrderDirection, where: Account_filter): [Account!]!
+}
+
+type AccountBalanceUpdate implements BalanceUpdate {
+  id: Bytes!
+
+  account: Account!
+
+  amount: BigInt!
+
+  delegateAmount: BigInt!
+
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+}
+
+input AccountBalanceUpdate_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  account: String
+
+  account_not: String
+
+  account_gt: String
+
+  account_lt: String
+
+  account_gte: String
+
+  account_lte: String
+
+  account_in: [String!]
+
+  account_not_in: [String!]
+
+  account_contains: String
+
+  account_contains_nocase: String
+
+  account_not_contains: String
+
+  account_not_contains_nocase: String
+
+  account_starts_with: String
+
+  account_starts_with_nocase: String
+
+  account_not_starts_with: String
+
+  account_not_starts_with_nocase: String
+
+  account_ends_with: String
+
+  account_ends_with_nocase: String
+
+  account_not_ends_with: String
+
+  account_not_ends_with_nocase: String
+
+  account_: Account_filter
+
+  amount: BigInt
+
+  amount_not: BigInt
+
+  amount_gt: BigInt
+
+  amount_lt: BigInt
+
+  amount_gte: BigInt
+
+  amount_lte: BigInt
+
+  amount_in: [BigInt!]
+
+  amount_not_in: [BigInt!]
+
+  delegateAmount: BigInt
+
+  delegateAmount_not: BigInt
+
+  delegateAmount_gt: BigInt
+
+  delegateAmount_lt: BigInt
+
+  delegateAmount_gte: BigInt
+
+  delegateAmount_lte: BigInt
+
+  delegateAmount_in: [BigInt!]
+
+  delegateAmount_not_in: [BigInt!]
+
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [AccountBalanceUpdate_filter]
+
+  or: [AccountBalanceUpdate_filter]
+}
+
+enum AccountBalanceUpdate_orderBy {
+  id
+
+  account
+
+  account__id
+
+  account__balance
+
+  account__delegateBalance
+
+  amount
+
+  delegateAmount
+
+  balance
+
+  delegateBalance
+
+  timestamp
+
+  txHash
+}
+
+type AccountObservation implements Observation {
+  id: Bytes!
+
+  account: Account!
+
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  cumulativeBalance: BigInt!
+
+  timestamp: BigInt!
+
+  isNew: Boolean!
+
+  txHash: Bytes!
+}
+
+input AccountObservation_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  account: String
+
+  account_not: String
+
+  account_gt: String
+
+  account_lt: String
+
+  account_gte: String
+
+  account_lte: String
+
+  account_in: [String!]
+
+  account_not_in: [String!]
+
+  account_contains: String
+
+  account_contains_nocase: String
+
+  account_not_contains: String
+
+  account_not_contains_nocase: String
+
+  account_starts_with: String
+
+  account_starts_with_nocase: String
+
+  account_not_starts_with: String
+
+  account_not_starts_with_nocase: String
+
+  account_ends_with: String
+
+  account_ends_with_nocase: String
+
+  account_not_ends_with: String
+
+  account_not_ends_with_nocase: String
+
+  account_: Account_filter
+
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  cumulativeBalance: BigInt
+
+  cumulativeBalance_not: BigInt
+
+  cumulativeBalance_gt: BigInt
+
+  cumulativeBalance_lt: BigInt
+
+  cumulativeBalance_gte: BigInt
+
+  cumulativeBalance_lte: BigInt
+
+  cumulativeBalance_in: [BigInt!]
+
+  cumulativeBalance_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  isNew: Boolean
+
+  isNew_not: Boolean
+
+  isNew_in: [Boolean!]
+
+  isNew_not_in: [Boolean!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [AccountObservation_filter]
+
+  or: [AccountObservation_filter]
+}
+
+enum AccountObservation_orderBy {
+  id
+
+  account
+
+  account__id
+
+  account__balance
+
+  account__delegateBalance
+
+  balance
+
+  delegateBalance
+
+  cumulativeBalance
+
+  timestamp
+
+  isNew
+
+  txHash
+}
+
+input Account_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  prizeVault: String
+
+  prizeVault_not: String
+
+  prizeVault_gt: String
+
+  prizeVault_lt: String
+
+  prizeVault_gte: String
+
+  prizeVault_lte: String
+
+  prizeVault_in: [String!]
+
+  prizeVault_not_in: [String!]
+
+  prizeVault_contains: String
+
+  prizeVault_contains_nocase: String
+
+  prizeVault_not_contains: String
+
+  prizeVault_not_contains_nocase: String
+
+  prizeVault_starts_with: String
+
+  prizeVault_starts_with_nocase: String
+
+  prizeVault_not_starts_with: String
+
+  prizeVault_not_starts_with_nocase: String
+
+  prizeVault_ends_with: String
+
+  prizeVault_ends_with_nocase: String
+
+  prizeVault_not_ends_with: String
+
+  prizeVault_not_ends_with_nocase: String
+
+  prizeVault_: PrizeVault_filter
+
+  user: String
+
+  user_not: String
+
+  user_gt: String
+
+  user_lt: String
+
+  user_gte: String
+
+  user_lte: String
+
+  user_in: [String!]
+
+  user_not_in: [String!]
+
+  user_contains: String
+
+  user_contains_nocase: String
+
+  user_not_contains: String
+
+  user_not_contains_nocase: String
+
+  user_starts_with: String
+
+  user_starts_with_nocase: String
+
+  user_not_starts_with: String
+
+  user_not_starts_with_nocase: String
+
+  user_ends_with: String
+
+  user_ends_with_nocase: String
+
+  user_not_ends_with: String
+
+  user_not_ends_with_nocase: String
+
+  user_: User_filter
+
+  delegate: String
+
+  delegate_not: String
+
+  delegate_gt: String
+
+  delegate_lt: String
+
+  delegate_gte: String
+
+  delegate_lte: String
+
+  delegate_in: [String!]
+
+  delegate_not_in: [String!]
+
+  delegate_contains: String
+
+  delegate_contains_nocase: String
+
+  delegate_not_contains: String
+
+  delegate_not_contains_nocase: String
+
+  delegate_starts_with: String
+
+  delegate_starts_with_nocase: String
+
+  delegate_not_starts_with: String
+
+  delegate_not_starts_with_nocase: String
+
+  delegate_ends_with: String
+
+  delegate_ends_with_nocase: String
+
+  delegate_not_ends_with: String
+
+  delegate_not_ends_with_nocase: String
+
+  delegate_: Account_filter
+
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  balanceUpdates_: AccountBalanceUpdate_filter
+
+  observations_: AccountObservation_filter
+
+  delegators_: Account_filter
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [Account_filter]
+
+  or: [Account_filter]
+}
+
+enum Account_orderBy {
+  id
+
+  prizeVault
+
+  prizeVault__id
+
+  prizeVault__address
+
+  prizeVault__yieldVault
+
+  prizeVault__name
+
+  prizeVault__symbol
+
+  prizeVault__balance
+
+  prizeVault__delegateBalance
+
+  user
+
+  user__id
+
+  user__address
+
+  delegate
+
+  delegate__id
+
+  delegate__balance
+
+  delegate__delegateBalance
+
+  balance
+
+  delegateBalance
+
+  balanceUpdates
+
+  observations
+
+  delegators
+}
+
+enum Aggregation_interval {
+  hour
+
+  day
+}
+
+interface BalanceUpdate {
+  amount: BigInt!
+
+  delegateAmount: BigInt!
+
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+}
+
+input BalanceUpdate_filter {
+  amount: BigInt
+
+  amount_not: BigInt
+
+  amount_gt: BigInt
+
+  amount_lt: BigInt
+
+  amount_gte: BigInt
+
+  amount_lte: BigInt
+
+  amount_in: [BigInt!]
+
+  amount_not_in: [BigInt!]
+
+  delegateAmount: BigInt
+
+  delegateAmount_not: BigInt
+
+  delegateAmount_gt: BigInt
+
+  delegateAmount_lt: BigInt
+
+  delegateAmount_gte: BigInt
+
+  delegateAmount_lte: BigInt
+
+  delegateAmount_in: [BigInt!]
+
+  delegateAmount_not_in: [BigInt!]
+
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [BalanceUpdate_filter]
+
+  or: [BalanceUpdate_filter]
+}
+
+enum BalanceUpdate_orderBy {
+  amount
+
+  delegateAmount
+
+  balance
+
+  delegateBalance
+
+  timestamp
+
+  txHash
+}
+
+scalar BigDecimal
+
+scalar BigInt
+
+input BlockChangedFilter {
+  number_gte: Int!
+}
+
+input Block_height {
+  hash: Bytes
+
+  number: Int
+
+  number_gte: Int
+}
+
+scalar Bytes
+
+type Draw {
+  id: Bytes!
+
+  drawId: Int!
+
+  numTiers: Int!
+
+  lastNumTiers: Int!
+
+  prizeClaims(skip: Int = 0, first: Int = 100, orderBy: PrizeClaim_orderBy, orderDirection: OrderDirection, where: PrizeClaim_filter): [PrizeClaim!]!
+
+  winningRandomNumber: BigInt!
+
+  reserve: BigInt!
+
+  prizeTokensPerShare: BigInt!
+
+  drawOpenedAt: BigInt!
+
+  block: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+}
+
+input Draw_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  drawId: Int
+
+  drawId_not: Int
+
+  drawId_gt: Int
+
+  drawId_lt: Int
+
+  drawId_gte: Int
+
+  drawId_lte: Int
+
+  drawId_in: [Int!]
+
+  drawId_not_in: [Int!]
+
+  numTiers: Int
+
+  numTiers_not: Int
+
+  numTiers_gt: Int
+
+  numTiers_lt: Int
+
+  numTiers_gte: Int
+
+  numTiers_lte: Int
+
+  numTiers_in: [Int!]
+
+  numTiers_not_in: [Int!]
+
+  lastNumTiers: Int
+
+  lastNumTiers_not: Int
+
+  lastNumTiers_gt: Int
+
+  lastNumTiers_lt: Int
+
+  lastNumTiers_gte: Int
+
+  lastNumTiers_lte: Int
+
+  lastNumTiers_in: [Int!]
+
+  lastNumTiers_not_in: [Int!]
+
+  prizeClaims_: PrizeClaim_filter
+
+  winningRandomNumber: BigInt
+
+  winningRandomNumber_not: BigInt
+
+  winningRandomNumber_gt: BigInt
+
+  winningRandomNumber_lt: BigInt
+
+  winningRandomNumber_gte: BigInt
+
+  winningRandomNumber_lte: BigInt
+
+  winningRandomNumber_in: [BigInt!]
+
+  winningRandomNumber_not_in: [BigInt!]
+
+  reserve: BigInt
+
+  reserve_not: BigInt
+
+  reserve_gt: BigInt
+
+  reserve_lt: BigInt
+
+  reserve_gte: BigInt
+
+  reserve_lte: BigInt
+
+  reserve_in: [BigInt!]
+
+  reserve_not_in: [BigInt!]
+
+  prizeTokensPerShare: BigInt
+
+  prizeTokensPerShare_not: BigInt
+
+  prizeTokensPerShare_gt: BigInt
+
+  prizeTokensPerShare_lt: BigInt
+
+  prizeTokensPerShare_gte: BigInt
+
+  prizeTokensPerShare_lte: BigInt
+
+  prizeTokensPerShare_in: [BigInt!]
+
+  prizeTokensPerShare_not_in: [BigInt!]
+
+  drawOpenedAt: BigInt
+
+  drawOpenedAt_not: BigInt
+
+  drawOpenedAt_gt: BigInt
+
+  drawOpenedAt_lt: BigInt
+
+  drawOpenedAt_gte: BigInt
+
+  drawOpenedAt_lte: BigInt
+
+  drawOpenedAt_in: [BigInt!]
+
+  drawOpenedAt_not_in: [BigInt!]
+
+  block: BigInt
+
+  block_not: BigInt
+
+  block_gt: BigInt
+
+  block_lt: BigInt
+
+  block_gte: BigInt
+
+  block_lte: BigInt
+
+  block_in: [BigInt!]
+
+  block_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [Draw_filter]
+
+  or: [Draw_filter]
+}
+
+enum Draw_orderBy {
+  id
+
+  drawId
+
+  numTiers
+
+  lastNumTiers
+
+  prizeClaims
+
+  winningRandomNumber
+
+  reserve
+
+  prizeTokensPerShare
+
+  drawOpenedAt
+
+  block
+
+  timestamp
+
+  txHash
+}
+
+"""
+8 bytes signed integer
+"""
+scalar Int8
+
+type Liquidation {
+  id: Bytes!
+
+  liquidationPair: LiquidationPair!
+
+  sender: Bytes!
+
+  receiver: Bytes!
+
+  amountOut: BigInt!
+
+  amountInMax: BigInt!
+
+  amountIn: BigInt!
+
+  deadline: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+
+  gasUsed: BigInt!
+}
+
+type LiquidationPair {
+  id: Bytes!
+
+  liquidations(skip: Int = 0, first: Int = 100, orderBy: Liquidation_orderBy, orderDirection: OrderDirection, where: Liquidation_filter): [Liquidation!]!
+
+  vaultBooster: VaultBooster
+
+  address: Bytes!
+
+  source: Bytes!
+
+  tokenIn: Bytes!
+
+  tokenOut: Bytes!
+
+  targetAuctionPeriod: BigInt!
+
+  minimumAuctionAmount: BigInt!
+
+  smoothingFactor: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+
+  gasUsed: BigInt!
+}
+
+input LiquidationPair_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  liquidations_: Liquidation_filter
+
+  vaultBooster_: VaultBooster_filter
+
+  address: Bytes
+
+  address_not: Bytes
+
+  address_gt: Bytes
+
+  address_lt: Bytes
+
+  address_gte: Bytes
+
+  address_lte: Bytes
+
+  address_in: [Bytes!]
+
+  address_not_in: [Bytes!]
+
+  address_contains: Bytes
+
+  address_not_contains: Bytes
+
+  source: Bytes
+
+  source_not: Bytes
+
+  source_gt: Bytes
+
+  source_lt: Bytes
+
+  source_gte: Bytes
+
+  source_lte: Bytes
+
+  source_in: [Bytes!]
+
+  source_not_in: [Bytes!]
+
+  source_contains: Bytes
+
+  source_not_contains: Bytes
+
+  tokenIn: Bytes
+
+  tokenIn_not: Bytes
+
+  tokenIn_gt: Bytes
+
+  tokenIn_lt: Bytes
+
+  tokenIn_gte: Bytes
+
+  tokenIn_lte: Bytes
+
+  tokenIn_in: [Bytes!]
+
+  tokenIn_not_in: [Bytes!]
+
+  tokenIn_contains: Bytes
+
+  tokenIn_not_contains: Bytes
+
+  tokenOut: Bytes
+
+  tokenOut_not: Bytes
+
+  tokenOut_gt: Bytes
+
+  tokenOut_lt: Bytes
+
+  tokenOut_gte: Bytes
+
+  tokenOut_lte: Bytes
+
+  tokenOut_in: [Bytes!]
+
+  tokenOut_not_in: [Bytes!]
+
+  tokenOut_contains: Bytes
+
+  tokenOut_not_contains: Bytes
+
+  targetAuctionPeriod: BigInt
+
+  targetAuctionPeriod_not: BigInt
+
+  targetAuctionPeriod_gt: BigInt
+
+  targetAuctionPeriod_lt: BigInt
+
+  targetAuctionPeriod_gte: BigInt
+
+  targetAuctionPeriod_lte: BigInt
+
+  targetAuctionPeriod_in: [BigInt!]
+
+  targetAuctionPeriod_not_in: [BigInt!]
+
+  minimumAuctionAmount: BigInt
+
+  minimumAuctionAmount_not: BigInt
+
+  minimumAuctionAmount_gt: BigInt
+
+  minimumAuctionAmount_lt: BigInt
+
+  minimumAuctionAmount_gte: BigInt
+
+  minimumAuctionAmount_lte: BigInt
+
+  minimumAuctionAmount_in: [BigInt!]
+
+  minimumAuctionAmount_not_in: [BigInt!]
+
+  smoothingFactor: BigInt
+
+  smoothingFactor_not: BigInt
+
+  smoothingFactor_gt: BigInt
+
+  smoothingFactor_lt: BigInt
+
+  smoothingFactor_gte: BigInt
+
+  smoothingFactor_lte: BigInt
+
+  smoothingFactor_in: [BigInt!]
+
+  smoothingFactor_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  gasUsed: BigInt
+
+  gasUsed_not: BigInt
+
+  gasUsed_gt: BigInt
+
+  gasUsed_lt: BigInt
+
+  gasUsed_gte: BigInt
+
+  gasUsed_lte: BigInt
+
+  gasUsed_in: [BigInt!]
+
+  gasUsed_not_in: [BigInt!]
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [LiquidationPair_filter]
+
+  or: [LiquidationPair_filter]
+}
+
+enum LiquidationPair_orderBy {
+  id
+
+  liquidations
+
+  vaultBooster
+
+  vaultBooster__id
+
+  vaultBooster__address
+
+  vaultBooster__prizePool
+
+  vaultBooster__owner
+
+  address
+
+  source
+
+  tokenIn
+
+  tokenOut
+
+  targetAuctionPeriod
+
+  minimumAuctionAmount
+
+  smoothingFactor
+
+  timestamp
+
+  txHash
+
+  gasUsed
+}
+
+input Liquidation_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  liquidationPair: String
+
+  liquidationPair_not: String
+
+  liquidationPair_gt: String
+
+  liquidationPair_lt: String
+
+  liquidationPair_gte: String
+
+  liquidationPair_lte: String
+
+  liquidationPair_in: [String!]
+
+  liquidationPair_not_in: [String!]
+
+  liquidationPair_contains: String
+
+  liquidationPair_contains_nocase: String
+
+  liquidationPair_not_contains: String
+
+  liquidationPair_not_contains_nocase: String
+
+  liquidationPair_starts_with: String
+
+  liquidationPair_starts_with_nocase: String
+
+  liquidationPair_not_starts_with: String
+
+  liquidationPair_not_starts_with_nocase: String
+
+  liquidationPair_ends_with: String
+
+  liquidationPair_ends_with_nocase: String
+
+  liquidationPair_not_ends_with: String
+
+  liquidationPair_not_ends_with_nocase: String
+
+  liquidationPair_: LiquidationPair_filter
+
+  sender: Bytes
+
+  sender_not: Bytes
+
+  sender_gt: Bytes
+
+  sender_lt: Bytes
+
+  sender_gte: Bytes
+
+  sender_lte: Bytes
+
+  sender_in: [Bytes!]
+
+  sender_not_in: [Bytes!]
+
+  sender_contains: Bytes
+
+  sender_not_contains: Bytes
+
+  receiver: Bytes
+
+  receiver_not: Bytes
+
+  receiver_gt: Bytes
+
+  receiver_lt: Bytes
+
+  receiver_gte: Bytes
+
+  receiver_lte: Bytes
+
+  receiver_in: [Bytes!]
+
+  receiver_not_in: [Bytes!]
+
+  receiver_contains: Bytes
+
+  receiver_not_contains: Bytes
+
+  amountOut: BigInt
+
+  amountOut_not: BigInt
+
+  amountOut_gt: BigInt
+
+  amountOut_lt: BigInt
+
+  amountOut_gte: BigInt
+
+  amountOut_lte: BigInt
+
+  amountOut_in: [BigInt!]
+
+  amountOut_not_in: [BigInt!]
+
+  amountInMax: BigInt
+
+  amountInMax_not: BigInt
+
+  amountInMax_gt: BigInt
+
+  amountInMax_lt: BigInt
+
+  amountInMax_gte: BigInt
+
+  amountInMax_lte: BigInt
+
+  amountInMax_in: [BigInt!]
+
+  amountInMax_not_in: [BigInt!]
+
+  amountIn: BigInt
+
+  amountIn_not: BigInt
+
+  amountIn_gt: BigInt
+
+  amountIn_lt: BigInt
+
+  amountIn_gte: BigInt
+
+  amountIn_lte: BigInt
+
+  amountIn_in: [BigInt!]
+
+  amountIn_not_in: [BigInt!]
+
+  deadline: BigInt
+
+  deadline_not: BigInt
+
+  deadline_gt: BigInt
+
+  deadline_lt: BigInt
+
+  deadline_gte: BigInt
+
+  deadline_lte: BigInt
+
+  deadline_in: [BigInt!]
+
+  deadline_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  gasUsed: BigInt
+
+  gasUsed_not: BigInt
+
+  gasUsed_gt: BigInt
+
+  gasUsed_lt: BigInt
+
+  gasUsed_gte: BigInt
+
+  gasUsed_lte: BigInt
+
+  gasUsed_in: [BigInt!]
+
+  gasUsed_not_in: [BigInt!]
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [Liquidation_filter]
+
+  or: [Liquidation_filter]
+}
+
+enum Liquidation_orderBy {
+  id
+
+  liquidationPair
+
+  liquidationPair__id
+
+  liquidationPair__address
+
+  liquidationPair__source
+
+  liquidationPair__tokenIn
+
+  liquidationPair__tokenOut
+
+  liquidationPair__targetAuctionPeriod
+
+  liquidationPair__minimumAuctionAmount
+
+  liquidationPair__smoothingFactor
+
+  liquidationPair__timestamp
+
+  liquidationPair__txHash
+
+  liquidationPair__gasUsed
+
+  sender
+
+  receiver
+
+  amountOut
+
+  amountInMax
+
+  amountIn
+
+  deadline
+
+  timestamp
+
+  txHash
+
+  gasUsed
+}
+
+interface Observation {
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  cumulativeBalance: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+}
+
+input Observation_filter {
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  cumulativeBalance: BigInt
+
+  cumulativeBalance_not: BigInt
+
+  cumulativeBalance_gt: BigInt
+
+  cumulativeBalance_lt: BigInt
+
+  cumulativeBalance_gte: BigInt
+
+  cumulativeBalance_lte: BigInt
+
+  cumulativeBalance_in: [BigInt!]
+
+  cumulativeBalance_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [Observation_filter]
+
+  or: [Observation_filter]
+}
+
+enum Observation_orderBy {
+  balance
+
+  delegateBalance
+
+  cumulativeBalance
+
+  timestamp
+
+  txHash
+}
+
+"""
+Defines the order direction, either ascending or descending
+"""
+enum OrderDirection {
+  asc
+
+  desc
+}
+
+type PrizeClaim {
+  id: Bytes!
+
+  prizeVault: PrizeVault!
+
+  winner: Bytes!
+
+  recipient: Bytes!
+
+  draw: Draw!
+
+  tier: Int!
+
+  prizeIndex: BigInt!
+
+  payout: BigInt!
+
+  claimReward: BigInt!
+
+  claimRewardRecipient: Bytes!
+
+  timestamp: BigInt!
+
+  block: BigInt!
+
+  txHash: Bytes!
+
+  gasUsed: BigInt!
+}
+
+input PrizeClaim_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  prizeVault: String
+
+  prizeVault_not: String
+
+  prizeVault_gt: String
+
+  prizeVault_lt: String
+
+  prizeVault_gte: String
+
+  prizeVault_lte: String
+
+  prizeVault_in: [String!]
+
+  prizeVault_not_in: [String!]
+
+  prizeVault_contains: String
+
+  prizeVault_contains_nocase: String
+
+  prizeVault_not_contains: String
+
+  prizeVault_not_contains_nocase: String
+
+  prizeVault_starts_with: String
+
+  prizeVault_starts_with_nocase: String
+
+  prizeVault_not_starts_with: String
+
+  prizeVault_not_starts_with_nocase: String
+
+  prizeVault_ends_with: String
+
+  prizeVault_ends_with_nocase: String
+
+  prizeVault_not_ends_with: String
+
+  prizeVault_not_ends_with_nocase: String
+
+  prizeVault_: PrizeVault_filter
+
+  winner: Bytes
+
+  winner_not: Bytes
+
+  winner_gt: Bytes
+
+  winner_lt: Bytes
+
+  winner_gte: Bytes
+
+  winner_lte: Bytes
+
+  winner_in: [Bytes!]
+
+  winner_not_in: [Bytes!]
+
+  winner_contains: Bytes
+
+  winner_not_contains: Bytes
+
+  recipient: Bytes
+
+  recipient_not: Bytes
+
+  recipient_gt: Bytes
+
+  recipient_lt: Bytes
+
+  recipient_gte: Bytes
+
+  recipient_lte: Bytes
+
+  recipient_in: [Bytes!]
+
+  recipient_not_in: [Bytes!]
+
+  recipient_contains: Bytes
+
+  recipient_not_contains: Bytes
+
+  draw: String
+
+  draw_not: String
+
+  draw_gt: String
+
+  draw_lt: String
+
+  draw_gte: String
+
+  draw_lte: String
+
+  draw_in: [String!]
+
+  draw_not_in: [String!]
+
+  draw_contains: String
+
+  draw_contains_nocase: String
+
+  draw_not_contains: String
+
+  draw_not_contains_nocase: String
+
+  draw_starts_with: String
+
+  draw_starts_with_nocase: String
+
+  draw_not_starts_with: String
+
+  draw_not_starts_with_nocase: String
+
+  draw_ends_with: String
+
+  draw_ends_with_nocase: String
+
+  draw_not_ends_with: String
+
+  draw_not_ends_with_nocase: String
+
+  draw_: Draw_filter
+
+  tier: Int
+
+  tier_not: Int
+
+  tier_gt: Int
+
+  tier_lt: Int
+
+  tier_gte: Int
+
+  tier_lte: Int
+
+  tier_in: [Int!]
+
+  tier_not_in: [Int!]
+
+  prizeIndex: BigInt
+
+  prizeIndex_not: BigInt
+
+  prizeIndex_gt: BigInt
+
+  prizeIndex_lt: BigInt
+
+  prizeIndex_gte: BigInt
+
+  prizeIndex_lte: BigInt
+
+  prizeIndex_in: [BigInt!]
+
+  prizeIndex_not_in: [BigInt!]
+
+  payout: BigInt
+
+  payout_not: BigInt
+
+  payout_gt: BigInt
+
+  payout_lt: BigInt
+
+  payout_gte: BigInt
+
+  payout_lte: BigInt
+
+  payout_in: [BigInt!]
+
+  payout_not_in: [BigInt!]
+
+  claimReward: BigInt
+
+  claimReward_not: BigInt
+
+  claimReward_gt: BigInt
+
+  claimReward_lt: BigInt
+
+  claimReward_gte: BigInt
+
+  claimReward_lte: BigInt
+
+  claimReward_in: [BigInt!]
+
+  claimReward_not_in: [BigInt!]
+
+  claimRewardRecipient: Bytes
+
+  claimRewardRecipient_not: Bytes
+
+  claimRewardRecipient_gt: Bytes
+
+  claimRewardRecipient_lt: Bytes
+
+  claimRewardRecipient_gte: Bytes
+
+  claimRewardRecipient_lte: Bytes
+
+  claimRewardRecipient_in: [Bytes!]
+
+  claimRewardRecipient_not_in: [Bytes!]
+
+  claimRewardRecipient_contains: Bytes
+
+  claimRewardRecipient_not_contains: Bytes
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  block: BigInt
+
+  block_not: BigInt
+
+  block_gt: BigInt
+
+  block_lt: BigInt
+
+  block_gte: BigInt
+
+  block_lte: BigInt
+
+  block_in: [BigInt!]
+
+  block_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  gasUsed: BigInt
+
+  gasUsed_not: BigInt
+
+  gasUsed_gt: BigInt
+
+  gasUsed_lt: BigInt
+
+  gasUsed_gte: BigInt
+
+  gasUsed_lte: BigInt
+
+  gasUsed_in: [BigInt!]
+
+  gasUsed_not_in: [BigInt!]
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [PrizeClaim_filter]
+
+  or: [PrizeClaim_filter]
+}
+
+enum PrizeClaim_orderBy {
+  id
+
+  prizeVault
+
+  prizeVault__id
+
+  prizeVault__address
+
+  prizeVault__yieldVault
+
+  prizeVault__name
+
+  prizeVault__symbol
+
+  prizeVault__balance
+
+  prizeVault__delegateBalance
+
+  winner
+
+  recipient
+
+  draw
+
+  draw__id
+
+  draw__drawId
+
+  draw__numTiers
+
+  draw__lastNumTiers
+
+  draw__winningRandomNumber
+
+  draw__reserve
+
+  draw__prizeTokensPerShare
+
+  draw__drawOpenedAt
+
+  draw__block
+
+  draw__timestamp
+
+  draw__txHash
+
+  tier
+
+  prizeIndex
+
+  payout
+
+  claimReward
+
+  claimRewardRecipient
+
+  timestamp
+
+  block
+
+  txHash
+
+  gasUsed
+}
+
+type PrizePool {
+  id: Bytes!
+
+  address: Bytes!
+
+  prizeVaults(skip: Int = 0, first: Int = 100, orderBy: PrizeVault_orderBy, orderDirection: OrderDirection, where: PrizeVault_filter): [PrizeVault!]!
+}
+
+input PrizePool_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  address: Bytes
+
+  address_not: Bytes
+
+  address_gt: Bytes
+
+  address_lt: Bytes
+
+  address_gte: Bytes
+
+  address_lte: Bytes
+
+  address_in: [Bytes!]
+
+  address_not_in: [Bytes!]
+
+  address_contains: Bytes
+
+  address_not_contains: Bytes
+
+  prizeVaults_: PrizeVault_filter
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [PrizePool_filter]
+
+  or: [PrizePool_filter]
+}
+
+enum PrizePool_orderBy {
+  id
+
+  address
+
+  prizeVaults
+}
+
+type PrizeVault {
+  id: Bytes!
+
+  address: Bytes!
+
+  prizePool: PrizePool
+
+  liquidationPair: LiquidationPair
+
+  yieldVault: Bytes
+
+  name: String
+
+  symbol: String
+
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  balanceUpdates(skip: Int = 0, first: Int = 100, orderBy: VaultBalanceUpdate_orderBy, orderDirection: OrderDirection, where: VaultBalanceUpdate_filter): [VaultBalanceUpdate!]!
+
+  observations(skip: Int = 0, first: Int = 100, orderBy: VaultObservation_orderBy, orderDirection: OrderDirection, where: VaultObservation_filter): [VaultObservation!]!
+
+  accounts(skip: Int = 0, first: Int = 100, orderBy: Account_orderBy, orderDirection: OrderDirection, where: Account_filter): [Account!]!
+
+  prizeClaims(skip: Int = 0, first: Int = 100, orderBy: PrizeClaim_orderBy, orderDirection: OrderDirection, where: PrizeClaim_filter): [PrizeClaim!]!
+}
+
+input PrizeVault_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  address: Bytes
+
+  address_not: Bytes
+
+  address_gt: Bytes
+
+  address_lt: Bytes
+
+  address_gte: Bytes
+
+  address_lte: Bytes
+
+  address_in: [Bytes!]
+
+  address_not_in: [Bytes!]
+
+  address_contains: Bytes
+
+  address_not_contains: Bytes
+
+  prizePool: String
+
+  prizePool_not: String
+
+  prizePool_gt: String
+
+  prizePool_lt: String
+
+  prizePool_gte: String
+
+  prizePool_lte: String
+
+  prizePool_in: [String!]
+
+  prizePool_not_in: [String!]
+
+  prizePool_contains: String
+
+  prizePool_contains_nocase: String
+
+  prizePool_not_contains: String
+
+  prizePool_not_contains_nocase: String
+
+  prizePool_starts_with: String
+
+  prizePool_starts_with_nocase: String
+
+  prizePool_not_starts_with: String
+
+  prizePool_not_starts_with_nocase: String
+
+  prizePool_ends_with: String
+
+  prizePool_ends_with_nocase: String
+
+  prizePool_not_ends_with: String
+
+  prizePool_not_ends_with_nocase: String
+
+  prizePool_: PrizePool_filter
+
+  liquidationPair: String
+
+  liquidationPair_not: String
+
+  liquidationPair_gt: String
+
+  liquidationPair_lt: String
+
+  liquidationPair_gte: String
+
+  liquidationPair_lte: String
+
+  liquidationPair_in: [String!]
+
+  liquidationPair_not_in: [String!]
+
+  liquidationPair_contains: String
+
+  liquidationPair_contains_nocase: String
+
+  liquidationPair_not_contains: String
+
+  liquidationPair_not_contains_nocase: String
+
+  liquidationPair_starts_with: String
+
+  liquidationPair_starts_with_nocase: String
+
+  liquidationPair_not_starts_with: String
+
+  liquidationPair_not_starts_with_nocase: String
+
+  liquidationPair_ends_with: String
+
+  liquidationPair_ends_with_nocase: String
+
+  liquidationPair_not_ends_with: String
+
+  liquidationPair_not_ends_with_nocase: String
+
+  liquidationPair_: LiquidationPair_filter
+
+  yieldVault: Bytes
+
+  yieldVault_not: Bytes
+
+  yieldVault_gt: Bytes
+
+  yieldVault_lt: Bytes
+
+  yieldVault_gte: Bytes
+
+  yieldVault_lte: Bytes
+
+  yieldVault_in: [Bytes!]
+
+  yieldVault_not_in: [Bytes!]
+
+  yieldVault_contains: Bytes
+
+  yieldVault_not_contains: Bytes
+
+  name: String
+
+  name_not: String
+
+  name_gt: String
+
+  name_lt: String
+
+  name_gte: String
+
+  name_lte: String
+
+  name_in: [String!]
+
+  name_not_in: [String!]
+
+  name_contains: String
+
+  name_contains_nocase: String
+
+  name_not_contains: String
+
+  name_not_contains_nocase: String
+
+  name_starts_with: String
+
+  name_starts_with_nocase: String
+
+  name_not_starts_with: String
+
+  name_not_starts_with_nocase: String
+
+  name_ends_with: String
+
+  name_ends_with_nocase: String
+
+  name_not_ends_with: String
+
+  name_not_ends_with_nocase: String
+
+  symbol: String
+
+  symbol_not: String
+
+  symbol_gt: String
+
+  symbol_lt: String
+
+  symbol_gte: String
+
+  symbol_lte: String
+
+  symbol_in: [String!]
+
+  symbol_not_in: [String!]
+
+  symbol_contains: String
+
+  symbol_contains_nocase: String
+
+  symbol_not_contains: String
+
+  symbol_not_contains_nocase: String
+
+  symbol_starts_with: String
+
+  symbol_starts_with_nocase: String
+
+  symbol_not_starts_with: String
+
+  symbol_not_starts_with_nocase: String
+
+  symbol_ends_with: String
+
+  symbol_ends_with_nocase: String
+
+  symbol_not_ends_with: String
+
+  symbol_not_ends_with_nocase: String
+
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  balanceUpdates_: VaultBalanceUpdate_filter
+
+  observations_: VaultObservation_filter
+
+  accounts_: Account_filter
+
+  prizeClaims_: PrizeClaim_filter
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [PrizeVault_filter]
+
+  or: [PrizeVault_filter]
+}
+
+enum PrizeVault_orderBy {
+  id
+
+  address
+
+  prizePool
+
+  prizePool__id
+
+  prizePool__address
+
+  liquidationPair
+
+  liquidationPair__id
+
+  liquidationPair__address
+
+  liquidationPair__source
+
+  liquidationPair__tokenIn
+
+  liquidationPair__tokenOut
+
+  liquidationPair__targetAuctionPeriod
+
+  liquidationPair__minimumAuctionAmount
+
+  liquidationPair__smoothingFactor
+
+  liquidationPair__timestamp
+
+  liquidationPair__txHash
+
+  liquidationPair__gasUsed
+
+  yieldVault
+
+  name
+
+  symbol
+
+  balance
+
+  delegateBalance
+
+  balanceUpdates
+
+  observations
+
+  accounts
+
+  prizeClaims
+}
+
+type Query {
+  prizeVault(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): PrizeVault
+
+  prizeVaults(skip: Int = 0, first: Int = 100, orderBy: PrizeVault_orderBy, orderDirection: OrderDirection, where: PrizeVault_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [PrizeVault!]!
+
+  user(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): User
+
+  users(skip: Int = 0, first: Int = 100, orderBy: User_orderBy, orderDirection: OrderDirection, where: User_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [User!]!
+
+  account(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): Account
+
+  accounts(skip: Int = 0, first: Int = 100, orderBy: Account_orderBy, orderDirection: OrderDirection, where: Account_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [Account!]!
+
+  draw(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): Draw
+
+  draws(skip: Int = 0, first: Int = 100, orderBy: Draw_orderBy, orderDirection: OrderDirection, where: Draw_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [Draw!]!
+
+  prizeClaim(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): PrizeClaim
+
+  prizeClaims(skip: Int = 0, first: Int = 100, orderBy: PrizeClaim_orderBy, orderDirection: OrderDirection, where: PrizeClaim_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [PrizeClaim!]!
+
+  accountBalanceUpdate(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): AccountBalanceUpdate
+
+  accountBalanceUpdates(skip: Int = 0, first: Int = 100, orderBy: AccountBalanceUpdate_orderBy, orderDirection: OrderDirection, where: AccountBalanceUpdate_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [AccountBalanceUpdate!]!
+
+  vaultBalanceUpdate(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): VaultBalanceUpdate
+
+  vaultBalanceUpdates(skip: Int = 0, first: Int = 100, orderBy: VaultBalanceUpdate_orderBy, orderDirection: OrderDirection, where: VaultBalanceUpdate_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [VaultBalanceUpdate!]!
+
+  accountObservation(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): AccountObservation
+
+  accountObservations(skip: Int = 0, first: Int = 100, orderBy: AccountObservation_orderBy, orderDirection: OrderDirection, where: AccountObservation_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [AccountObservation!]!
+
+  vaultObservation(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): VaultObservation
+
+  vaultObservations(skip: Int = 0, first: Int = 100, orderBy: VaultObservation_orderBy, orderDirection: OrderDirection, where: VaultObservation_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [VaultObservation!]!
+
+  rngAuction(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): RngAuction
+
+  rngAuctions(skip: Int = 0, first: Int = 100, orderBy: RngAuction_orderBy, orderDirection: OrderDirection, where: RngAuction_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [RngAuction!]!
+
+  rngRelay(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): RngRelay
+
+  rngRelays(skip: Int = 0, first: Int = 100, orderBy: RngRelay_orderBy, orderDirection: OrderDirection, where: RngRelay_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [RngRelay!]!
+
+  rngRelayReward(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): RngRelayReward
+
+  rngRelayRewards(skip: Int = 0, first: Int = 100, orderBy: RngRelayReward_orderBy, orderDirection: OrderDirection, where: RngRelayReward_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [RngRelayReward!]!
+
+  liquidationPair(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): LiquidationPair
+
+  liquidationPairs(skip: Int = 0, first: Int = 100, orderBy: LiquidationPair_orderBy, orderDirection: OrderDirection, where: LiquidationPair_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [LiquidationPair!]!
+
+  liquidation(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): Liquidation
+
+  liquidations(skip: Int = 0, first: Int = 100, orderBy: Liquidation_orderBy, orderDirection: OrderDirection, where: Liquidation_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [Liquidation!]!
+
+  vaultBooster(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): VaultBooster
+
+  vaultBoosters(skip: Int = 0, first: Int = 100, orderBy: VaultBooster_orderBy, orderDirection: OrderDirection, where: VaultBooster_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [VaultBooster!]!
+
+  prizePool(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): PrizePool
+
+  prizePools(skip: Int = 0, first: Int = 100, orderBy: PrizePool_orderBy, orderDirection: OrderDirection, where: PrizePool_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [PrizePool!]!
+
+  balanceUpdate(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): BalanceUpdate
+
+  balanceUpdates(skip: Int = 0, first: Int = 100, orderBy: BalanceUpdate_orderBy, orderDirection: OrderDirection, where: BalanceUpdate_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [BalanceUpdate!]!
+
+  observation(id: ID!, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): Observation
+
+  observations(skip: Int = 0, first: Int = 100, orderBy: Observation_orderBy, orderDirection: OrderDirection, where: Observation_filter, "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted." block: Block_height, "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing." subgraphError: _SubgraphErrorPolicy_! = deny): [Observation!]!
+
+  """
+  Access to subgraph metadata
+  """
+  _meta(block: Block_height): _Meta_
+}
+
+type RngAuction {
+  id: Bytes!
+
+  from: Bytes!
+
+  sender: Bytes!
+
+  recipient: Bytes!
+
+  sequenceId: BigInt!
+
+  rng: Bytes!
+
+  rngRequestId: BigInt!
+
+  elapsedTime: BigInt!
+
+  rewardFraction: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+
+  gasUsed: BigInt!
+}
+
+input RngAuction_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  from: Bytes
+
+  from_not: Bytes
+
+  from_gt: Bytes
+
+  from_lt: Bytes
+
+  from_gte: Bytes
+
+  from_lte: Bytes
+
+  from_in: [Bytes!]
+
+  from_not_in: [Bytes!]
+
+  from_contains: Bytes
+
+  from_not_contains: Bytes
+
+  sender: Bytes
+
+  sender_not: Bytes
+
+  sender_gt: Bytes
+
+  sender_lt: Bytes
+
+  sender_gte: Bytes
+
+  sender_lte: Bytes
+
+  sender_in: [Bytes!]
+
+  sender_not_in: [Bytes!]
+
+  sender_contains: Bytes
+
+  sender_not_contains: Bytes
+
+  recipient: Bytes
+
+  recipient_not: Bytes
+
+  recipient_gt: Bytes
+
+  recipient_lt: Bytes
+
+  recipient_gte: Bytes
+
+  recipient_lte: Bytes
+
+  recipient_in: [Bytes!]
+
+  recipient_not_in: [Bytes!]
+
+  recipient_contains: Bytes
+
+  recipient_not_contains: Bytes
+
+  sequenceId: BigInt
+
+  sequenceId_not: BigInt
+
+  sequenceId_gt: BigInt
+
+  sequenceId_lt: BigInt
+
+  sequenceId_gte: BigInt
+
+  sequenceId_lte: BigInt
+
+  sequenceId_in: [BigInt!]
+
+  sequenceId_not_in: [BigInt!]
+
+  rng: Bytes
+
+  rng_not: Bytes
+
+  rng_gt: Bytes
+
+  rng_lt: Bytes
+
+  rng_gte: Bytes
+
+  rng_lte: Bytes
+
+  rng_in: [Bytes!]
+
+  rng_not_in: [Bytes!]
+
+  rng_contains: Bytes
+
+  rng_not_contains: Bytes
+
+  rngRequestId: BigInt
+
+  rngRequestId_not: BigInt
+
+  rngRequestId_gt: BigInt
+
+  rngRequestId_lt: BigInt
+
+  rngRequestId_gte: BigInt
+
+  rngRequestId_lte: BigInt
+
+  rngRequestId_in: [BigInt!]
+
+  rngRequestId_not_in: [BigInt!]
+
+  elapsedTime: BigInt
+
+  elapsedTime_not: BigInt
+
+  elapsedTime_gt: BigInt
+
+  elapsedTime_lt: BigInt
+
+  elapsedTime_gte: BigInt
+
+  elapsedTime_lte: BigInt
+
+  elapsedTime_in: [BigInt!]
+
+  elapsedTime_not_in: [BigInt!]
+
+  rewardFraction: BigInt
+
+  rewardFraction_not: BigInt
+
+  rewardFraction_gt: BigInt
+
+  rewardFraction_lt: BigInt
+
+  rewardFraction_gte: BigInt
+
+  rewardFraction_lte: BigInt
+
+  rewardFraction_in: [BigInt!]
+
+  rewardFraction_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  gasUsed: BigInt
+
+  gasUsed_not: BigInt
+
+  gasUsed_gt: BigInt
+
+  gasUsed_lt: BigInt
+
+  gasUsed_gte: BigInt
+
+  gasUsed_lte: BigInt
+
+  gasUsed_in: [BigInt!]
+
+  gasUsed_not_in: [BigInt!]
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [RngAuction_filter]
+
+  or: [RngAuction_filter]
+}
+
+enum RngAuction_orderBy {
+  id
+
+  from
+
+  sender
+
+  recipient
+
+  sequenceId
+
+  rng
+
+  rngRequestId
+
+  elapsedTime
+
+  rewardFraction
+
+  timestamp
+
+  txHash
+
+  gasUsed
+}
+
+type RngRelay {
+  id: Bytes!
+
+  from: Bytes!
+
+  messageDispatcher: Bytes!
+
+  remoteOwnerChainId: BigInt!
+
+  remoteOwner: Bytes!
+
+  remoteRngAuctionRelayListener: Bytes!
+
+  rewardRecipient: Bytes!
+
+  messageId: Bytes!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+
+  gasUsed: BigInt!
+}
+
+type RngRelayReward {
+  id: Bytes!
+
+  recipient: Bytes!
+
+  reward: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+
+  gasUsed: BigInt!
+}
+
+input RngRelayReward_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  recipient: Bytes
+
+  recipient_not: Bytes
+
+  recipient_gt: Bytes
+
+  recipient_lt: Bytes
+
+  recipient_gte: Bytes
+
+  recipient_lte: Bytes
+
+  recipient_in: [Bytes!]
+
+  recipient_not_in: [Bytes!]
+
+  recipient_contains: Bytes
+
+  recipient_not_contains: Bytes
+
+  reward: BigInt
+
+  reward_not: BigInt
+
+  reward_gt: BigInt
+
+  reward_lt: BigInt
+
+  reward_gte: BigInt
+
+  reward_lte: BigInt
+
+  reward_in: [BigInt!]
+
+  reward_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  gasUsed: BigInt
+
+  gasUsed_not: BigInt
+
+  gasUsed_gt: BigInt
+
+  gasUsed_lt: BigInt
+
+  gasUsed_gte: BigInt
+
+  gasUsed_lte: BigInt
+
+  gasUsed_in: [BigInt!]
+
+  gasUsed_not_in: [BigInt!]
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [RngRelayReward_filter]
+
+  or: [RngRelayReward_filter]
+}
+
+enum RngRelayReward_orderBy {
+  id
+
+  recipient
+
+  reward
+
+  timestamp
+
+  txHash
+
+  gasUsed
+}
+
+input RngRelay_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  from: Bytes
+
+  from_not: Bytes
+
+  from_gt: Bytes
+
+  from_lt: Bytes
+
+  from_gte: Bytes
+
+  from_lte: Bytes
+
+  from_in: [Bytes!]
+
+  from_not_in: [Bytes!]
+
+  from_contains: Bytes
+
+  from_not_contains: Bytes
+
+  messageDispatcher: Bytes
+
+  messageDispatcher_not: Bytes
+
+  messageDispatcher_gt: Bytes
+
+  messageDispatcher_lt: Bytes
+
+  messageDispatcher_gte: Bytes
+
+  messageDispatcher_lte: Bytes
+
+  messageDispatcher_in: [Bytes!]
+
+  messageDispatcher_not_in: [Bytes!]
+
+  messageDispatcher_contains: Bytes
+
+  messageDispatcher_not_contains: Bytes
+
+  remoteOwnerChainId: BigInt
+
+  remoteOwnerChainId_not: BigInt
+
+  remoteOwnerChainId_gt: BigInt
+
+  remoteOwnerChainId_lt: BigInt
+
+  remoteOwnerChainId_gte: BigInt
+
+  remoteOwnerChainId_lte: BigInt
+
+  remoteOwnerChainId_in: [BigInt!]
+
+  remoteOwnerChainId_not_in: [BigInt!]
+
+  remoteOwner: Bytes
+
+  remoteOwner_not: Bytes
+
+  remoteOwner_gt: Bytes
+
+  remoteOwner_lt: Bytes
+
+  remoteOwner_gte: Bytes
+
+  remoteOwner_lte: Bytes
+
+  remoteOwner_in: [Bytes!]
+
+  remoteOwner_not_in: [Bytes!]
+
+  remoteOwner_contains: Bytes
+
+  remoteOwner_not_contains: Bytes
+
+  remoteRngAuctionRelayListener: Bytes
+
+  remoteRngAuctionRelayListener_not: Bytes
+
+  remoteRngAuctionRelayListener_gt: Bytes
+
+  remoteRngAuctionRelayListener_lt: Bytes
+
+  remoteRngAuctionRelayListener_gte: Bytes
+
+  remoteRngAuctionRelayListener_lte: Bytes
+
+  remoteRngAuctionRelayListener_in: [Bytes!]
+
+  remoteRngAuctionRelayListener_not_in: [Bytes!]
+
+  remoteRngAuctionRelayListener_contains: Bytes
+
+  remoteRngAuctionRelayListener_not_contains: Bytes
+
+  rewardRecipient: Bytes
+
+  rewardRecipient_not: Bytes
+
+  rewardRecipient_gt: Bytes
+
+  rewardRecipient_lt: Bytes
+
+  rewardRecipient_gte: Bytes
+
+  rewardRecipient_lte: Bytes
+
+  rewardRecipient_in: [Bytes!]
+
+  rewardRecipient_not_in: [Bytes!]
+
+  rewardRecipient_contains: Bytes
+
+  rewardRecipient_not_contains: Bytes
+
+  messageId: Bytes
+
+  messageId_not: Bytes
+
+  messageId_gt: Bytes
+
+  messageId_lt: Bytes
+
+  messageId_gte: Bytes
+
+  messageId_lte: Bytes
+
+  messageId_in: [Bytes!]
+
+  messageId_not_in: [Bytes!]
+
+  messageId_contains: Bytes
+
+  messageId_not_contains: Bytes
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  gasUsed: BigInt
+
+  gasUsed_not: BigInt
+
+  gasUsed_gt: BigInt
+
+  gasUsed_lt: BigInt
+
+  gasUsed_gte: BigInt
+
+  gasUsed_lte: BigInt
+
+  gasUsed_in: [BigInt!]
+
+  gasUsed_not_in: [BigInt!]
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [RngRelay_filter]
+
+  or: [RngRelay_filter]
+}
+
+enum RngRelay_orderBy {
+  id
+
+  from
+
+  messageDispatcher
+
+  remoteOwnerChainId
+
+  remoteOwner
+
+  remoteRngAuctionRelayListener
+
+  rewardRecipient
+
+  messageId
+
+  timestamp
+
+  txHash
+
+  gasUsed
+}
+
+"""
+A string representation of microseconds UNIX timestamp (16 digits)
+"""
+scalar Timestamp
+
+type User {
+  id: Bytes!
+
+  address: Bytes!
+
+  accounts(skip: Int = 0, first: Int = 100, orderBy: Account_orderBy, orderDirection: OrderDirection, where: Account_filter): [Account!]!
+}
+
+input User_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  address: Bytes
+
+  address_not: Bytes
+
+  address_gt: Bytes
+
+  address_lt: Bytes
+
+  address_gte: Bytes
+
+  address_lte: Bytes
+
+  address_in: [Bytes!]
+
+  address_not_in: [Bytes!]
+
+  address_contains: Bytes
+
+  address_not_contains: Bytes
+
+  accounts_: Account_filter
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [User_filter]
+
+  or: [User_filter]
+}
+
+enum User_orderBy {
+  id
+
+  address
+
+  accounts
+}
+
+type VaultBalanceUpdate implements BalanceUpdate {
+  id: Bytes!
+
+  prizeVault: PrizeVault!
+
+  amount: BigInt!
+
+  delegateAmount: BigInt!
+
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  timestamp: BigInt!
+
+  txHash: Bytes!
+}
+
+input VaultBalanceUpdate_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  prizeVault: String
+
+  prizeVault_not: String
+
+  prizeVault_gt: String
+
+  prizeVault_lt: String
+
+  prizeVault_gte: String
+
+  prizeVault_lte: String
+
+  prizeVault_in: [String!]
+
+  prizeVault_not_in: [String!]
+
+  prizeVault_contains: String
+
+  prizeVault_contains_nocase: String
+
+  prizeVault_not_contains: String
+
+  prizeVault_not_contains_nocase: String
+
+  prizeVault_starts_with: String
+
+  prizeVault_starts_with_nocase: String
+
+  prizeVault_not_starts_with: String
+
+  prizeVault_not_starts_with_nocase: String
+
+  prizeVault_ends_with: String
+
+  prizeVault_ends_with_nocase: String
+
+  prizeVault_not_ends_with: String
+
+  prizeVault_not_ends_with_nocase: String
+
+  prizeVault_: PrizeVault_filter
+
+  amount: BigInt
+
+  amount_not: BigInt
+
+  amount_gt: BigInt
+
+  amount_lt: BigInt
+
+  amount_gte: BigInt
+
+  amount_lte: BigInt
+
+  amount_in: [BigInt!]
+
+  amount_not_in: [BigInt!]
+
+  delegateAmount: BigInt
+
+  delegateAmount_not: BigInt
+
+  delegateAmount_gt: BigInt
+
+  delegateAmount_lt: BigInt
+
+  delegateAmount_gte: BigInt
+
+  delegateAmount_lte: BigInt
+
+  delegateAmount_in: [BigInt!]
+
+  delegateAmount_not_in: [BigInt!]
+
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [VaultBalanceUpdate_filter]
+
+  or: [VaultBalanceUpdate_filter]
+}
+
+enum VaultBalanceUpdate_orderBy {
+  id
+
+  prizeVault
+
+  prizeVault__id
+
+  prizeVault__address
+
+  prizeVault__yieldVault
+
+  prizeVault__name
+
+  prizeVault__symbol
+
+  prizeVault__balance
+
+  prizeVault__delegateBalance
+
+  amount
+
+  delegateAmount
+
+  balance
+
+  delegateBalance
+
+  timestamp
+
+  txHash
+}
+
+type VaultBooster {
+  id: Bytes!
+
+  liquidationPair: LiquidationPair
+
+  address: Bytes!
+
+  prizePool: Bytes
+
+  prizeVault: PrizeVault
+
+  owner: Bytes
+}
+
+input VaultBooster_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  liquidationPair: String
+
+  liquidationPair_not: String
+
+  liquidationPair_gt: String
+
+  liquidationPair_lt: String
+
+  liquidationPair_gte: String
+
+  liquidationPair_lte: String
+
+  liquidationPair_in: [String!]
+
+  liquidationPair_not_in: [String!]
+
+  liquidationPair_contains: String
+
+  liquidationPair_contains_nocase: String
+
+  liquidationPair_not_contains: String
+
+  liquidationPair_not_contains_nocase: String
+
+  liquidationPair_starts_with: String
+
+  liquidationPair_starts_with_nocase: String
+
+  liquidationPair_not_starts_with: String
+
+  liquidationPair_not_starts_with_nocase: String
+
+  liquidationPair_ends_with: String
+
+  liquidationPair_ends_with_nocase: String
+
+  liquidationPair_not_ends_with: String
+
+  liquidationPair_not_ends_with_nocase: String
+
+  liquidationPair_: LiquidationPair_filter
+
+  address: Bytes
+
+  address_not: Bytes
+
+  address_gt: Bytes
+
+  address_lt: Bytes
+
+  address_gte: Bytes
+
+  address_lte: Bytes
+
+  address_in: [Bytes!]
+
+  address_not_in: [Bytes!]
+
+  address_contains: Bytes
+
+  address_not_contains: Bytes
+
+  prizePool: Bytes
+
+  prizePool_not: Bytes
+
+  prizePool_gt: Bytes
+
+  prizePool_lt: Bytes
+
+  prizePool_gte: Bytes
+
+  prizePool_lte: Bytes
+
+  prizePool_in: [Bytes!]
+
+  prizePool_not_in: [Bytes!]
+
+  prizePool_contains: Bytes
+
+  prizePool_not_contains: Bytes
+
+  prizeVault: String
+
+  prizeVault_not: String
+
+  prizeVault_gt: String
+
+  prizeVault_lt: String
+
+  prizeVault_gte: String
+
+  prizeVault_lte: String
+
+  prizeVault_in: [String!]
+
+  prizeVault_not_in: [String!]
+
+  prizeVault_contains: String
+
+  prizeVault_contains_nocase: String
+
+  prizeVault_not_contains: String
+
+  prizeVault_not_contains_nocase: String
+
+  prizeVault_starts_with: String
+
+  prizeVault_starts_with_nocase: String
+
+  prizeVault_not_starts_with: String
+
+  prizeVault_not_starts_with_nocase: String
+
+  prizeVault_ends_with: String
+
+  prizeVault_ends_with_nocase: String
+
+  prizeVault_not_ends_with: String
+
+  prizeVault_not_ends_with_nocase: String
+
+  prizeVault_: PrizeVault_filter
+
+  owner: Bytes
+
+  owner_not: Bytes
+
+  owner_gt: Bytes
+
+  owner_lt: Bytes
+
+  owner_gte: Bytes
+
+  owner_lte: Bytes
+
+  owner_in: [Bytes!]
+
+  owner_not_in: [Bytes!]
+
+  owner_contains: Bytes
+
+  owner_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [VaultBooster_filter]
+
+  or: [VaultBooster_filter]
+}
+
+enum VaultBooster_orderBy {
+  id
+
+  liquidationPair
+
+  liquidationPair__id
+
+  liquidationPair__address
+
+  liquidationPair__source
+
+  liquidationPair__tokenIn
+
+  liquidationPair__tokenOut
+
+  liquidationPair__targetAuctionPeriod
+
+  liquidationPair__minimumAuctionAmount
+
+  liquidationPair__smoothingFactor
+
+  liquidationPair__timestamp
+
+  liquidationPair__txHash
+
+  liquidationPair__gasUsed
+
+  address
+
+  prizePool
+
+  prizeVault
+
+  prizeVault__id
+
+  prizeVault__address
+
+  prizeVault__yieldVault
+
+  prizeVault__name
+
+  prizeVault__symbol
+
+  prizeVault__balance
+
+  prizeVault__delegateBalance
+
+  owner
+}
+
+type VaultObservation implements Observation {
+  id: Bytes!
+
+  prizeVault: PrizeVault!
+
+  balance: BigInt!
+
+  delegateBalance: BigInt!
+
+  cumulativeBalance: BigInt!
+
+  timestamp: BigInt!
+
+  isNew: Boolean!
+
+  txHash: Bytes!
+}
+
+input VaultObservation_filter {
+  id: Bytes
+
+  id_not: Bytes
+
+  id_gt: Bytes
+
+  id_lt: Bytes
+
+  id_gte: Bytes
+
+  id_lte: Bytes
+
+  id_in: [Bytes!]
+
+  id_not_in: [Bytes!]
+
+  id_contains: Bytes
+
+  id_not_contains: Bytes
+
+  prizeVault: String
+
+  prizeVault_not: String
+
+  prizeVault_gt: String
+
+  prizeVault_lt: String
+
+  prizeVault_gte: String
+
+  prizeVault_lte: String
+
+  prizeVault_in: [String!]
+
+  prizeVault_not_in: [String!]
+
+  prizeVault_contains: String
+
+  prizeVault_contains_nocase: String
+
+  prizeVault_not_contains: String
+
+  prizeVault_not_contains_nocase: String
+
+  prizeVault_starts_with: String
+
+  prizeVault_starts_with_nocase: String
+
+  prizeVault_not_starts_with: String
+
+  prizeVault_not_starts_with_nocase: String
+
+  prizeVault_ends_with: String
+
+  prizeVault_ends_with_nocase: String
+
+  prizeVault_not_ends_with: String
+
+  prizeVault_not_ends_with_nocase: String
+
+  prizeVault_: PrizeVault_filter
+
+  balance: BigInt
+
+  balance_not: BigInt
+
+  balance_gt: BigInt
+
+  balance_lt: BigInt
+
+  balance_gte: BigInt
+
+  balance_lte: BigInt
+
+  balance_in: [BigInt!]
+
+  balance_not_in: [BigInt!]
+
+  delegateBalance: BigInt
+
+  delegateBalance_not: BigInt
+
+  delegateBalance_gt: BigInt
+
+  delegateBalance_lt: BigInt
+
+  delegateBalance_gte: BigInt
+
+  delegateBalance_lte: BigInt
+
+  delegateBalance_in: [BigInt!]
+
+  delegateBalance_not_in: [BigInt!]
+
+  cumulativeBalance: BigInt
+
+  cumulativeBalance_not: BigInt
+
+  cumulativeBalance_gt: BigInt
+
+  cumulativeBalance_lt: BigInt
+
+  cumulativeBalance_gte: BigInt
+
+  cumulativeBalance_lte: BigInt
+
+  cumulativeBalance_in: [BigInt!]
+
+  cumulativeBalance_not_in: [BigInt!]
+
+  timestamp: BigInt
+
+  timestamp_not: BigInt
+
+  timestamp_gt: BigInt
+
+  timestamp_lt: BigInt
+
+  timestamp_gte: BigInt
+
+  timestamp_lte: BigInt
+
+  timestamp_in: [BigInt!]
+
+  timestamp_not_in: [BigInt!]
+
+  isNew: Boolean
+
+  isNew_not: Boolean
+
+  isNew_in: [Boolean!]
+
+  isNew_not_in: [Boolean!]
+
+  txHash: Bytes
+
+  txHash_not: Bytes
+
+  txHash_gt: Bytes
+
+  txHash_lt: Bytes
+
+  txHash_gte: Bytes
+
+  txHash_lte: Bytes
+
+  txHash_in: [Bytes!]
+
+  txHash_not_in: [Bytes!]
+
+  txHash_contains: Bytes
+
+  txHash_not_contains: Bytes
+
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+
+  and: [VaultObservation_filter]
+
+  or: [VaultObservation_filter]
+}
+
+enum VaultObservation_orderBy {
+  id
+
+  prizeVault
+
+  prizeVault__id
+
+  prizeVault__address
+
+  prizeVault__yieldVault
+
+  prizeVault__name
+
+  prizeVault__symbol
+
+  prizeVault__balance
+
+  prizeVault__delegateBalance
+
+  balance
+
+  delegateBalance
+
+  cumulativeBalance
+
+  timestamp
+
+  isNew
+
+  txHash
+}
+
+type _Block_ {
+  """
+  The hash of the block
+  """
+  hash: Bytes
+
+  """
+  The block number
+  """
+  number: Int!
+
+  """
+  Integer representation of the timestamp stored in blocks for the chain
+  """
+  timestamp: Int
+
+  """
+  The hash of the parent block
+  """
+  parentHash: Bytes
+}
+
+"""
+The type for the top-level _meta field
+"""
+type _Meta_ {
+  """
+  Information about a specific subgraph block. The hash of the block
+  will be null if the _meta field has a block constraint that asks for
+  a block number. It will be filled if the _meta field has no block constraint
+  and therefore asks for the latest  block
+  """
+  block: _Block_!
+
+  """
+  The deployment ID
+  """
+  deployment: String!
+
+  """
+  If `true`, the subgraph encountered indexing errors at some past block
+  """
+  hasIndexingErrors: Boolean!
+}
+
+enum _SubgraphErrorPolicy_ {
+  """
+  Data will be returned even if the subgraph has indexing errors
+  """
+  allow
+
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
+}
+
+directive @skip (if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
+
+directive @include (if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
+
+"""
+Marks the GraphQL type as indexable entity.  Each type that should be an entity is required to be annotated with this directive.
+"""
+directive @entity on OBJECT
+
+"""
+Defined a Subgraph ID for an object type
+"""
+directive @subgraphId (id: String!) on OBJECT
+
+"""
+creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API.
+"""
+directive @derivedFrom (field: String!) on FIELD_DEFINITION
+
+schema {
+  query: Query
+}

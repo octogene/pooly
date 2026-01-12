@@ -1,0 +1,57 @@
+CREATE TABLE Draw (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    -- Foreign key linking to the Wallet table. Assumes Wallet has a unique 'address' column.
+    walletAddress TEXT NOT NULL,
+    -- The address of the vault this draw is associated with.
+    vaultAddress TEXT NOT NULL,
+    -- The amount of the draw. Storing as TEXT is safest for large numbers to avoid precision loss.
+    amount TEXT NOT NULL,
+    -- Timestamp of when the draw was initiated. Storing as INTEGER (Unix epoch).
+    timestamp INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+
+    FOREIGN KEY (walletAddress) REFERENCES Wallet(address),
+    FOREIGN KEY (vaultAddress) REFERENCES Vault(address)
+);
+
+-- Indexes to speed up common queries
+CREATE INDEX idx_draw_wallet_address ON Draw(walletAddress);
+CREATE INDEX idx_draw_vault_address ON Draw(vaultAddress);
+
+
+-- SQLDelight queries to interact with the table
+
+-- Insert a new draw record
+insertDraw:
+INSERT INTO Draw(walletAddress, vaultAddress, amount)
+VALUES (?, ?, ?);
+
+-- Select all draws for a specific wallet
+getDrawsByWallet:
+SELECT * FROM Draw
+WHERE walletAddress = ?
+ORDER BY timestamp DESC;
+
+-- Select the most recent draw for a specific wallet and vault combination
+getLatestDrawForWallet:
+SELECT * FROM Draw
+WHERE walletAddress = ?
+ORDER BY timestamp DESC
+LIMIT 1;
+
+-- Select the most recent draw for a specific wallet and vault combination
+getLatestDrawForVault:
+SELECT * FROM Draw
+WHERE walletAddress = ? AND vaultAddress = ?
+ORDER BY timestamp DESC
+LIMIT 1;
+
+-- Select all draws
+getAllDraws:
+SELECT * FROM Draw, Vault
+ORDER BY timestamp DESC;
+
+-- Select most recent timestamp
+getLatestDrawTimestamp:
+SELECT timestamp FROM Draw
+ORDER BY timestamp DESC
+LIMIT 1;

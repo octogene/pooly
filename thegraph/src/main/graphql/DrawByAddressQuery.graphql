@@ -1,0 +1,16 @@
+query DrawsByAddress($address: Bytes!, $skip: Int!) {
+    prizeClaims(
+        skip: $skip,
+        where:  {
+            recipient: $address
+            payout_gt: 0
+        },
+        orderBy: timestamp
+    ) {
+        draw {
+            drawId
+        }
+        payout
+        timestamp
+    }
+}

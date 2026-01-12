@@ -1,0 +1,13 @@
+app:
+  host: "$KTOR_HOST:0.0.0.0"
+  port: "$KTOR_PORT:8080"
+  metrics:
+    minFreeMem: 256
+    maxLoad: 0.75
+  database:
+    driver: "$DB_DRIVER:org.h2.Driver"
+    host: "$DB_HOST:localhost"
+    port: "$DB_PORT:5432"
+    name: "$DB_NAME:pooly"
+    username: "$DB_USERNAME:user"
+    password: "$DB_PASSWORD:password"

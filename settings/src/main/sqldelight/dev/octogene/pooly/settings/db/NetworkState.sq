@@ -1,0 +1,33 @@
+import dev.octogene.pooly.shared.model.ChainNetwork;
+import kotlin.Boolean;
+
+CREATE TABLE NetworkState (
+    name TEXT AS ChainNetwork NOT NULL PRIMARY KEY,
+    isActive INTEGER AS Boolean NOT NULL DEFAULT 0,
+    rpc TEXT
+);
+
+INSERT INTO NetworkState (name, isActive)
+VALUES
+('GNOSIS', 0),
+('ARBITRUM', 0),
+('BASE', 1),
+('OPTIMISM', 0),
+('WORLD', 0),
+('SCROLL', 0);
+
+
+toggleNetworkState:
+UPDATE NetworkState
+SET isActive = CASE WHEN isActive = 1 THEN 0 ELSE 1 END
+WHERE name = ?;
+
+selectActiveNetworks:
+SELECT * FROM NetworkState WHERE isActive = 1;
+
+selectAllNetworks:
+SELECT * FROM NetworkState;
+
+setRpc:
+UPDATE NetworkState
+SET rpc = ? WHERE name = ?;

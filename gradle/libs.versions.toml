@@ -1,0 +1,166 @@
+[versions]
+agp = "8.13.2"
+android-compileSdk = "36"
+android-minSdk = "28"
+android-targetSdk = "36"
+androidx-activity = "1.12.2"
+androidx-adaptive = "1.3.0-alpha05"
+androidx-appcompat = "1.7.1"
+androidx-compose-bom = "2025.12.01"
+androidx-core = "1.17.0"
+androidx-datastore = "1.2.0"
+androidx-espresso = "3.7.0"
+androidx-graphics-shapes = "1.1.0"
+androidx-lifecycle = "2.10.0"
+androidx-nav3 = "1.0.0"
+androidx-testExt = "1.3.0"
+androidx-workmanager = "2.11.0"
+apollo = "5.0.0-alpha.3"
+arrow = "2.2.1.1"
+changelog = "2.5.0"
+cohort = "2.8.2"
+composeHotReload = "1.0.0"
+detekt = "1.23.8"
+docker-compose = "0.17.20"
+ethers = "1.5.1"
+exposed = "1.0.0-rc-4"
+h2 = "2.2.224"
+koin = "4.2.0-beta2"
+glance = "1.1.1"
+gradle-buildconfig = "6.0.7"
+junit = "4.13.2"
+kbigint = "0.5.0"
+kermit = "2.0.8"
+kotlin = "2.3.0"
+kotlinx-coroutines = "1.10.2"
+kotlinx-datetime = "0.7.1"
+ktor = "3.3.3"
+logback = "1.5.15"
+material = "1.13.0"
+material3 = "1.5.0-alpha11"
+metro = "0.9.3"
+moduleGraph = "0.13.0"
+protobuf-gradle = "0.9.6"
+protobufJavalite = "4.33.2"
+sqldelight = "2.2.1"
+violations = "4.1.2"
+
+[libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-datastore = { module = "androidx.datastore:datastore-core", version.ref = "androidx-datastore" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
+androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "androidx-graphics-shapes"}
+androidx-lifecycle-runtimeCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-nav3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidx-adaptive" }
+androidx-material3-adaptive-nav3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3", version.ref = "androidx-adaptive" }
+androidx-nav3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidx-nav3" }
+androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
+androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-workmanager" }
+apollo-api = { module = "com.apollographql.apollo:apollo-api", version.ref = "apollo" }
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
+arrow-continuations = { module = "io.arrow-kt:suspendapp-ktor" }
+arrow-core = { module = "io.arrow-kt:arrow-core" }
+arrow-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines" }
+arrow-raise-ktor-server = { module = "io.arrow-kt:arrow-raise-ktor-server-jvm", version.ref = "arrow" }
+arrow-stack = { module = "io.arrow-kt:arrow-stack", version.ref = "arrow" }
+cohort-ktor = { module = "com.sksamuel.cohort:cohort-ktor", version.ref = "cohort" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom"  }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+compose-runtime = { module = "androidx.compose.runtime:runtime" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+ethers-abi = { module = "io.kriptal.ethers:ethers-abi" }
+ethers-bom = { module = "io.kriptal.ethers:ethers-bom", version.ref = "ethers" }
+ethers-core = { module = "io.kriptal.ethers:ethers-core" }
+ethers-providers = { module = "io.kriptal.ethers:ethers-providers" }
+ethers-signers = { module = "io.kriptal.ethers:ethers-signers" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+junit = { module = "junit:junit", version.ref = "junit" }
+kbigint = { module = "io.github.observeroftime.kbigint:kbigint", version.ref = "kbigint" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-ktor = { module = "io.insert-koin:koin-ktor" }
+koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-serialization-kotlinx-protobuf = { module = "io.ktor:ktor-serialization-kotlinx-protobuf", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor"}
+ktor-server-call-id = { module = "io.ktor:ktor-server-call-id", version.ref = "ktor" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-server-compression = { module = "io.ktor:ktor-server-compression", version.ref = "ktor" }
+ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-server-default-headers = { module = "io.ktor:ktor-server-default-headers", version.ref = "ktor" }
+ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }
+ktor-server-hsts = { module = "io.ktor:ktor-server-hsts", version.ref = "ktor" }
+ktor-server-html-builder = { module = "io.ktor:ktor-server-html-builder", version.ref = "ktor" }
+ktor-server-htmx = { module = "io.ktor:ktor-server-htmx", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
+ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validation", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+metrox = { module = "dev.zacsweers.metro:metrox-android", version.ref = "metro" }
+metrox-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref = "metro" }
+metrox-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metro" }
+protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
+sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+
+[bundles]
+ktor-server = [
+    "ktor-serialization-kotlinx-protobuf",
+    "ktor-server-auth",
+    "ktor-server-content-negotiation",
+    "ktor-server-core",
+    "ktor-server-cors",
+    "ktor-server-default-headers",
+    "ktor-server-netty",
+    "ktor-server-config-yaml",
+    "ktor-server-call-logging",
+    "ktor-server-openapi"
+]
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+docker-compose = { id = "com.avast.gradle.docker-compose", version.ref = "docker-compose" }
+ethers-abigen = { id = "io.kriptal.ethers.abigen-plugin", version.ref = "ethers" }
+gradle-buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "gradle-buildconfig"}
+jetbrains-changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
+moduleGraph = { id = "dev.iurysouza.modulegraph", version.ref = "moduleGraph" }
+pooly-detekt = { id = "dev.octogene.pooly.detekt" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-gradle" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version = "0.6.6" }
+violations = { id = "se.bjurr.violations.violations-gradle-plugin", version.ref = "violations" }
