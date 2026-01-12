@@ -66,6 +66,7 @@ kotlin {
 //}
 
 dependencies {
+    implementation(project(":common:core"))
     implementation(libs.bundles.ktor.server)
     implementation(libs.ktor.serialization.kotlinx.protobuf)
     implementation(libs.ktor.serialization.kotlinx.json)
