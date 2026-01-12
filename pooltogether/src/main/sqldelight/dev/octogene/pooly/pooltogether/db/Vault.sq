@@ -1,0 +1,13 @@
+import dev.octogene.pooly.shared.model.ChainNetwork;
+
+CREATE TABLE Vault (
+  address TEXT PRIMARY KEY NOT NULL,
+  name TEXT NOT NULL,
+  symbol TEXT NOT NULL,
+  network TEXT AS ChainNetwork NOT NULL,
+
+  FOREIGN KEY (network) REFERENCES NetworkState(name)
+  );
+
+getAllVaultsAdresses:
+SELECT address, network FROM Vault;
