@@ -4,7 +4,6 @@ import arrow.continuations.SuspendApp
 import ch.qos.logback.classic.Logger
 import dev.octogene.pooly.ptgraph.api.PoolTogetherGraphQLClient
 import dev.octogene.pooly.rpc.PoolTogetherRPCClient
-import kotlinx.coroutines.awaitCancellation
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.slf4j.LoggerFactory
 
@@ -19,5 +18,4 @@ fun main() = SuspendApp {
         database = Database.connect(dbUrl, dbDriver)
     )
     worker.run()
-    awaitCancellation()
 }

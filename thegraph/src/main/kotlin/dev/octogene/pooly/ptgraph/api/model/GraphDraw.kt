@@ -11,5 +11,6 @@ constructor(
     val payout: BigInteger,
     val timestamp: LocalDateTime,
     val winner: String,
-    val vault: String
+    val vault: String,
+    val transactionHash: String
 )
