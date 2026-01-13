@@ -1,14 +1,14 @@
 package dev.octogene.pooly.pooltogether
 
 import co.touchlab.kermit.Logger
+import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.pooltogether.db.DrawQueries
 import dev.octogene.pooly.settings.db.WalletQueries
-import dev.octogene.pooly.shared.model.ChainNetwork
 import dev.zacsweers.metro.Inject
 
 @Inject
 class PoolTogetherRepository(
-    private val client: PoolTogetherClient,
+    private val client: PoolyApiClient,
     private val walletQueries: WalletQueries,
     private val drawQueries: DrawQueries
 ) {
@@ -20,7 +20,7 @@ class PoolTogetherRepository(
             afterCommit { Logger.i("${draws.size} draws were inserted.") }
 
             draws.forEach {
-                drawQueries.insertDraw(it.winner, it.vault, it.payout.toString())
+                drawQueries.insertDraw(it.winner.value, it.vault.address.value, it.payout.toString())
             }
         }
     }

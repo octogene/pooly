@@ -2,16 +2,16 @@ package dev.octogene.pooly.pooltogether
 
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
+import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.pooltogether.db.Database
 import dev.octogene.pooly.pooltogether.db.GetAllDraws
-import dev.octogene.pooly.shared.model.ChainNetwork
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 
 @Inject
 class DrawsRepository(
     private val database: Database,
-    private val client: PoolTogetherClient
+    private val client: PoolyApiClientImpl
 ) {
 
     suspend fun updateDraws() {

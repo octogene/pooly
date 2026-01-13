@@ -24,12 +24,44 @@ in your IDE’s toolbar or build it directly from the terminal:
 
 ## Server
 
+```mermaid
+sequenceDiagram
+    actor Client
+    participant Server
+    participant Database
+    participant Worker
+    participant RpcDataSource as Ethereum (RPC)
+    participant GraphQLDataSource as The Graph
+    Client ->> Server: Request data (e.g., GET /prizes/latest)
+    Server ->> Database: Query data
+    Server -->> Client: Return data (e.g., JSON response)
+    Worker ->> Worker: On time loop OR external orchestration
+    Worker ->> Database: Query wallets to check for
+    Database -->> Worker: Return data
+    Worker ->> RpcDataSource: Query Vault Info
+    RpcDataSource --> Worker: Return data
+    Worker ->> GraphQLDataSource: Query Draws Info
+    GraphQLDataSource --> Worker: Return data
+    Worker ->> Worker: Process data
+    Worker ->> Database: Update draws data
+```
+
 ### Build and Run Server
 
 - on macOS/Linux
   ```shell
   ./gradlew :server:runDocker --no-configuration-cache
   ```
+
+## Testing
+
+### Get test addresses
+
+In order to test the application without random addresses that would not return any data with
+the protocol, we need to get addresses of new winners. To do so, you can go on the [cabana.fi](https://app.cabana.fi) 
+frontend and look at any vault on Base (only chain supported for now). For example https://app.cabana.fi/vault/8453/0x4e42f783db2d0c5bdff40fdc66fcae8b1cda4a43 .
+On the page you should be able to find addresses of the latest winners that you can use to test the
+application whether on the frontend or the backend.
 
 ### Module Graph
 

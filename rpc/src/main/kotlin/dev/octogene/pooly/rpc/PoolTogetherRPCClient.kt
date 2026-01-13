@@ -1,6 +1,6 @@
 package dev.octogene.pooly.rpc
 
-import dev.octogene.pooly.shared.BuildConfig.ALCHEMY_KEY
+import dev.octogene.pooly.common.core.BuildConfig.ALCHEMY_KEY
 import io.ethers.core.types.Address
 import io.ethers.providers.Provider
 import java.math.BigInteger

@@ -40,7 +40,6 @@ fun main(args: Array<String>) {
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.app(config: AppConfig) {
-
     install(Koin) {
         slf4jLogger()
 

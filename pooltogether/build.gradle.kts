@@ -53,8 +53,6 @@ sqldelight {
 
 dependencies {
     implementation(project(":shared"))
-    implementation(project(":rpc"))
-    implementation(project(":thegraph"))
     implementation(project(":settings"))
     implementation(libs.sqldelight.coroutines)
     implementation(libs.androidx.workmanager)

@@ -10,11 +10,13 @@ import kotlinx.serialization.Serializable
 value class Address private constructor(val value: String) {
 
     companion object {
+        private const val ADDRESS_LENGTH = 42
+
         fun from(rawAddress: String): Either<InvalidField, Address> = either {
             ensure(rawAddress.isNotBlank()) {
                 InvalidField("address", "Address cannot be empty")
             }
-            ensure(rawAddress.startsWith("0x") && rawAddress.length == 42) {
+            ensure(rawAddress.startsWith("0x") && rawAddress.length == ADDRESS_LENGTH) {
                 InvalidField(
                     "address",
                     "Invalid address length"

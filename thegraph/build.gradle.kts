@@ -1,48 +1,26 @@
-import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.jvm)
     alias(libs.plugins.apollo)
-    alias(libs.plugins.metro)
 }
 
-android {
-    namespace = "dev.octogene.pooly.thegraph"
-    compileSdk {
-        version = release(36)
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_24
+    targetCompatibility = JavaVersion.VERSION_24
+}
 
-    defaultConfig {
-        minSdk = 24
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_24
-        targetCompatibility = JavaVersion.VERSION_24
-    }
-    kotlin {
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_24
-            targetCompatibility = JavaVersion.VERSION_24
-        }
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_24
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
 dependencies {
-    implementation(project(":shared"))
+    implementation(project(":common:core"))
+    implementation(platform(libs.arrow.stack))
+    implementation(libs.arrow.core)
     implementation(libs.apollo.runtime)
     testImplementation(libs.junit)
 }

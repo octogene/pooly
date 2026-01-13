@@ -4,11 +4,11 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
-import java.math.BigInteger
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import java.math.BigInteger
 
-class BigIntegerSerializer: KSerializer<BigInteger> {
+class BigIntegerSerializer : KSerializer<BigInteger> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("BigInteger", PrimitiveKind.STRING)
 

@@ -61,9 +61,9 @@ kotlin {
 }
 
 // Once buildOpenApi works
-//tasks.processResources {
+// tasks.processResources {
 //    dependsOn("buildOpenApi")
-//}
+// }
 
 dependencies {
     implementation(project(":common:core"))
@@ -76,7 +76,7 @@ dependencies {
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.core)
     implementation(libs.arrow.coroutines)
-    implementation(libs.arrow.continuations)
+    implementation(libs.arrow.suspendapp.ktor)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)
