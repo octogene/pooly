@@ -9,5 +9,6 @@ data class Vault(
     val name: String,
     val symbol: String,
     @Serializable(with = BigIntegerSerializer::class)
-    val decimals: BigInteger
+    val decimals: BigInteger,
+    val network: ChainNetwork
 )

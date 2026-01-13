@@ -10,6 +10,7 @@ query DrawsByAddresses($addresses: [Bytes!]!, $skip: Int!, $after: BigInt = 0) {
     ) {
         draw {
             drawId
+            txHash
         }
         prizeVault {
             id

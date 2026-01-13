@@ -8,20 +8,22 @@ import dev.octogene.pooly.thegraph.DrawsByAddressesQuery
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.math.BigInteger
-import kotlin.collections.associateWith
-import kotlin.text.lowercase
 import kotlin.text.toLongOrNull
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 class PoolTogetherGraphQLClient(
     chainNetworks: List<ChainNetwork> = ChainNetwork.entries,
-    builder: ApolloClient.Builder = ApolloClient.Builder()
+    builder: ApolloClient.Builder = ApolloClient.Builder(),
+    private val logger: Logger = LoggerFactory.getLogger(PoolTogetherGraphQLClient::class.java)
 ) {
     private val clients = chainNetworks.associateWith { network ->
         with(builder) {
-            serverUrl("https://api.studio.thegraph.com/query/63100/pt-v5-${network.name.lowercase()}/version/latest")
+            val id = if (network == ChainNetwork.BASE) 41211 else 63100
+            serverUrl("https://api.studio.thegraph.com/query/$id/pt-v5-${network.name.lowercase()}/version/latest")
         }.build()
     }
 
@@ -32,6 +34,7 @@ class PoolTogetherGraphQLClient(
         after: Long?
     ): List<GraphDraw>? {
         val afterTimestamp = Optional.presentIfNotNull(after?.toString())
+        logger.debug("Fetching draws for ${addresses.size} addresses with skip $skip and after $after")
         val response = client.query(DrawsByAddressesQuery(addresses, skip, afterTimestamp)).execute()
         return response.data?.prizeClaims?.mapNotNull { it.toGraphDraw() }
     }
@@ -42,12 +45,13 @@ class PoolTogetherGraphQLClient(
         chainNetwork: ChainNetwork,
         after: Long? = null
     ): List<GraphDraw> {
-        val client = clients[chainNetwork]
-            ?: throw IllegalArgumentException("Unknown network: $chainNetwork")
+        logger.info("Fetching draws for ${addresses.size} addresses on $chainNetwork")
+        val client = clients.getValue(chainNetwork)
         return buildList {
             var skip = 0
             while (true) {
                 val draws = getDraws(client, addresses, skip, after)
+                logger.debug("Found ${draws?.size} draws")
                 if (draws.isNullOrEmpty()) {
                     break
                 }
@@ -63,7 +67,8 @@ class PoolTogetherGraphQLClient(
             payout = BigInteger(payout),
             timestamp = it,
             winner = winner,
-            vault = prizeVault.id
+            vault = prizeVault.id,
+            transactionHash = draw.txHash
         )
     }
 

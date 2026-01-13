@@ -29,12 +29,15 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":common:core"))
+    implementation(project(":common:db"))
     implementation(project(":rpc"))
     implementation(project(":thegraph"))
     implementation(libs.h2)
+    implementation(libs.postgresql)
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.suspendapp)
-    implementation(libs.exposed.core)
-    implementation(libs.exposed.jdbc)
+    implementation(libs.bundles.exposed)
+    implementation(libs.exposed.kotlin.datetime)
     implementation(libs.logback.classic)
 }
