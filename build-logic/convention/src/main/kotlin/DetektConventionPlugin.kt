@@ -74,10 +74,10 @@ private fun Project.setupDetekt() {
         }
 
         tasks.withType<Detekt>().configureEach {
-            jvmTarget = "24"
+            jvmTarget = "21"
         }
         tasks.withType<DetektCreateBaselineTask>().configureEach {
-            jvmTarget = "24"
+            jvmTarget = "21"
         }
 
         dependencies {

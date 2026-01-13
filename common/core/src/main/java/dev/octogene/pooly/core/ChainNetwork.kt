@@ -1,4 +1,4 @@
-package dev.octogene.pooly.shared.model
+package dev.octogene.pooly.core
 
 enum class ChainNetwork {
     BASE,

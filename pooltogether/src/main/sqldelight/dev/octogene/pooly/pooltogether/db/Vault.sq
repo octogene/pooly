@@ -1,4 +1,4 @@
-import dev.octogene.pooly.shared.model.ChainNetwork;
+import dev.octogene.pooly.core.ChainNetwork;
 
 CREATE TABLE Vault (
   address TEXT PRIMARY KEY NOT NULL,

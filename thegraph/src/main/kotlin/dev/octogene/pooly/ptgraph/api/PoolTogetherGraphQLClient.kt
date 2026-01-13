@@ -2,27 +2,18 @@ package dev.octogene.pooly.ptgraph.api
 
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
+import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.ptgraph.api.model.GraphDraw
-import dev.octogene.pooly.shared.model.ChainNetwork
 import dev.octogene.pooly.thegraph.DrawsByAddressesQuery
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.BindingContainer
-import dev.zacsweers.metro.ContributesTo
-import dev.zacsweers.metro.Provides
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.math.BigInteger
-import kotlin.collections.isNullOrEmpty
+import kotlin.collections.associateWith
+import kotlin.text.lowercase
+import kotlin.text.toLongOrNull
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
-
-@BindingContainer
-@ContributesTo(AppScope::class)
-class PoolTogetherClientModule {
-    @Provides
-    fun providePTClient(): PoolTogetherGraphQLClient = PoolTogetherGraphQLClient()
-}
 
 class PoolTogetherGraphQLClient(
     chainNetworks: List<ChainNetwork> = ChainNetwork.entries,
