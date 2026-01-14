@@ -15,17 +15,26 @@ jib {
     to {
         image = "pooly-worker"
     }
+    from {
+        image = "amazoncorretto:24-headless"
+    }
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_24
     targetCompatibility = JavaVersion.VERSION_24
 }
+
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_24
         freeCompilerArgs.add("-Xcontext-parameters")
     }
+}
+
+// workaround https://github.com/GoogleContainerTools/jib/issues/3132
+tasks.filter { it.name in setOf("jibDockerBuild", "jibBuildTar", "jib") }.onEach {
+    it.notCompatibleWithConfigurationCache("Jib is not compatible with configuration cache")
 }
 
 dependencies {

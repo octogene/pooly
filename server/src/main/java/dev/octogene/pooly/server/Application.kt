@@ -1,6 +1,7 @@
 package dev.octogene.pooly.server
 
 import arrow.raise.ktor.server.routing.getOrRaise
+import com.auth0.jwt.interfaces.JWTVerifier
 import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
 import com.sksamuel.cohort.cpu.ProcessCpuHealthCheck
@@ -8,10 +9,16 @@ import com.sksamuel.cohort.memory.FreememHealthCheck
 import dev.octogene.pooly.server.config.AppConfig
 import dev.octogene.pooly.server.config.Metrics
 import dev.octogene.pooly.server.di.persistenceModule
+import dev.octogene.pooly.server.di.securityModule
+import dev.octogene.pooly.server.di.userModule
+import dev.octogene.pooly.server.user.usersRoute
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.getAs
 import io.ktor.server.engine.embeddedServer
@@ -23,6 +30,7 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.ExperimentalSerializationApi
+import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import kotlin.time.Duration.Companion.minutes
@@ -42,9 +50,21 @@ fun main(args: Array<String>) {
 fun Application.app(config: AppConfig) {
     install(Koin) {
         slf4jLogger()
+        modules(persistenceModule(config.database), userModule(), securityModule(config.security))
+    }
 
-        // Declare modules
-        modules(persistenceModule(config.database))
+    val jwtVerifier: JWTVerifier by inject<JWTVerifier>()
+
+    install(Authentication) {
+        jwt("auth-jwt") {
+            realm = "Access to pooly application"
+            verifier(jwtVerifier)
+            validate { credential ->
+                credential.payload.getClaim("username").asString()?.let {
+                    JWTPrincipal(credential.payload)
+                }
+            }
+        }
     }
 
     routing()
@@ -55,23 +75,17 @@ fun Application.app(config: AppConfig) {
     }
 
     install(ContentNegotiation) {
-        protobuf()
         json()
+        protobuf()
     }
 }
 
 fun Application.routing() {
     routing {
         route("/api/v1") {
+            usersRoute()
             prizesRoute()
-            walletsRoute()
         }
-    }
-}
-
-fun Route.walletsRoute() {
-    getOrRaise("/wallets") {
-        "Hello, world!"
     }
 }
 

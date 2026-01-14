@@ -6,21 +6,21 @@ import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.dao.LongEntity
 import org.jetbrains.exposed.v1.dao.LongEntityClass
-import org.jetbrains.exposed.v1.datetime.datetime
+import org.jetbrains.exposed.v1.datetime.timestamp
 
 object Users : LongIdTable("users") {
-    val username = varchar("username", MAX_USERNAME_LENGTH).uniqueIndex()
+    val createdAt = timestamp("created_at")
     val email = varchar("email", MAX_VARCHAR_LENGTH).nullable()
-    val createdAt = datetime("created_at")
+    val passwordHash = varchar("password_hash", MAX_VARCHAR_LENGTH)
+    val username = varchar("username", MAX_USERNAME_LENGTH).uniqueIndex()
 }
 
-class User(id: EntityID<Long>) : LongEntity(id) {
-    companion object : LongEntityClass<User>(Users)
+class UserEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<UserEntity>(Users)
 
-    var username by Users.username
-    var email by Users.email
+    val walletAddresses by WalletEntity referrersOn Wallets.userId
     var createdAt by Users.createdAt
-
-    // A user has a list of wallet addresses
-    val walletAddresses by WalletAddress referrersOn WalletAddresses.userId
+    var email by Users.email
+    var passwordHash by Users.passwordHash
+    var username by Users.username
 }

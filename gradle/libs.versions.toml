@@ -16,35 +16,36 @@ androidx-nav3 = "1.0.0"
 androidx-testExt = "1.3.0"
 androidx-workmanager = "2.11.0"
 apollo = "4.3.3"
+argon2 = "2.12"
 arrow = "2.2.1.1"
 changelog = "2.5.0"
 cohort = "2.8.2"
 composeHotReload = "1.0.0"
 detekt = "1.23.8"
 docker-compose = "0.17.20"
-kotlinx-serialization = "1.9.0"
 ethers = "1.5.1"
 exposed = "1.0.0-rc-4"
-h2 = "2.4.240"
-koin = "4.2.0-beta2"
 glance = "1.1.1"
 gradle-buildconfig = "6.0.7"
+h2 = "2.4.240"
+jib = "3.5.2"
 junit = "4.13.2"
-jib = "3.4.2"
 kbigint = "0.5.0"
 kermit = "2.0.8"
+koin = "4.2.0-beta2"
 kotlin = "2.3.0"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
+kotlinx-serialization = "1.9.0"
 ktor = "3.3.3"
 logback = "1.5.24"
 material = "1.13.0"
 material3 = "1.5.0-alpha11"
 metro = "0.9.3"
 moduleGraph = "0.13.0"
+postgresql = "42.7.8"
 protobuf-gradle = "0.9.6"
 protobufJavalite = "4.33.2"
-postgresql = "42.7.8"
 sqldelight = "2.2.1"
 violations = "4.1.2"
 
@@ -67,12 +68,13 @@ androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "an
 androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-workmanager" }
 apollo-api = { module = "com.apollographql.apollo:apollo-api", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
-arrow-suspendapp-ktor = { module = "io.arrow-kt:suspendapp-ktor" }
-arrow-suspendapp = { module = "io.arrow-kt:suspendapp" }
+argon2 = { module = "de.mkammerer:argon2-jvm", version.ref = "argon2"}
 arrow-core = { module = "io.arrow-kt:arrow-core" }
 arrow-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines" }
 arrow-raise-ktor-server = { module = "io.arrow-kt:arrow-raise-ktor-server-jvm", version.ref = "arrow" }
 arrow-stack = { module = "io.arrow-kt:arrow-stack", version.ref = "arrow" }
+arrow-suspendapp = { module = "io.arrow-kt:suspendapp" }
+arrow-suspendapp-ktor = { module = "io.arrow-kt:suspendapp-ktor" }
 cohort-ktor = { module = "com.sksamuel.cohort:cohort-ktor", version.ref = "cohort" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
@@ -89,16 +91,17 @@ ethers-core = { module = "io.kriptal.ethers:ethers-core" }
 ethers-providers = { module = "io.kriptal.ethers:ethers-providers" }
 ethers-signers = { module = "io.kriptal.ethers:ethers-signers" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-crypt = { module = "org.jetbrains.exposed:exposed-crypt", version.ref = "exposed" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kbigint = { module = "io.github.observeroftime.kbigint:kbigint", version.ref = "kbigint" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-ktor = { module = "io.insert-koin:koin-ktor" }
 koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j" }
-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -108,6 +111,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-serialization-kotlinx-protobuf = { module = "io.ktor:ktor-serialization-kotlinx-protobuf", version.ref = "ktor" }
 ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
 ktor-server-call-id = { module = "io.ktor:ktor-server-call-id", version.ref = "ktor" }
 ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
 ktor-server-compression = { module = "io.ktor:ktor-server-compression", version.ref = "ktor" }
@@ -130,8 +134,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 metrox = { module = "dev.zacsweers.metro:metrox-android", version.ref = "metro" }
 metrox-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref = "metro" }
 metrox-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metro" }
-protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
@@ -140,20 +144,22 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 ktor-server = [
     "ktor-serialization-kotlinx-protobuf",
     "ktor-server-auth",
+    "ktor-server-call-logging",
+    "ktor-server-config-yaml",
     "ktor-server-content-negotiation",
     "ktor-server-core",
     "ktor-server-cors",
     "ktor-server-default-headers",
     "ktor-server-netty",
-    "ktor-server-config-yaml",
-    "ktor-server-call-logging",
     "ktor-server-openapi"
 ]
 exposed = [
     "exposed-core",
     "exposed-dao",
     "exposed-jdbc",
-    "exposed-kotlin-datetime"
+    "exposed-kotlin-datetime",
+    "h2",
+    "postgresql"
 ]
 
 [plugins]
