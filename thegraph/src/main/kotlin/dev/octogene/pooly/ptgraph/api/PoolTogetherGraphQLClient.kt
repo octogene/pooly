@@ -65,6 +65,7 @@ class PoolTogetherGraphQLClient(
         GraphDraw(
             id = draw.drawId,
             payout = BigInteger(payout),
+            // TODO: Convert to Instant, need to make sure of the initial format (epoch ?)
             timestamp = it,
             winner = winner,
             vault = prizeVault.id,

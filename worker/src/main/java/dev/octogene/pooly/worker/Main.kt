@@ -12,10 +12,14 @@ fun main() = SuspendApp {
     logger.info("Starting process")
     val dbUrl = System.getenv("DB_URL") ?: "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
     val dbDriver = System.getenv("DB_DRIVER") ?: "org.h2.Driver"
+    val dbUser = System.getenv("DB_USERNAME") ?: ""
+    val dbPassword = System.getenv("DB_PASSWORD") ?: ""
+    val checkInterval = System.getenv("CHECK_INTERVAL") ?: "5m"
     val worker = Worker(
         rpcClient = PoolTogetherRPCClient(),
         graphClient = PoolTogetherGraphQLClient(),
-        database = Database.connect(dbUrl, dbDriver)
+        database = Database.connect(dbUrl, dbDriver, dbUser, dbPassword),
+        checkInterval = checkInterval
     )
     worker.run()
 }

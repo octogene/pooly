@@ -44,6 +44,15 @@ ktor {
         jreVersion.set(JavaVersion.VERSION_24)
         imageTag.set("${project.version}")
     }
+
+    jib {
+        to {
+            image = "pooly"
+        }
+        from {
+            image = "amazoncorretto:24-headless"
+        }
+    }
 }
 
 java {
@@ -67,10 +76,13 @@ kotlin {
 
 dependencies {
     implementation(project(":common:core"))
+    implementation(project(":common:db"))
+    implementation(libs.argon2)
     implementation(libs.bundles.ktor.server)
     implementation(libs.ktor.serialization.kotlinx.protobuf)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.arrow.raise.ktor.server)
+    implementation(libs.ktor.server.auth.jwt)
     implementation(libs.logback.classic)
     implementation(libs.cohort.ktor)
     implementation(platform(libs.arrow.stack))
@@ -80,6 +92,5 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)
-    implementation(libs.exposed.core)
-    implementation(libs.exposed.jdbc)
+    implementation(libs.bundles.exposed)
 }

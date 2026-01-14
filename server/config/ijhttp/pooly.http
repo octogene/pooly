@@ -1,0 +1,53 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=Android Studio
+
+###
+
+### Create user
+POST {{base_url}}/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "test",
+  "password": "password",
+  "email": "test@email.com"
+}
+
+### Login
+POST {{base_url}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "test",
+  "password": "password"
+}
+
+> {%
+ client.global.set("auth_token", response.body.token);
+%}
+
+### Add wallet
+POST {{base_url}}/wallets
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+[
+  "0x4d864b0ddec2a861506c8baa676e2d99a4c30a84",
+  "0x461cde402c6b945036df1b49f2703fca22b23d7b",
+  "0x800c0ee9e3f8ea44b6f240ebd68bba5745ce9013"
+]
+
+### Get wallets
+GET {{base_url}}/wallets
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+
+### Get prizes
+GET {{base_url}}/prizes
+Accept: application/json
+Authorization: Bearer {{auth_token}}

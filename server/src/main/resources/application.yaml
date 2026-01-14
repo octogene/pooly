@@ -11,3 +11,11 @@ app:
     name: "$DB_NAME:pooly"
     username: "$DB_USERNAME:user"
     password: "$DB_PASSWORD:password"
+  security:
+    hashing:
+      argon2Type: "$HASHING_ARGON2_TYPE:ARGON2id"
+      iterations: "$HASHING_ARGON2_ITERATIONS:2"
+      memory: "$HASHING_ARGON2_MEMORY:20000"
+      parallelism: "$HASHING_ARGON2_PARALLELISM:1"
+    jwt:
+      secret: "$JWT_SECRET:e0df4b2b82be5c9bb10de9cd1f"

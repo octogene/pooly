@@ -31,7 +31,8 @@ class PoolTogetherRPCClient(
                 Address.unsafeFrom(hexAddress),
                 name as String,
                 symbol as String,
-                decimals as BigInteger,
+                // TODO: Check why BigInteger is returned by contract. Really not required.
+                (decimals as BigInteger).toInt(),
                 ChainNetwork.BASE
             )
         }

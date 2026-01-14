@@ -5,7 +5,12 @@ CREATE TABLE Wallet (
 );
 
 INSERT INTO Wallet (address, name) VALUES
-('0x9342e2ac6dd4a907948e91e80d2734ecac1d70ec', 'poulet');
+('0x02ce3b6c086e88616783163fb095578c86fbd4a9', 'pomme'),
+('0x4da5bda21c66edec94ba1a7d215fa2a62ad8e4fc', 'nicktoon'),
+('0x4e7d889700fc76057872b89aacb11083b8f939c7', 'patoknox'),
+('0x9342e2ac6dd4a907948e91e80d2734ecac1d70ec', 'poolparty'),
+('0x4d864b0ddec2a861506c8baa676e2d99a4c30a84', 'patate'),
+('0x2699c32a793d58691419a054da69414df186b181', 'flashprofit');
 
 getAllWallets:
 SELECT * FROM Wallet;
