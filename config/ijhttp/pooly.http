@@ -10,9 +10,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "test",
-  "password": "password",
-  "email": "test@email.com"
+  "username": "{{user}}",
+  "password": "{{password}}",
+  "email": "{{user}}@email.com"
 }
 
 ### Login
@@ -21,8 +21,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "test",
-  "password": "password"
+  "username": "{{user}}",
+  "password": "{{password}}"
 }
 
 > {%

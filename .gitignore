@@ -19,3 +19,4 @@ captures
 node_modules/
 code-climate.json
 *.jfr
+*.private.*

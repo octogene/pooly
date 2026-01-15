@@ -20,8 +20,9 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.exists
-import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.insertIgnore
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -29,7 +30,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.time.Clock
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 class Worker(
@@ -62,16 +62,14 @@ class Worker(
         draws: List<GraphDraw>
     ) {
         transaction(database) {
-            newVaults.forEach { vault ->
-                Vaults.insert {
-                    it[id] = vault.address.value
-                    it[name] = vault.name
-                    it[chainNetwork] = ChainNetwork.BASE.name
-                    it[tokenAddress] = vault.address.value
-                    it[tokenSymbol] = vault.symbol
-                    it[tokenDecimals] = vault.decimals.toInt()
-                    it[createdAt] = Clock.System.now()
-                }
+            Vaults.batchInsert(newVaults, ignore = true) { vault ->
+                set(Vaults.id, vault.address.value)
+                set(Vaults.name, vault.name)
+                set(Vaults.chainNetwork, ChainNetwork.BASE.name)
+                set(Vaults.tokenAddress, vault.address.value)
+                set(Vaults.tokenSymbol, vault.symbol)
+                set(Vaults.tokenDecimals, vault.decimals)
+                set(Vaults.createdAt, Clock.System.now())
             }
 
             draws.groupBy { it.vault }.forEach { (vaultAddress, draws) ->
@@ -81,7 +79,7 @@ class Worker(
                     // TODO: For whatever reason the graph returns duplicate draws.
                     //  We filter them out here, but it should be fixed upstream.
                     draws.distinctBy { it.transactionHash }.forEach { draw ->
-                        Prizes.insert {
+                        Prizes.insertIgnore {
                             it[vaultId] = vault.id.value
                             it[winnerAddress] = draw.winner
                             it[amount] = draw.payout.toString()

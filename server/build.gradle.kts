@@ -1,3 +1,4 @@
+import buildlogic.DownloadArtifactTask
 import io.ktor.plugin.OpenApiPreview
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -43,15 +44,48 @@ ktor {
         localImageName.set("pooly")
         jreVersion.set(JavaVersion.VERSION_24)
         imageTag.set("${project.version}")
-    }
 
-    jib {
-        to {
-            image = "pooly"
+        jib {
+            to {
+                image = "pooly"
+            }
+            from {
+                image = "amazoncorretto:24-headless"
+            }
+            extraDirectories {
+                paths {
+                    path {
+                        setFrom(layout.buildDirectory.dir("tmp/javaagent"))
+                        into = "/extras"
+                    }
+                }
+            }
         }
-        from {
-            image = "amazoncorretto:24-headless"
-        }
+
+        val javaToolOptions =
+            application.applicationDefaultJvmArgs +
+                "-javaagent:/extras/opentelemetry-javaagent.jar" +
+                "-javaagent:/extras/pyroscope.jar"
+
+        val pyroscope = dockerCompose.servicesInfos["pyroscope"]?.host ?: "pyroscope"
+        val loki = dockerCompose.servicesInfos["loki"]?.host ?: "loki"
+        val otel = dockerCompose.servicesInfos["otel-collector"]?.host ?: "otel-collector"
+
+        environmentVariable("JAVA_TOOL_OPTIONS", javaToolOptions.joinToString(" "))
+        environmentVariable("OTEL_RESOURCE_ATTRIBUTES", "service.name=pooly")
+        environmentVariable("OTEL_JAVAAGENT_DEBUG", "true")
+        environmentVariable("OTEL_JAVAAGENT_LOGGING", "application")
+        environmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", "http://$otel:4318")
+        environmentVariable("OTEL_RESOURCE_ATTRIBUTES", "service.namespace=pooly,service.name=pooly")
+        environmentVariable("PYROSCOPE_APPLICATION_NAME", "dev.octogene.pooly")
+        environmentVariable("PYROSCOPE_SERVER_ADDRESS", "http://$pyroscope:4040")
+        environmentVariable("PYROSCOPE_FORMAT", "jfr")
+        environmentVariable("PYROSCOPE_PROFILING_INTERVAL", "10ms")
+        environmentVariable("PYROSCOPE_PROFILER_EVENT", "itimer")
+        environmentVariable("PYROSCOPE_PROFILER_LOCK", "10ms")
+        environmentVariable("PYROSCOPE_PROFILER_ALLOC", "512k")
+        environmentVariable("AWS_REGION", "us-east-1")
+        environmentVariable("LISTEN_ADDRESS", "0.0.0.0:8080")
     }
 }
 
@@ -93,4 +127,27 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)
     implementation(libs.bundles.exposed)
+}
+
+tasks.named("setupJibLocal") {
+    dependsOn("downloadOTELAgent")
+    dependsOn("downloadPyroscopeAgent")
+}
+
+tasks.register<DownloadArtifactTask>("downloadOTELAgent") {
+    description = "Downloads the AWS OTEL Java agent artifact"
+    group = "custom"
+    val agentVersion = "v2.20.0"
+    artifactUrl = "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/$agentVersion/opentelemetry-javaagent.jar"
+    val outputDir = layout.buildDirectory.dir("tmp/javaagent")
+    outputFile = outputDir.get().file("opentelemetry-javaagent.jar")
+}
+
+tasks.register<DownloadArtifactTask>("downloadPyroscopeAgent") {
+    description = "Downloads the Pyroscope Java agent artifact"
+    group = "custom"
+    val agentVersion = "v2.1.2"
+    artifactUrl = "https://github.com/grafana/pyroscope-java/releases/download/$agentVersion/pyroscope.jar"
+    val outputDir = layout.buildDirectory.dir("tmp/javaagent")
+    outputFile = outputDir.get().file("pyroscope.jar")
 }

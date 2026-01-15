@@ -27,8 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import co.touchlab.kermit.Logger
+import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.settings.SettingsScreen
-import dev.octogene.pooly.shared.model.ChainNetwork
 import dev.octogene.pooly.shared.model.Draw
 import dev.octogene.pooly.ui.lightColorScheme
 import dev.zacsweers.metrox.viewmodel.metroViewModel

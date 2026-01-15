@@ -46,7 +46,7 @@ class PoolyApp : Application(), MetroApplication, Configuration.Provider {
 
     private fun scheduleBackgroundWork() {
         val workRequest =
-            PeriodicWorkRequestBuilder<DrawWorker>(15, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<DrawWorker>(1, TimeUnit.MINUTES)
                 .setInputData(Data.Builder().putString("workName", "onCreate").build())
                 .build()
         appGraph.workManager.enqueue(workRequest)

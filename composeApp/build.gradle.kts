@@ -57,6 +57,7 @@ android {
     }
 
     kotlin {
+        jvmToolchain(24)
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_24
             targetCompatibility = JavaVersion.VERSION_24
@@ -110,7 +111,7 @@ dependencies {
     // Datastore
     implementation(libs.sqldelight.android)
 
-    // Compose - Note: You might need to add a Compose BOM to your libs.versions.toml
+    // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)

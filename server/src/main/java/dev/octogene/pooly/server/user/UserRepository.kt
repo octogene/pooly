@@ -1,33 +1,43 @@
 package dev.octogene.pooly.server.user
 
+import arrow.core.Either
+import arrow.core.raise.context.ensureNotNull
+import arrow.core.raise.either
+import arrow.core.raise.ensureNotNull
 import dev.octogene.pooly.common.db.table.Prizes
+import dev.octogene.pooly.common.db.table.UserEntity
 import dev.octogene.pooly.common.db.table.Users
 import dev.octogene.pooly.common.db.table.Vaults
 import dev.octogene.pooly.common.db.table.Wallets
+import dev.octogene.pooly.server.model.DatabaseError
+import dev.octogene.pooly.server.model.DatabaseError.OperationError.NotFound
 import dev.octogene.pooly.server.security.PasswordHasher
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import kotlin.time.Clock
-import dev.octogene.pooly.common.db.table.UserEntity as UserEntity
 
 interface UserRepository {
     fun createUser(name: String, email: String, password: String)
-    fun addWallets(username: String, addresses: List<String>)
-    fun removeWallets(username: String, addresses: List<String>)
+    fun addWallets(username: String, addresses: List<String>): Either<DatabaseError, Unit>
+    fun removeWallets(username: String, addresses: List<String>): Either<DatabaseError, Unit>
 
-    fun getWallets(username: String): List<String>
+    fun getWallets(username: String): Either<DatabaseError, List<String>>
 }
 
 class UserRepositoryImpl(
     private val database: Database,
-    private val passwordHasher: PasswordHasher
+    private val passwordHasher: PasswordHasher,
+    private val logger: Logger = LoggerFactory.getLogger(UserRepositoryImpl::class.java)
 ) : UserRepository {
 
     init {
@@ -37,6 +47,7 @@ class UserRepositoryImpl(
     }
 
     override fun createUser(name: String, email: String, password: String) {
+        logger.debug("Creating user $name")
         transaction(database) {
             Users.insert {
                 it[Users.username] = name
@@ -47,31 +58,36 @@ class UserRepositoryImpl(
         }
     }
 
-    override fun addWallets(username: String, addresses: List<String>) {
+    override fun addWallets(
+        username: String,
+        addresses: List<String>
+    ): Either<DatabaseError, Unit> = either {
         transaction(database) {
             val userId = Users
                 .select(Users.id)
                 .where(Users.username eq username)
-                .single()[Users.id]
+                .singleOrNull()?.get(Users.id)
+
+            ensureNotNull(userId) { NotFound("User", username) }
 
             val createdAt = Clock.System.now()
 
-            addresses.forEach { address ->
-                Wallets.insert {
-                    it[Wallets.userId] = userId.value
-                    it[Wallets.id] = address
-                    it[Wallets.createdAt] = createdAt
-                }
+            Wallets.batchInsert(addresses, ignore = true) { address ->
+                set(Wallets.userId, userId.value)
+                set(Wallets.id, address)
+                set(Wallets.createdAt, createdAt)
             }
         }
     }
 
-    override fun removeWallets(username: String, addresses: List<String>) {
+    override fun removeWallets(username: String, addresses: List<String>): Either<DatabaseError, Unit> = either {
         transaction(database) {
             val userId = Users
                 .select(Users.id)
                 .where(Users.username eq username)
-                .single()[Users.id]
+                .singleOrNull()?.get(Users.id)
+
+            ensureNotNull(userId) { NotFound("User", username) }
 
             Wallets.deleteWhere {
                 (Wallets.userId eq userId.value) and (Wallets.id inList addresses)
@@ -79,11 +95,12 @@ class UserRepositoryImpl(
         }
     }
 
-    override fun getWallets(username: String): List<String> {
+    override fun getWallets(username: String): Either<DatabaseError, List<String>> = either {
         val wallets = transaction(database) {
-            val user = UserEntity.find { Users.username eq username }.single()
+            val user = UserEntity.find { Users.username eq username }.singleOrNull()
+            ensureNotNull(user) { NotFound("User", username) }
             user.walletAddresses.map { it.id.value }
         }
-        return wallets
+        wallets
     }
 }

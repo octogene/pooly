@@ -4,6 +4,7 @@ import android.content.Context
 import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.db.Database
 import dev.octogene.pooly.pooltogether.db.DrawQueries
 import dev.octogene.pooly.pooltogether.db.Vault
@@ -11,7 +12,6 @@ import dev.octogene.pooly.pooltogether.db.VaultQueries
 import dev.octogene.pooly.settings.db.NetworkState
 import dev.octogene.pooly.settings.db.NetworkStateQueries
 import dev.octogene.pooly.settings.db.WalletQueries
-import dev.octogene.pooly.shared.model.ChainNetwork
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.Includes
 import dev.zacsweers.metro.Provides

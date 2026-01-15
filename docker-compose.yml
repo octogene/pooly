@@ -29,13 +29,11 @@ services:
       - PYROSCOPE_PROFILER_EVENT=itimer
       - PYROSCOPE_PROFILER_LOCK=10ms
       - PYROSCOPE_PROFILER_ALLOC=512k
-      - AWS_REGION=us-east-1
-      - LISTEN_ADDRESS=0.0.0.0:8080
-#      - JAVA_TOOL_OPTIONS=
-#          -javaagent:/extras/opentelemetry-javaagent.jar
-#          -javaagent:/extras/pyroscope.jar
-#          -XX:+PrintFlagsFinal
-#          -XX:StartFlightRecording:filename=pooly.jfr
+      - JAVA_TOOL_OPTIONS=
+          -javaagent:/extras/opentelemetry-javaagent.jar
+          -javaagent:/extras/pyroscope.jar
+          -XX:+PrintFlagsFinal
+          -XX:StartFlightRecording:filename=pooly.jfr
     volumes:
       - ~/.aws:/root/.aws
     ports:
@@ -90,15 +88,15 @@ services:
       - monitor-net
       - common-net
     volumes:
-      - "./config/awscollector/otel-config.yaml:/etc/otel-agent-config.yaml"
-      - "~/.aws:/home/aoc/.aws"
+      - "./config/awscollector/otel-config.yaml:/etc/otel-agent-config.yaml:z"
+      - "~/.aws:/home/aoc/.aws:z"
     depends_on:
       - prometheus
   prometheus:
     image: prom/prometheus:v3.5.0
     container_name: prometheus
     volumes:
-      - ./config/prometheus:/etc/prometheus
+      - ./config/prometheus:/etc/prometheus:z
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
@@ -123,13 +121,13 @@ services:
       - "10001:10001"
       - "/var/tempo"
     volumes:
-      - ./tempo-data:/var/tempo
+      - "./tempo-data:/var/tempo"
   tempo:
     image: *tempoImage
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ./config/tempo/tempo.yaml:/etc/tempo.yaml
-      - ./tempo-data:/var/tempo
+      - "./config/tempo/tempo.yaml:/etc/tempo.yaml:z"
+      - "./tempo-data:/var/tempo"
     ports:
       - "3200" # tempo
       - "4319" # otlp grpc
@@ -164,7 +162,7 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./config/loki/loki-config.yaml:/etc/loki/loki-config.yaml
+      - ./config/loki/loki-config.yaml:/etc/loki/loki-config.yaml:z
     networks:
       - monitor-net
       - common-net
