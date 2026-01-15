@@ -1,9 +1,9 @@
 package dev.octogene.pooly.settings
 
 import app.cash.sqldelight.coroutines.asFlow
+import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.settings.db.NetworkStateQueries
 import dev.octogene.pooly.settings.db.WalletQueries
-import dev.octogene.pooly.shared.model.ChainNetwork
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject

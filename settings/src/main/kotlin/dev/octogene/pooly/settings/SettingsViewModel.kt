@@ -2,7 +2,7 @@ package dev.octogene.pooly.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.octogene.pooly.shared.model.ChainNetwork
+import dev.octogene.pooly.core.ChainNetwork
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject

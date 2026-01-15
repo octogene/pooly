@@ -1,8 +1,8 @@
 package dev.octogene.pooly.server.di
 
 import com.auth0.jwt.JWT
-import com.auth0.jwt.interfaces.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.JWTVerifier
 import dev.octogene.pooly.server.config.DbConfig
 import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.prize.PrizeRepository

@@ -55,6 +55,36 @@ sequenceDiagram
 
 ## Testing
 
+### User setup
+
+For now, we're using a default user or local testing across the mobile & server, to set it up add these values
+in you `local.properties` file: 
+``
+pooly.user=YOUR-USERNAME
+pooly.password=YOUR-PASSWORD
+``
+
+If you're using IJHTTP for the api testing you should create a private env file `config/ijhttp/http-client.private.env.json` and
+add:
+``
+{
+  "local": {
+    "user": "YOUR-USERNAME",
+    "password": "YOUR-PASSWORD"
+  }
+}
+``
+
+### Alchemy key
+
+To access an Ethereum RPC, we're using [Alchemy](https://www.alchemy.com/). You need to get a free
+api key to allow the worker to access the RPC. 
+
+Once created, just add this to your `local.properties` file :
+``
+alchemy.key=YOUR-ALCHEMY-KEY
+``
+
 ### Get test addresses
 
 In order to test the application without random addresses that would not return any data with

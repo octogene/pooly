@@ -3,6 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.1.124</domain>
         <domain includeSubdomains="true">192.168.1.100</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
         <!-- Add other domains here if needed -->
         <!-- <domain includeSubdomains="true">another-domain.com</domain> -->
     </domain-config>
