@@ -15,6 +15,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -40,6 +41,7 @@ class PoolyApiClientImpl(
                     val loginResponse = httpClient.post("$base_url/login") {
                         contentType(ContentType.Application.Json)
                         // TODO: Get from the settings
+                        accept(ContentType.Application.Json)
                         setBody(LoginRequest(POOLY_USER, POOLY_PASSWORD))
                     }.body<LoginResponse>()
                     BearerTokens(loginResponse.token, null)
@@ -56,9 +58,12 @@ class PoolyApiClientImpl(
         withContext(Dispatchers.IO) {
             // TODO: Should be done separately upon changes in settings
             registerWallets(addresses)
-            val response = poolyClient.get("$base_url/prizes")
+            // TODO: Should be paged
+            val response = poolyClient.get("$base_url/prizes") {
+                accept(ContentType.Application.Json)
+            }.body<List<Prize>>()
             Logger.d { "getAllDraws response: $response" }
-            emptyList()
+            response
         }
 
     override suspend fun getVaultsInfo(addresses: List<String>): List<Vault> {

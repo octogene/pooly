@@ -1,5 +1,6 @@
 package dev.octogene.pooly
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +25,12 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import co.touchlab.kermit.Logger
-import dev.octogene.pooly.core.ChainNetwork
+import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.settings.SettingsScreen
-import dev.octogene.pooly.shared.model.Draw
 import dev.octogene.pooly.ui.lightColorScheme
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
@@ -86,7 +87,7 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
 private fun AppNavContainer(
     innerPadding: PaddingValues,
     backStack: SnapshotStateList<Any>,
-    draws: Map<ChainNetwork, List<Draw>>
+    draws: List<Prize>
 ) {
     Box(
         modifier = Modifier
@@ -119,7 +120,7 @@ private fun AppNavContainer(
 
 @Composable
 private fun RootUi(
-    draws: Map<ChainNetwork, List<Draw>>,
+    draws: List<Prize>,
     modifier: Modifier = Modifier,
     onNavigate: (Destination) -> Unit
 ) {
@@ -133,30 +134,19 @@ private fun RootUi(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column {
-            Image(painterResource(R.drawable.pooly), null)
-            Text("Nothing to see here")
+        AnimatedContent(draws) {
+            if (it.isEmpty()) {
+                Column {
+                    Image(painterResource(R.drawable.pooly), null)
+                    Text("Nothing to see here")
+                }
+            } else {
+                LazyColumn {
+                    items(it.size) { index ->
+                        Text(it[index].payout.toString())
+                    }
+                }
+            }
         }
     }
 }
-
-// @Composable
-// private fun WinsUi(
-//    wins: List<Draw>,
-//    modifier: Modifier = Modifier
-// ) {
-//    val state by remember {
-//        derivedStateOf { wins.isEmpty() }
-//    }
-//    AnimatedContent(state) { isWins ->
-//        if (isWins) {
-//            LazyColumn {
-//                items(wins) { win ->
-//                    Text(win.winner)
-//                }
-//            }
-//        } else {
-//            Text("No wins yet")
-//        }
-//    }
-// }

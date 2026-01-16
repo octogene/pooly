@@ -33,5 +33,5 @@ class PrizeEntity(id: EntityID<Long>) : LongEntity(id) {
     var vaultId by Prizes.vaultId
     var winnerAddress by Prizes.winnerAddress
 
-    val vault by VaultEntity backReferencedOn Vaults.id
+    val vault by VaultEntity referencedOn Prizes.vaultId
 }
