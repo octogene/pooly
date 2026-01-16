@@ -127,6 +127,13 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)
     implementation(libs.bundles.exposed)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.ktor.client.content.negotiation)
+    testImplementation(libs.kotlin.testJunit)
+    testImplementation(libs.kotest.core)
+    testImplementation(libs.kotest.extensions.ktor)
+
 }
 
 tasks.named("setupJibLocal") {

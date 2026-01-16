@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.JWTVerifier
 import dev.octogene.pooly.server.config.DbConfig
 import dev.octogene.pooly.server.config.SecurityConfig
+import dev.octogene.pooly.server.prize.PrizeController
 import dev.octogene.pooly.server.prize.PrizeRepository
 import dev.octogene.pooly.server.prize.PrizeRepositoryImpl
 import dev.octogene.pooly.server.security.JwtGenerator
@@ -42,6 +43,9 @@ val userModule = {
         }
         single<PrizeRepository> {
             PrizeRepositoryImpl(get())
+        }
+        single<PrizeController> {
+            PrizeController(get(), get())
         }
     }
 }

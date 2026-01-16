@@ -1,4 +1,4 @@
-package dev.octogene.pooly.pooltogether.di
+package dev.octogene.pooly.pooltogether
 
 import dev.octogene.pooly.pooltogether.db.DrawQueries
 import dev.octogene.pooly.settings.db.WalletQueries
@@ -41,7 +41,7 @@ class PoolTogetherContainer {
             json()
         }
         install(Logging) {
-            logger = Logger.DEFAULT
+            logger = Logger.Companion.DEFAULT
             level = LogLevel.HEADERS
             sanitizeHeader { header -> header == HttpHeaders.Authorization }
         }

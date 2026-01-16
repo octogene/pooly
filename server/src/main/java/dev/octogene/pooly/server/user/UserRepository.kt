@@ -1,7 +1,6 @@
 package dev.octogene.pooly.server.user
 
 import arrow.core.Either
-import arrow.core.raise.context.ensureNotNull
 import arrow.core.raise.either
 import arrow.core.raise.ensureNotNull
 import dev.octogene.pooly.common.db.table.Prizes
@@ -9,6 +8,7 @@ import dev.octogene.pooly.common.db.table.UserEntity
 import dev.octogene.pooly.common.db.table.Users
 import dev.octogene.pooly.common.db.table.Vaults
 import dev.octogene.pooly.common.db.table.Wallets
+import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.server.model.DatabaseError
 import dev.octogene.pooly.server.model.DatabaseError.OperationError.NotFound
 import dev.octogene.pooly.server.security.PasswordHasher
@@ -27,11 +27,10 @@ import org.slf4j.LoggerFactory
 import kotlin.time.Clock
 
 interface UserRepository {
-    fun createUser(name: String, email: String, password: String)
-    fun addWallets(username: String, addresses: List<String>): Either<DatabaseError, Unit>
-    fun removeWallets(username: String, addresses: List<String>): Either<DatabaseError, Unit>
-
-    fun getWallets(username: String): Either<DatabaseError, List<String>>
+    fun createUser(name: String, email: String, password: String): Either<DatabaseError, Unit>
+    fun addWallets(username: String, addresses: List<Address>): Either<DatabaseError, Unit>
+    fun removeWallets(username: String, addresses: List<Address>): Either<DatabaseError, Unit>
+    fun getWallets(username: String): Either<DatabaseError, List<Address>>
 }
 
 class UserRepositoryImpl(
@@ -46,7 +45,7 @@ class UserRepositoryImpl(
         }
     }
 
-    override fun createUser(name: String, email: String, password: String) {
+    override fun createUser(name: String, email: String, password: String): Either<DatabaseError, Unit> = either {
         logger.debug("Creating user $name")
         transaction(database) {
             Users.insert {
@@ -60,7 +59,7 @@ class UserRepositoryImpl(
 
     override fun addWallets(
         username: String,
-        addresses: List<String>
+        addresses: List<Address>
     ): Either<DatabaseError, Unit> = either {
         transaction(database) {
             val userId = Users
@@ -74,13 +73,13 @@ class UserRepositoryImpl(
 
             Wallets.batchInsert(addresses, ignore = true) { address ->
                 set(Wallets.userId, userId.value)
-                set(Wallets.id, address)
+                set(Wallets.id, address.value)
                 set(Wallets.createdAt, createdAt)
             }
         }
     }
 
-    override fun removeWallets(username: String, addresses: List<String>): Either<DatabaseError, Unit> = either {
+    override fun removeWallets(username: String, addresses: List<Address>): Either<DatabaseError, Unit> = either {
         transaction(database) {
             val userId = Users
                 .select(Users.id)
@@ -90,16 +89,16 @@ class UserRepositoryImpl(
             ensureNotNull(userId) { NotFound("User", username) }
 
             Wallets.deleteWhere {
-                (Wallets.userId eq userId.value) and (Wallets.id inList addresses)
+                (Wallets.userId eq userId.value) and (Wallets.id inList addresses.map { it.value })
             }
         }
     }
 
-    override fun getWallets(username: String): Either<DatabaseError, List<String>> = either {
+    override fun getWallets(username: String): Either<DatabaseError, List<Address>> = either {
         val wallets = transaction(database) {
             val user = UserEntity.find { Users.username eq username }.singleOrNull()
             ensureNotNull(user) { NotFound("User", username) }
-            user.walletAddresses.map { it.id.value }
+            user.walletAddresses.map { Address.unsafeFrom(it.id.value) }
         }
         wallets
     }

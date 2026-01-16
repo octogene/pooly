@@ -1,6 +1,5 @@
 package dev.octogene.pooly.server
 
-import arrow.raise.ktor.server.routing.getOrRaise
 import com.auth0.jwt.interfaces.JWTVerifier
 import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
@@ -11,6 +10,7 @@ import dev.octogene.pooly.server.config.Metrics
 import dev.octogene.pooly.server.di.persistenceModule
 import dev.octogene.pooly.server.di.securityModule
 import dev.octogene.pooly.server.di.userModule
+import dev.octogene.pooly.server.prize.prizesRoute
 import dev.octogene.pooly.server.user.usersRoute
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
@@ -25,7 +25,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.routing.Route
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
@@ -48,10 +47,7 @@ fun main(args: Array<String>) {
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.app(config: AppConfig) {
-    install(Koin) {
-        slf4jLogger()
-        modules(persistenceModule(config.database), userModule(), securityModule(config.security))
-    }
+    dependencies(config)
 
     val jwtVerifier: JWTVerifier by inject<JWTVerifier>()
 
@@ -80,6 +76,13 @@ fun Application.app(config: AppConfig) {
     }
 }
 
+fun Application.dependencies(config: AppConfig) {
+    install(Koin) {
+        slf4jLogger()
+        modules(persistenceModule(config.database), userModule(), securityModule(config.security))
+    }
+}
+
 fun Application.routing() {
     routing {
         route("/api/v1") {
@@ -89,16 +92,7 @@ fun Application.routing() {
     }
 }
 
-fun Route.prizesRoute() {
-    getOrRaise("/prizes/latest") {
-        "Hello, world!"
-    }
-    getOrRaise("/prizes/{wallet}/latest") {
-        "Hello, world!"
-    }
-}
-
-private fun Application.metrics(metrics: Metrics) {
+fun Application.metrics(metrics: Metrics) {
     val healthChecks = HealthCheckRegistry(Dispatchers.Default) {
         register(FreememHealthCheck.mb(metrics.minFreeMem), 30.seconds, 1.minutes)
         register(ProcessCpuHealthCheck(metrics.maxLoad), 30.seconds, 1.minutes)
