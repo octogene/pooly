@@ -1,5 +1,10 @@
 package dev.octogene.pooly.server.model
 
+import arrow.raise.ktor.server.response.Response
+import arrow.raise.ktor.server.response.Response.Companion.Response
+import dev.octogene.pooly.core.DomainError
+import dev.octogene.pooly.core.InvalidField
+import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.postgresql.util.PSQLException
 
@@ -7,7 +12,6 @@ sealed interface PoolyError
 
 sealed interface ClientError : PoolyError {
     val message: String
-
     data class BadRequest(override val message: String) : ClientError
 }
 
@@ -50,6 +54,7 @@ sealed interface DatabaseError : PoolyError {
                 is ExposedSQLException -> {
                     val cause = e.cause
                     if (cause is PSQLException && cause.message?.contains("violates unique constraint") == true) {
+                        // TODO: Extract constraint name from message
                         OperationError.ConstraintViolation.UniqueConstraint(
                             "",
                             "",
@@ -68,5 +73,24 @@ sealed interface DatabaseError : PoolyError {
         fun general(message: String, cause: Throwable? = null): DatabaseError {
             return GeneralError(message, cause)
         }
+    }
+}
+
+
+fun mapToResponse(error: PoolyError): Response {
+    return when(error) {
+        is DatabaseError.OperationError.ConstraintViolation.UniqueConstraint ->
+            Response(HttpStatusCode.BadRequest, error.message)
+        is ClientError.BadRequest -> Response(HttpStatusCode.BadRequest, error.message)
+        is DatabaseError.OperationError.NotFound -> Response(HttpStatusCode.NotFound, error.message)
+        is DatabaseError.GeneralError ->
+            Response(HttpStatusCode.InternalServerError, error.message)
+        is DatabaseError.TransactionError.Rollback -> Response(HttpStatusCode.InternalServerError, error.message)
+    }
+}
+
+fun mapToResponse(error: DomainError): Response {
+    return when(error) {
+        is InvalidField -> Response(HttpStatusCode.BadRequest, error.message)
     }
 }
