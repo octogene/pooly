@@ -47,8 +47,17 @@ LIMIT 1;
 
 -- Select all draws
 getAllDraws:
-SELECT * FROM Draw, Vault
-ORDER BY timestamp DESC;
+SELECT
+    Draw.walletAddress,
+    Draw.vaultAddress,
+    Draw.amount,
+    Draw.timestamp,
+    Vault.name,
+    Vault.symbol,
+    Vault.network
+FROM Draw
+INNER JOIN Vault ON Draw.vaultAddress = Vault.address
+ORDER BY Draw.timestamp DESC;
 
 -- Select most recent timestamp
 getLatestDrawTimestamp:

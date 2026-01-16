@@ -12,13 +12,16 @@ import dev.octogene.pooly.pooltogether.db.VaultQueries
 import dev.octogene.pooly.settings.db.NetworkState
 import dev.octogene.pooly.settings.db.NetworkStateQueries
 import dev.octogene.pooly.settings.db.WalletQueries
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.Includes
 import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 
 @BindingContainer
 class DatabaseBindings {
     @Provides
+    @SingleIn(AppScope::class)
     fun provideDatabase(sqlDriver: SqlDriver): Database = Database(
         sqlDriver,
         NetworkStateAdapter = NetworkState.Adapter(
