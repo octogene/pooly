@@ -10,5 +10,6 @@ data class Prize(
     val payout: BigInteger,
     val timestamp: Instant,
     val winner: Address,
-    val vault: Vault
+    val vault: Vault,
+    val transactionHash: String
 )

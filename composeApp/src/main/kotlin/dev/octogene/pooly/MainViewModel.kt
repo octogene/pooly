@@ -11,6 +11,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 
@@ -20,12 +21,12 @@ import kotlinx.coroutines.flow.stateIn
 class MainViewModel(
     private val poolTogetherRepository: PoolTogetherRepository
 ) : ViewModel() {
-    val draws: StateFlow<List<Prize>>
-        get() = poolTogetherRepository.getAllDraws().onEach {
-            Logger.i { "New flow with ${it.size} prizes" }
-        }.stateIn(
+    val draws: StateFlow<List<Prize>> = poolTogetherRepository.getAllDraws()
+        .onEach { Logger.i { "New flow with ${it.size} prizes" } }
+        .map { it.take(10) }
+        .stateIn(
             viewModelScope,
-            SharingStarted.Lazily,
-            emptyList<Prize>()
+            SharingStarted.Eagerly,
+            emptyList()
         )
 }

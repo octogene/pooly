@@ -53,6 +53,7 @@ class PrizeRepositoryImpl(
                             payout = BigInteger(amount),
                             timestamp = timestamp,
                             winner = Address.unsafeFrom(winnerAddress),
+                            transactionHash = transactionHash,
                             vault = Vault(
                                 Address.unsafeFrom(vault.id.value),
                                 vault.name,

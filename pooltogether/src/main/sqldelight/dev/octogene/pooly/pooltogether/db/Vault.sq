@@ -9,5 +9,9 @@ CREATE TABLE Vault (
   FOREIGN KEY (network) REFERENCES NetworkState(name)
   );
 
+insertVault:
+INSERT OR IGNORE INTO Vault(address, name, symbol, network)
+VALUES (?, ?, ?, ?);
+
 getAllVaultsAdresses:
 SELECT address, network FROM Vault;
