@@ -1,6 +1,7 @@
 package dev.octogene.pooly.pooltogether
 
 import dev.octogene.pooly.pooltogether.db.DrawQueries
+import dev.octogene.pooly.pooltogether.db.VaultQueries
 import dev.octogene.pooly.settings.db.WalletQueries
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -23,8 +24,9 @@ class PoolTogetherContainer {
     fun providePoolTogetherRepository(
         client: PoolyApiClientImpl,
         walletQueries: WalletQueries,
-        drawQueries: DrawQueries
-    ): PoolTogetherRepository = PoolTogetherRepository(client, walletQueries, drawQueries)
+        drawQueries: DrawQueries,
+        vaultQueries: VaultQueries
+    ): PoolTogetherRepository = PoolTogetherRepository(client, walletQueries, vaultQueries, drawQueries)
 
     @Provides
     fun providesPoolyApiClient(
