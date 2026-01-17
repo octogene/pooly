@@ -53,9 +53,8 @@ sqldelight {
 }
 
 dependencies {
-    implementation(project(":shared"))
+    implementation(project(":common:mobile"))
 
-    // Compose - Note: You might need to add a Compose BOM to your libs.versions.toml
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.runtime)
     implementation(libs.androidx.lifecycle.runtimeCompose)

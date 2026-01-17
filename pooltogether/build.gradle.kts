@@ -54,7 +54,7 @@ sqldelight {
 }
 
 dependencies {
-    implementation(project(":shared"))
+    implementation(project(":common:mobile"))
     implementation(project(":settings"))
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
