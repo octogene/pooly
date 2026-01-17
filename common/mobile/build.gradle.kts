@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.octogene.pooly.shared"
+    namespace = "dev.octogene.pooly.common.mobile"
     compileSdk {
         version = release(36)
     }

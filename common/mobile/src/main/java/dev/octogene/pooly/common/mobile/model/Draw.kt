@@ -1,4 +1,4 @@
-package dev.octogene.pooly.shared.model
+package dev.octogene.pooly.common.mobile.model
 
 import kotlinx.datetime.LocalDateTime
 import java.math.BigInteger

@@ -1,4 +1,4 @@
-package dev.octogene.pooly.shared.di
+package dev.octogene.pooly.common.mobile.di
 
 import androidx.work.ListenableWorker
 import dev.zacsweers.metro.MapKey

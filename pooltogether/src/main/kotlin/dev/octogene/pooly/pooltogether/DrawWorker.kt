@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
-import dev.octogene.pooly.shared.di.MetroWorkerFactory
-import dev.octogene.pooly.shared.di.WorkerKey
+import dev.octogene.pooly.common.mobile.di.MetroWorkerFactory
+import dev.octogene.pooly.common.mobile.di.WorkerKey
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory

@@ -90,7 +90,7 @@ sqldelight {
 }
 
 dependencies {
-    implementation(project(":shared"))
+    implementation(project(":common:mobile"))
     implementation(project(":pooltogether"))
     implementation(project(":settings"))
     // Glance

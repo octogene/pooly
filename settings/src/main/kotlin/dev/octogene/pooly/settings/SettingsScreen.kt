@@ -61,7 +61,7 @@ fun SettingsScreen(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer
             ) {
                 Icon(
-                    painterResource(dev.octogene.pooly.shared.R.drawable.baseline_add_24),
+                    painterResource(dev.octogene.pooly.common.mobile.R.drawable.baseline_add_24),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onTertiaryContainer
                 )
@@ -100,12 +100,12 @@ fun Chains(
     ) {
         for (i in 0 until allNetworks.size) {
             val icon = when (allNetworks[i]) {
-                ChainNetwork.BASE -> dev.octogene.pooly.shared.R.drawable.bc_base
-                ChainNetwork.OPTIMISM -> dev.octogene.pooly.shared.R.drawable.bc_optimism
-                ChainNetwork.ARBITRUM -> dev.octogene.pooly.shared.R.drawable.bc_arbitrum_one
-                ChainNetwork.SCROLL -> dev.octogene.pooly.shared.R.drawable.bc_scroll
-                ChainNetwork.GNOSIS -> dev.octogene.pooly.shared.R.drawable.bc_gnosis
-                ChainNetwork.WORLD -> dev.octogene.pooly.shared.R.drawable.bc_world
+                ChainNetwork.BASE -> dev.octogene.pooly.common.mobile.R.drawable.bc_base
+                ChainNetwork.OPTIMISM -> dev.octogene.pooly.common.mobile.R.drawable.bc_optimism
+                ChainNetwork.ARBITRUM -> dev.octogene.pooly.common.mobile.R.drawable.bc_arbitrum_one
+                ChainNetwork.SCROLL -> dev.octogene.pooly.common.mobile.R.drawable.bc_scroll
+                ChainNetwork.GNOSIS -> dev.octogene.pooly.common.mobile.R.drawable.bc_gnosis
+                ChainNetwork.WORLD -> dev.octogene.pooly.common.mobile.R.drawable.bc_world
             }
             NetworkButton(
                 icon,
@@ -182,7 +182,7 @@ fun Wallets(wallets: List<String>, modifier: Modifier = Modifier) {
                     onClick = { /*TODO*/ }
                 ) {
                     Icon(
-                        painterResource(dev.octogene.pooly.shared.R.drawable.baseline_delete_24),
+                        painterResource(dev.octogene.pooly.common.mobile.R.drawable.baseline_delete_24),
                         contentDescription = null
                     )
                 }
