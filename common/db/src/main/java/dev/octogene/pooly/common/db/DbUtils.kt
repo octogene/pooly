@@ -10,10 +10,12 @@ import dev.octogene.pooly.common.db.table.Prizes
 import dev.octogene.pooly.common.db.table.Users
 import dev.octogene.pooly.common.db.table.Vaults
 import dev.octogene.pooly.common.db.table.Wallets
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
+import org.postgresql.util.PSQLException
 
 internal suspend fun <T> suspendTransactionOrRaise(
     database: Database,
@@ -31,6 +33,7 @@ internal suspend fun <T> suspendTransactionOrRaise(
                 is ExposedSQLException -> {
                     raise(handleSQLException(throwable))
                 }
+
                 else -> raise(DatabaseError(throwable.message ?: "Unknown error"))
             }
         }
@@ -38,16 +41,18 @@ internal suspend fun <T> suspendTransactionOrRaise(
 }
 
 fun handleSQLException(throwable: ExposedSQLException) = when (throwable.cause) {
-    is org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException -> {
+    is JdbcSQLIntegrityConstraintViolationException -> {
         RepositoryError.AlreadyExists(throwable.message ?: "Unkown error")
     }
-    is org.postgresql.util.PSQLException -> {
+
+    is PSQLException -> {
         if (throwable.sqlState == "23505") {
             RepositoryError.AlreadyExists(throwable.message ?: "Unkown error")
         } else {
             DatabaseError(throwable.message ?: "Unknown error")
         }
     }
+
     else -> DatabaseError(throwable.message ?: "Unknown SQL error")
 }
 
