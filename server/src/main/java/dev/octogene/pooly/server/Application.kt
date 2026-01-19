@@ -9,9 +9,9 @@ import dev.octogene.pooly.common.db.checkDatabaseInitialization
 import dev.octogene.pooly.common.db.di.repositoriesModule
 import dev.octogene.pooly.server.config.AppConfig
 import dev.octogene.pooly.server.config.Metrics
+import dev.octogene.pooly.server.di.controllerModule
 import dev.octogene.pooly.server.di.persistenceModule
 import dev.octogene.pooly.server.di.securityModule
-import dev.octogene.pooly.server.di.controllerModule
 import dev.octogene.pooly.server.prize.prizesRoute
 import dev.octogene.pooly.server.user.usersRoute
 import io.ktor.serialization.kotlinx.json.json
@@ -30,7 +30,6 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.ktor.ext.get

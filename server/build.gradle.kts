@@ -121,6 +121,7 @@ dependencies {
     implementation(libs.cohort.ktor)
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.core)
+    implementation(libs.arrow.core.serialization)
     implementation(libs.arrow.coroutines)
     implementation(libs.arrow.suspendapp.ktor)
     implementation(platform(libs.koin.bom))

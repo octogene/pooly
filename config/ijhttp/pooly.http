@@ -15,6 +15,16 @@ Accept: application/json
   "email": "{{user}}@email.com"
 }
 
+### Invalid create user body
+POST {{base_url}}/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{user}}",
+  "password": "{{password}}"
+}
+
 ### Login
 POST {{base_url}}/login
 Content-Type: application/json
