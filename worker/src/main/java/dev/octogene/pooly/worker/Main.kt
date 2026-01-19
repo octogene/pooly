@@ -2,9 +2,14 @@ package dev.octogene.pooly.worker
 
 import arrow.continuations.SuspendApp
 import ch.qos.logback.classic.Logger
+import dev.octogene.pooly.common.db.di.repositoriesModule
 import dev.octogene.pooly.ptgraph.api.PoolTogetherGraphQLClient
 import dev.octogene.pooly.rpc.PoolTogetherRPCClient
 import org.jetbrains.exposed.v1.jdbc.Database
+import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
+import org.koin.java.KoinJavaComponent.getKoin
 import org.slf4j.LoggerFactory
 
 fun main() = SuspendApp {
@@ -15,11 +20,35 @@ fun main() = SuspendApp {
     val dbUser = System.getenv("DB_USERNAME") ?: ""
     val dbPassword = System.getenv("DB_PASSWORD") ?: ""
     val checkInterval = System.getenv("CHECK_INTERVAL") ?: "5m"
-    val worker = Worker(
-        rpcClient = PoolTogetherRPCClient(),
-        graphClient = PoolTogetherGraphQLClient(),
-        database = Database.connect(dbUrl, dbDriver, dbUser, dbPassword),
-        checkInterval = checkInterval
-    )
+
+    startKoin {
+        modules(
+            repositoriesModule,
+            module {
+                single { Database.connect(dbUrl, dbDriver, dbUser, dbPassword) }
+                single { PoolTogetherRPCClient() }
+                single { PoolTogetherGraphQLClient() }
+                single {
+                    Worker(
+                        rpcClient = get(),
+                        graphClient = get(),
+                        database = get(),
+                        checkInterval = checkInterval,
+                        vaultRepository = get(),
+                        prizeRepository = get(),
+                        walletRepository = get(),
+                    )
+                }
+                // Dummy
+                single<(String) -> String>(named("password-hasher")) {
+                    {
+                            rawPassword ->
+                        rawPassword
+                    }
+                }
+            }
+        )
+    }
+    val worker = getKoin().get<Worker>()
     worker.run()
 }

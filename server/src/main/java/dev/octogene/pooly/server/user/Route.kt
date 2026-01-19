@@ -1,11 +1,9 @@
 package dev.octogene.pooly.server.user
 
-import arrow.raise.ktor.server.response.Response
 import arrow.raise.ktor.server.routing.deleteOrRaise
 import arrow.raise.ktor.server.routing.getOrRaise
 import arrow.raise.ktor.server.routing.postOrRaise
 import dev.octogene.pooly.server.security.JwtGenerator
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
@@ -16,7 +14,6 @@ import org.koin.ktor.ext.inject
 
 fun Route.usersRoute() {
     val userController: UserController by inject()
-    val jwtGenerator: JwtGenerator by inject()
 
     postOrRaise("/register") {
         val user = call.receive<User>()
@@ -24,9 +21,8 @@ fun Route.usersRoute() {
     }
 
     postOrRaise("/login") {
-        val user = call.receive<UserCredential>()
-        // TODO: Proper validation & jwt config
-        Response.Response(HttpStatusCode.OK, jwtGenerator.createToken(user.username))
+        val credentials = call.receive<UserCredential>()
+        userController.login(credentials)
     }
 
     authenticate("auth-jwt") {

@@ -62,9 +62,9 @@ android {
             sourceCompatibility = JavaVersion.VERSION_24
             targetCompatibility = JavaVersion.VERSION_24
         }
-//        compilerOptions {
-//            freeCompilerArgs.add("-Xexplicit-backing-fields")
-//        }
+        compilerOptions {
+            freeCompilerArgs.add("-Xexplicit-backing-fields")
+        }
     }
 
     sourceSets {
