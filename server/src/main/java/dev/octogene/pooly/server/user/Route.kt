@@ -1,13 +1,13 @@
 package dev.octogene.pooly.server.user
 
+import arrow.core.raise.context.bind
 import arrow.raise.ktor.server.routing.deleteOrRaise
 import arrow.raise.ktor.server.routing.getOrRaise
 import arrow.raise.ktor.server.routing.postOrRaise
-import dev.octogene.pooly.server.security.JwtGenerator
+import dev.octogene.pooly.server.receiveOrRaise
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
-import io.ktor.server.request.receive
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingContext
 import org.koin.ktor.ext.inject
@@ -16,12 +16,12 @@ fun Route.usersRoute() {
     val userController: UserController by inject()
 
     postOrRaise("/register") {
-        val user = call.receive<User>()
+        val user = call.receiveOrRaise<User>("Invalid user").bind()
         userController.createUser(user.username, user.email, user.password)
     }
 
     postOrRaise("/login") {
-        val credentials = call.receive<UserCredential>()
+        val credentials = call.receiveOrRaise<UserCredential>("Invalid credentials").bind()
         userController.login(credentials)
     }
 
@@ -33,13 +33,13 @@ fun Route.usersRoute() {
 
         postOrRaise("/wallets") {
             val username = getUsername()
-            val wallets = call.receive<Wallets>()
+            val wallets = call.receiveOrRaise<Wallets>("Invalid wallets").bind()
             userController.addWallets(username, wallets.content)
         }
 
         deleteOrRaise {
             val username = getUsername()
-            val wallets = call.receive<Wallets>()
+            val wallets = call.receiveOrRaise<Wallets>("Invalid wallets").bind()
             userController.removeWallets(username, wallets.content)
         }
     }

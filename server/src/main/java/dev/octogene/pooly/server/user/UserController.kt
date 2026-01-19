@@ -12,17 +12,23 @@ import dev.octogene.pooly.server.security.JwtGenerator
 import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class UserController(
     private val commonUserRepository: UserRepository,
     private val walletRepository: WalletRepository,
     private val jwtGenerator: JwtGenerator
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(UserController::class.java)
     context(_: Raise<Response>)
     suspend fun createUser(name: String, email: String, password: String): Response {
         return commonUserRepository.createUser(name, email, password)
             .map { Response(Created, "User $name created") }
-            .mapLeft(::mapToResponse).bind()
+            .mapLeft {
+                logger.error("Error creating user {} : {}", name, it.message)
+                mapToResponse(it)
+            }.bind()
     }
 
     context(_: Raise<Response>)

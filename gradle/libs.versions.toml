@@ -71,6 +71,7 @@ apollo-api = { module = "com.apollographql.apollo:apollo-api", version.ref = "ap
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
 argon2 = { module = "de.mkammerer:argon2-jvm", version.ref = "argon2" }
 arrow-core = { module = "io.arrow-kt:arrow-core" }
+arrow-core-serialization = { module = "io.arrow-kt:arrow-core-serialization" }
 arrow-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines" }
 arrow-raise-ktor-server = { module = "io.arrow-kt:arrow-raise-ktor-server-jvm", version.ref = "arrow" }
 arrow-stack = { module = "io.arrow-kt:arrow-stack", version.ref = "arrow" }
