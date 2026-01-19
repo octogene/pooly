@@ -40,6 +40,7 @@ kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.9.0"
 ktor = "3.3.3"
 logback = "1.5.24"
+logback-loki = "2.0.2"
 material = "1.13.0"
 material3 = "1.5.0-alpha12"
 metro = "0.9.4"
@@ -143,6 +144,7 @@ ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validat
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+logback-loki-appender = { module = "com.github.loki4j:loki-logback-appender", version.ref = "logback-loki" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 metrox = { module = "dev.zacsweers.metro:metrox-android", version.ref = "metro" }
 metrox-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref = "metro" }

@@ -4,6 +4,11 @@
             <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://loki:3100/loki/api/v1/push</url>
+        </http>
+    </appender>
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
