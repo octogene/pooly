@@ -74,6 +74,7 @@ arrow-core = { module = "io.arrow-kt:arrow-core" }
 arrow-core-serialization = { module = "io.arrow-kt:arrow-core-serialization" }
 arrow-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines" }
 arrow-raise-ktor-server = { module = "io.arrow-kt:arrow-raise-ktor-server-jvm", version.ref = "arrow" }
+arrow-resilience = { module = "io.arrow-kt:arrow-resilience", version.ref = "arrow" }
 arrow-stack = { module = "io.arrow-kt:arrow-stack", version.ref = "arrow" }
 arrow-suspendapp = { module = "io.arrow-kt:suspendapp" }
 arrow-suspendapp-ktor = { module = "io.arrow-kt:suspendapp-ktor" }

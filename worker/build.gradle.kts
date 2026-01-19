@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.postgresql)
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.core)
+    implementation(libs.arrow.resilience)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.arrow.suspendapp)
