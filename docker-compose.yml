@@ -7,6 +7,7 @@ volumes:
   prometheus_data: {}
   grafana_data: {}
   postgres_data: {}
+  tempo_data: {}
 
 services:
   pooly-app:
@@ -121,13 +122,13 @@ services:
       - "10001:10001"
       - "/var/tempo"
     volumes:
-      - "./tempo-data:/var/tempo"
+      - tempo_data:/var/tempo
   tempo:
     image: *tempoImage
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - "./config/tempo/tempo.yaml:/etc/tempo.yaml:z"
-      - "./tempo-data:/var/tempo"
+      - tempo_data:/var/tempo
     ports:
       - "3200" # tempo
       - "4319" # otlp grpc
