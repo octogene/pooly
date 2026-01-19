@@ -1,11 +1,5 @@
 package dev.octogene.pooly.server.test
 
-import dev.octogene.pooly.server.config.AppConfig
-import dev.octogene.pooly.server.config.DbConfig
-import dev.octogene.pooly.server.config.HashingConfig
-import dev.octogene.pooly.server.config.JwtConfig
-import dev.octogene.pooly.server.config.Metrics
-import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.security.Token
 import dev.octogene.pooly.server.user.User
 import io.ktor.client.call.body

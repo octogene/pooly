@@ -6,21 +6,19 @@ import com.auth0.jwt.interfaces.JWTVerifier
 import dev.octogene.pooly.server.config.DbConfig
 import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.prize.PrizeController
-import dev.octogene.pooly.server.prize.PrizeRepository
-import dev.octogene.pooly.server.prize.PrizeRepositoryImpl
 import dev.octogene.pooly.server.security.JwtGenerator
 import dev.octogene.pooly.server.security.PasswordHasher
 import dev.octogene.pooly.server.user.UserController
-import dev.octogene.pooly.server.user.UserRepository
-import dev.octogene.pooly.server.user.UserRepositoryImpl
 import org.jetbrains.exposed.v1.jdbc.Database
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val persistenceModule = { config: DbConfig ->
     module {
         single {
             if (config.driver == "org.h2.Driver") {
-                Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;", config.driver)
+                Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MYSQL;", config.driver)
             } else {
                 Database.connect(
                     "jdbc:postgresql://${config.host}:${config.port}/${config.name}",
@@ -33,20 +31,10 @@ val persistenceModule = { config: DbConfig ->
     }
 }
 
-val userModule = {
+val controllerModule = {
     module {
-        single<UserRepository> {
-            UserRepositoryImpl(get(), get())
-        }
-        single<UserController> {
-            UserController(get())
-        }
-        single<PrizeRepository> {
-            PrizeRepositoryImpl(get())
-        }
-        single<PrizeController> {
-            PrizeController(get(), get())
-        }
+        singleOf(::UserController)
+        singleOf(::PrizeController)
     }
 }
 
@@ -59,6 +47,14 @@ val securityModule = { config: SecurityConfig ->
                 config.hashing.memory,
                 config.hashing.parallelism
             )
+        }
+
+        // TODO: Properly share
+        single<(String) -> String>(named("password-hasher")) {
+            { password: String ->
+                val passwordHasher = get<PasswordHasher>()
+                passwordHasher.hashPassword(password)
+            }
         }
 
         single {

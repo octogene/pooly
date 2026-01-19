@@ -42,8 +42,9 @@ class PrizesRouteTest {
                             name = "TestVault",
                             symbol = "TST",
                             decimals = 18,
-                            network = ChainNetwork.BASE
-                        )
+                            network = ChainNetwork.BASE,
+                        ),
+                        transactionHash = "0x111"
                     )
                 )
             )

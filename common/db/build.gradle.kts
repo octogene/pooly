@@ -17,6 +17,8 @@ kotlin {
 
 dependencies {
     implementation(project(":common:core"))
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
     implementation(libs.bundles.exposed)
     implementation(libs.kotlinx.serialization.json)
     implementation(platform(libs.arrow.stack))
