@@ -118,6 +118,7 @@ dependencies {
     implementation(libs.arrow.raise.ktor.server)
     implementation(libs.ktor.server.auth.jwt)
     implementation(libs.logback.classic)
+    implementation(libs.logback.loki.appender)
     implementation(libs.cohort.ktor)
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.core)
