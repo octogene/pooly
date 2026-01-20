@@ -4,6 +4,10 @@ import dev.octogene.pooly.common.db.ADDRESS_LENGTH
 import dev.octogene.pooly.common.db.MAX_AMOUNT_LENGTH
 import dev.octogene.pooly.common.db.NETWORK_NAME_LENGTH
 import dev.octogene.pooly.common.db.TX_HASH_LENGTH
+import dev.octogene.pooly.core.Address
+import dev.octogene.pooly.core.ChainNetwork
+import dev.octogene.pooly.core.Prize
+import dev.octogene.pooly.core.Vault
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.dao.LongEntity
@@ -35,3 +39,17 @@ class PrizeEntity(id: EntityID<Long>) : LongEntity(id) {
 
     val vault by VaultEntity referencedOn Prizes.vaultId
 }
+
+internal fun PrizeEntity.toPrize(): Prize = Prize(
+    payout = amount.toBigInteger(),
+    timestamp = timestamp,
+    winner = Address.unsafeFrom(winnerAddress),
+    transactionHash = transactionHash,
+    vault = Vault(
+        address = Address.unsafeFrom(vault.id.value),
+        name = vault.name,
+        symbol = vault.tokenSymbol,
+        decimals = vault.tokenDecimals,
+        network = ChainNetwork.valueOf(network)
+    )
+)
