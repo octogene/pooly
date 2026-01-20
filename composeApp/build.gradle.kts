@@ -125,6 +125,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.nav3)
     implementation(libs.androidx.lifecycle.runtimeCompose)
 
+    // Paging3
+    implementation(libs.androidx.paging3.runtime)
+    implementation(libs.androidx.paging3.compose)
+
     // Navigation
     implementation(libs.androidx.nav3.ui)
 
