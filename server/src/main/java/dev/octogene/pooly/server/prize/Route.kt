@@ -12,7 +12,11 @@ fun Route.prizesRoute() {
     authenticate("auth-jwt") {
         getOrRaise("/prizes") {
             val username = getUsername()
-            prizeController.getAllPrizes(username)
+            val page = call.queryParameters["page"]?.toInt()
+            val pageSize = call.queryParameters["pagesSize"]?.toInt()
+            if (page != null) {
+                prizeController.getAllPrizesByPage(username, page, pageSize)
+            } else prizeController.getAllPrizes(username)
         }
     }
 }
