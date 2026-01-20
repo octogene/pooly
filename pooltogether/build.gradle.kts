@@ -56,6 +56,7 @@ sqldelight {
 dependencies {
     implementation(project(":common:mobile"))
     implementation(project(":settings"))
+    implementation(libs.androidx.paging3.runtime)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.logging)
@@ -63,5 +64,6 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.sqldelight.coroutines)
+    implementation(libs.sqldelight.androidx.paging3)
     implementation(libs.androidx.workmanager)
 }

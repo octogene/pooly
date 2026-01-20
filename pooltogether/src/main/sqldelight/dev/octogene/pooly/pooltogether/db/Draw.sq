@@ -45,6 +45,26 @@ FROM Draw
 INNER JOIN Vault ON Draw.vaultAddress = Vault.address
 ORDER BY Draw.timestamp DESC;
 
+countAllDraws:
+SELECT COUNT(*)
+FROM Draw
+INNER JOIN Vault ON Draw.vaultAddress = Vault.address;
+
+getAllDrawsPaged:
+SELECT
+    Draw.walletAddress,
+    Draw.vaultAddress,
+    Draw.amount,
+    Draw.timestamp,
+    Draw.transactionHash,
+    Vault.name,
+    Vault.symbol,
+    Vault.network
+FROM Draw
+INNER JOIN Vault ON Draw.vaultAddress = Vault.address
+ORDER BY Draw.timestamp DESC
+LIMIT :limit OFFSET :offset;
+
 getLatestDrawTimestamp:
 SELECT timestamp FROM Draw
 ORDER BY timestamp DESC

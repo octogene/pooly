@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,10 +29,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.settings.SettingsScreen
 import dev.octogene.pooly.ui.lightColorScheme
 import dev.zacsweers.metrox.viewmodel.metroViewModel
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 private class Destination(
     val name: String,
@@ -43,6 +51,7 @@ private class Heading(val name: String)
 fun App(viewModel: MainViewModel = metroViewModel()) {
     MaterialTheme(colorScheme = lightColorScheme) {
         val draws by viewModel.draws.collectAsState()
+        val allDraws = viewModel.alldraws.collectAsLazyPagingItems()
         val backStack = remember { mutableStateListOf<Any>("root") }
         Scaffold(
             topBar = {
@@ -75,7 +84,7 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
                 )
             }
         ) { innerPadding ->
-            AppNavContainer(innerPadding, backStack, draws)
+            AppNavContainer(innerPadding, backStack, allDraws)
         }
     }
 }
@@ -84,7 +93,7 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
 private fun AppNavContainer(
     innerPadding: PaddingValues,
     backStack: SnapshotStateList<Any>,
-    draws: List<Prize>
+    draws: LazyPagingItems<Prize>
 ) {
     Box(
         modifier = Modifier
@@ -117,7 +126,7 @@ private fun AppNavContainer(
 
 @Composable
 private fun RootUi(
-    draws: List<Prize>,
+    draws: LazyPagingItems<Prize>,
     modifier: Modifier = Modifier,
     onNavigate: (Destination) -> Unit
 ) {
@@ -127,15 +136,42 @@ private fun RootUi(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (draws.isEmpty()) {
+        if (draws.itemCount == 0) {
             Column {
                 Image(painterResource(R.drawable.pooly), null)
                 Text("Nothing to see here")
             }
         } else {
             LazyColumn {
-                items(draws.size) { index ->
-                    Text(draws[index].payout.toString())
+                if (draws.loadState.refresh == LoadState.Loading) {
+                    item {
+                        Text(
+                            text = "Waiting for items to load from the backend",
+                            modifier =
+                            Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally),
+                        )
+                    }
+                }
+                items(draws.itemCount) { index ->
+                    draws[index]?.payout?.let { amount ->
+                        Text(
+                            "${draws[index]?.timestamp} ${
+                                BigDecimal(amount)
+                                    .divide(BigDecimal.TEN.pow(16))
+                                    .setScale(5, RoundingMode.HALF_DOWN)
+                                    .toPlainString()
+                            } ${draws[index]?.vault?.symbol}"
+                        )
+                    }
+                }
+
+                if (draws.loadState.append == LoadState.Loading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier =
+                            Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)
+                        )
+                    }
                 }
             }
         }
