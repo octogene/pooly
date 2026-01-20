@@ -1,7 +1,7 @@
 package dev.octogene.pooly.common.db.repository
 
 import arrow.core.Either
-import arrow.core.raise.context.ensureNotNull
+import arrow.core.raise.context.ensure
 import dev.octogene.pooly.common.db.suspendTransactionOrRaise
 import dev.octogene.pooly.common.db.table.PrizeEntity
 import dev.octogene.pooly.common.db.table.Prizes
@@ -12,69 +12,88 @@ import dev.octogene.pooly.common.db.table.Prizes.vaultId
 import dev.octogene.pooly.common.db.table.Prizes.winnerAddress
 import dev.octogene.pooly.common.db.table.VaultEntity
 import dev.octogene.pooly.common.db.table.Vaults
+import dev.octogene.pooly.common.db.table.toPrize
 import dev.octogene.pooly.core.Address
-import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.core.Prize
-import dev.octogene.pooly.core.Vault
-import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.selectAll
-import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
 interface PrizeRepository {
 
     suspend fun insertPrizes(prizes: List<Prize>): Either<RepositoryError, Unit>
 
     suspend fun getAllPrizes(wallets: List<Address>): Either<RepositoryError, List<Prize>>
+
+    suspend fun getAllPrizesPaged(
+        wallets: List<Address>,
+        pageRequest: PageRequest
+    ): Either<RepositoryError, Page<Prize>>
 }
 
 internal class PrizeRepositoryImpl(
     private val database: Database
 ) : PrizeRepository {
 
-    override suspend fun getAllPrizes(wallets: List<Address>): Either<RepositoryError, List<Prize>> =
-        Either.catch {
-            suspendTransaction(database, readOnly = true) {
-                Prizes
-                    .selectAll()
-                    .where { Prizes.winnerAddress inList wallets.map { it.value } }
-                    .map {
-                        with(PrizeEntity.wrapRow(it)) {
-                            Prize(
-                                payout = amount.toBigInteger(),
-                                timestamp = timestamp,
-                                winner = Address.unsafeFrom(winnerAddress),
-                                transactionHash = transactionHash,
-                                vault = Vault(
-                                    address = Address.unsafeFrom(vault.id.value),
-                                    name = vault.name,
-                                    symbol = vault.tokenSymbol,
-                                    decimals = vault.tokenDecimals,
-                                    network = ChainNetwork.valueOf(network)
-                                )
-                            )
-                        }
-                    }
-            }
-        }.mapLeft { RepositoryError.DatabaseError(it.message ?: "Unknown error") }
+    override suspend fun getAllPrizes(
+        wallets: List<Address>
+    ): Either<RepositoryError, List<Prize>> = suspendTransactionOrRaise(database, readOnly = true) {
+        val walletRawAddresses = wallets.map { it.value }
+        Prizes
+            .selectAll()
+            .where { Prizes.winnerAddress inList walletRawAddresses }
+            .map { PrizeEntity.wrapRow(it).toPrize() }
+    }
+
+    override suspend fun getAllPrizesPaged(
+        wallets: List<Address>,
+        pageRequest: PageRequest
+    ): Either<RepositoryError, Page<Prize>> = suspendTransactionOrRaise(database, readOnly = true) {
+        val walletRawAddresses = wallets.map { it.value }
+        val totalCount = Prizes
+            .selectAll()
+            .where { Prizes.winnerAddress inList walletRawAddresses }
+            .count()
+
+        val items = Prizes
+            .selectAll()
+            .where { Prizes.winnerAddress inList walletRawAddresses }
+            .orderBy(Prizes.timestamp to SortOrder.DESC)
+            .offset(pageRequest.offset)
+            .limit(pageRequest.pageSize)
+            .map { PrizeEntity.wrapRow(it).toPrize() }
+
+        Page(
+            items = items,
+            totalCount = totalCount,
+            page = pageRequest.page,
+            pageSize = pageRequest.pageSize
+        )
+    }
 
     override suspend fun insertPrizes(
         prizes: List<Prize>
     ): Either<RepositoryError, Unit> = suspendTransactionOrRaise(database) {
-        prizes.groupBy { it.vault.address }
-            .forEach { (vaultAddress, prizesForVault) ->
-                val vault = VaultEntity.find { Vaults.id eq vaultAddress.value }.firstOrNull()
-                ensureNotNull(vault) { RepositoryError.NotFound("Vault", vaultAddress.value) }
-                Prizes.batchInsert(prizesForVault, ignore = true) { prize ->
-                    set(vaultId, vault.id.value)
-                    set(winnerAddress, prize.winner.value)
-                    set(amount, prize.payout.toString())
-                    set(transactionHash, prize.transactionHash)
-                    set(Prizes.timestamp, prize.timestamp)
-                    set(network, prize.vault.network.name)
-                }
-            }
+        val uniqueVaultAddresses = prizes.map { it.vault.address.value }.distinct()
+
+        val vaults = VaultEntity.find { Vaults.id inList uniqueVaultAddresses }
+            .associateBy { it.id.value }
+
+        val missingVaults = uniqueVaultAddresses.filter { it !in vaults.keys }
+        ensure(missingVaults.isNotEmpty()) {
+            RepositoryError.NotFound("Vault", missingVaults.joinToString(", "))
+        }
+
+        Prizes.batchInsert(prizes, ignore = true) { prize ->
+            val vault = vaults.getValue(prize.vault.address.value)
+            set(vaultId, vault.id.value)
+            set(winnerAddress, prize.winner.value)
+            set(amount, prize.payout.toString())
+            set(transactionHash, prize.transactionHash)
+            set(Prizes.timestamp, prize.timestamp)
+            set(network, prize.vault.network.name)
+        }
     }
 }
