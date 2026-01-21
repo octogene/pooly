@@ -9,9 +9,11 @@
             <url>http://loki:3100/loki/api/v1/push</url>
         </http>
     </appender>
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
+    <logger name="dev.octogene.pooly.server" level="DEBUG"/>
     <logger name="io.netty" level="INFO"/>
     <logger name="okhttp3.internal.concurrent.TaskRunner" level="ERROR" />
+    <logger name="io.opentelemetry.javaagent" level="ERROR" />
 </configuration>

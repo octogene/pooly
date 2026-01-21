@@ -35,12 +35,20 @@ in your IDE’s toolbar or build it directly from the terminal:
 sequenceDiagram
     actor Client
     participant Server
-    participant Database
+    participant Cache@{ "type" : "database" }
+    participant Database@{ "type" : "database" }
     participant Worker
     participant RpcDataSource as Ethereum (RPC)
     participant GraphQLDataSource as The Graph
+    Note right of Cache: Only used on some critical routes
     Client ->> Server: Request data (e.g., GET /prizes/latest)
-    Server ->> Database: Query data
+    alt is cached
+        Server ->> Cache: Query data
+        Cache -->> Server: Return data
+    else not cached
+        Server ->> Database: Query data
+        Database -->> Server: Return data
+    end
     Server -->> Client: Return data (e.g., JSON response)
     Worker ->> Worker: On time loop OR external orchestration
     Worker ->> Database: Query wallets to check for

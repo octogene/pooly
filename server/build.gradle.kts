@@ -20,7 +20,7 @@ application {
         "-Xmx512m",
         "-XX:+PrintFlagsFinal",
         "-XX:StartFlightRecording:" +
-            "filename=pooly.jfr"
+                "filename=pooly.jfr"
     )
 }
 
@@ -64,8 +64,8 @@ ktor {
 
         val javaToolOptions =
             application.applicationDefaultJvmArgs +
-                "-javaagent:/extras/opentelemetry-javaagent.jar" +
-                "-javaagent:/extras/pyroscope.jar"
+                    "-javaagent:/extras/opentelemetry-javaagent.jar" +
+                    "-javaagent:/extras/pyroscope.jar"
 
         val pyroscope = dockerCompose.servicesInfos["pyroscope"]?.host ?: "pyroscope"
         val loki = dockerCompose.servicesInfos["loki"]?.host ?: "loki"
@@ -76,7 +76,10 @@ ktor {
         environmentVariable("OTEL_JAVAAGENT_DEBUG", "true")
         environmentVariable("OTEL_JAVAAGENT_LOGGING", "application")
         environmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", "http://$otel:4318")
-        environmentVariable("OTEL_RESOURCE_ATTRIBUTES", "service.namespace=pooly,service.name=pooly")
+        environmentVariable(
+            "OTEL_RESOURCE_ATTRIBUTES",
+            "service.namespace=pooly,service.name=pooly"
+        )
         environmentVariable("PYROSCOPE_APPLICATION_NAME", "dev.octogene.pooly")
         environmentVariable("PYROSCOPE_SERVER_ADDRESS", "http://$pyroscope:4040")
         environmentVariable("PYROSCOPE_FORMAT", "jfr")
@@ -117,8 +120,6 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.arrow.raise.ktor.server)
     implementation(libs.ktor.server.auth.jwt)
-    implementation(libs.logback.classic)
-    implementation(libs.logback.loki.appender)
     implementation(libs.cohort.ktor)
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.core)
@@ -127,8 +128,9 @@ dependencies {
     implementation(libs.arrow.suspendapp.ktor)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.ktor)
-    implementation(libs.koin.logger.slf4j)
     implementation(libs.bundles.exposed)
+    implementation(libs.bundles.server.logs)
+    implementation(libs.rethis)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.content.negotiation)
@@ -147,7 +149,8 @@ tasks.register<DownloadArtifactTask>("downloadOTELAgent") {
     description = "Downloads the AWS OTEL Java agent artifact"
     group = "custom"
     val agentVersion = "v2.20.0"
-    artifactUrl = "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/$agentVersion/opentelemetry-javaagent.jar"
+    artifactUrl =
+        "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/$agentVersion/opentelemetry-javaagent.jar"
     val outputDir = layout.buildDirectory.dir("tmp/javaagent")
     outputFile = outputDir.get().file("opentelemetry-javaagent.jar")
 }
@@ -156,7 +159,29 @@ tasks.register<DownloadArtifactTask>("downloadPyroscopeAgent") {
     description = "Downloads the Pyroscope Java agent artifact"
     group = "custom"
     val agentVersion = "v2.1.2"
-    artifactUrl = "https://github.com/grafana/pyroscope-java/releases/download/$agentVersion/pyroscope.jar"
+    artifactUrl =
+        "https://github.com/grafana/pyroscope-java/releases/download/$agentVersion/pyroscope.jar"
     val outputDir = layout.buildDirectory.dir("tmp/javaagent")
     outputFile = outputDir.get().file("pyroscope.jar")
 }
+
+dockerCompose.isRequiredBy(tasks["runDocker"])
+
+dockerCompose {
+    useComposeFiles.addAll("../docker-compose.yml")
+    startedServices.addAll(
+        "pooly-worker",
+        "otel-collector",
+        "grafana",
+        "loki",
+        "pyroscope",
+        "prometheus",
+        "tempo"
+    )
+}
+
+// workaround for Jib https://github.com/GoogleContainerTools/jib/issues/3132 and runDocker
+tasks.filter { it.name in setOf("jibDockerBuild", "jibBuildTar", "jib", "runDocker") }.onEach {
+    it.notCompatibleWithConfigurationCache("Jib & runDocker are not compatible with configuration cache")
+}
+
