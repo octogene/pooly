@@ -32,7 +32,7 @@ class Worker(
     private val vaultRepository: VaultRepository,
     private val prizeRepository: PrizeRepository,
     private val walletRepository: WalletRepository,
-    private val checkInterval: String,
+    private val checkInterval: Duration,
     private val logger: Logger = LoggerFactory.getLogger(Worker::class.java)
 ) {
     private var lastCheckTimeStamp: Instant? = null
@@ -51,7 +51,7 @@ class Worker(
                 logger.info("No wallets found in database")
             }
             lastCheckTimeStamp = Clock.System.now()
-            delay(Duration.parse(checkInterval))
+            delay(checkInterval)
         }
     }
 
