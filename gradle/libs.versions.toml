@@ -29,6 +29,7 @@ exposed = "1.0.0-rc-4"
 glance = "1.1.1"
 gradle-buildconfig = "6.0.7"
 h2 = "2.4.240"
+hoplite = "2.9.0"
 jib = "3.5.2"
 junit = "4.13.2"
 kbigint = "0.5.0"
@@ -103,6 +104,10 @@ exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exp
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
+hoplite-arrow = { module = "com.sksamuel.hoplite:hoplite-arrow", version.ref = "hoplite"}
+hoplite-core = { module = "com.sksamuel.hoplite:hoplite-core", version.ref = "hoplite"}
+hoplite-datetime = { module = "com.sksamuel.hoplite:hoplite-datetime", version.ref = "hoplite"}
+hoplite-yaml = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite"}
 junit = { module = "junit:junit", version.ref = "junit" }
 kbigint = { module = "io.github.observeroftime.kbigint:kbigint", version.ref = "kbigint" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
