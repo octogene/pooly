@@ -32,8 +32,9 @@ exporters:
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
-  prometheusremotewrite:
-    endpoint: "prometheus:9090/api/v1/write"
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: pooly
 
 service:
   extensions: [health_check, pprof, zpages]
@@ -45,7 +46,7 @@ service:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheusremotewrite,debug]
+      exporters: [prometheus,debug]
     logs:
       receivers: [otlp]
       processors: [batch]
