@@ -11,6 +11,12 @@ app:
     name: "$DB_NAME:pooly"
     username: "$DB_USERNAME:user"
     password: "$DB_PASSWORD:password"
+  cache:
+    type: "$CACHE_TYPE:INMEMORY"
+    host: "$CACHE_HOST:localhost"
+    port: "$CACHE_PORT:6379"
+    defaultTTL: "$CACHE_DEFAULT_TTL:PT2M"
+    cleanupInterval: "$CACHE_INMEMORY_CLEANUP_INTERVAL:PT10M"
   security:
     hashing:
       argon2Type: "$HASHING_ARGON2_TYPE:ARGON2id"

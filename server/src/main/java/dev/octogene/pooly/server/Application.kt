@@ -1,12 +1,17 @@
 package dev.octogene.pooly.server
 
 import com.auth0.jwt.interfaces.JWTVerifier
+import com.github.loki4j.client.pipeline.PipelineConfig.json
+import com.github.loki4j.client.pipeline.PipelineConfig.protobuf
 import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
 import com.sksamuel.cohort.cpu.ProcessCpuHealthCheck
 import com.sksamuel.cohort.memory.FreememHealthCheck
 import dev.octogene.pooly.common.db.checkDatabaseInitialization
 import dev.octogene.pooly.common.db.di.repositoriesModule
+import dev.octogene.pooly.server.cache.CacheClient
+import dev.octogene.pooly.server.cache.CacheType
+import dev.octogene.pooly.server.cache.InMemoryCacheClient
 import dev.octogene.pooly.server.config.AppConfig
 import dev.octogene.pooly.server.config.Metrics
 import dev.octogene.pooly.server.di.controllerModule
@@ -14,6 +19,7 @@ import dev.octogene.pooly.server.di.persistenceModule
 import dev.octogene.pooly.server.di.securityModule
 import dev.octogene.pooly.server.prize.prizesRoute
 import dev.octogene.pooly.server.user.usersRoute
+import io.ktor.events.EventDefinition
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.server.application.Application
@@ -32,6 +38,7 @@ import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
+import org.koin.core.qualifier.named
 import org.koin.ktor.ext.get
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
@@ -51,6 +58,8 @@ fun main(args: Array<String>) {
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.app(config: AppConfig) {
+    install(CallLogging)
+
     dependencies(config)
 
     val jwtVerifier: JWTVerifier by inject<JWTVerifier>()
@@ -70,9 +79,6 @@ fun Application.app(config: AppConfig) {
     routing()
     metrics(config.metrics)
 
-    if (developmentMode) {
-        install(CallLogging)
-    }
 
     install(ContentNegotiation) {
         json()
@@ -83,10 +89,23 @@ fun Application.app(config: AppConfig) {
 fun Application.dependencies(config: AppConfig) {
     install(Koin) {
         slf4jLogger()
-        modules(persistenceModule(config.database), repositoriesModule, controllerModule(), securityModule(config.security))
+        modules(
+            persistenceModule(config.database, config.cache),
+            repositoriesModule,
+            controllerModule(config.cache.type),
+            securityModule(config.security)
+        )
     }
+
     launch {
         checkDatabaseInitialization(get())
+    }
+
+    if (config.cache.type == CacheType.INMEMORY) {
+        launch {
+            val cache = get<CacheClient>(named(config.cache.type)) as InMemoryCacheClient
+            cache.runBackgroundCleanup()
+        }
     }
 }
 

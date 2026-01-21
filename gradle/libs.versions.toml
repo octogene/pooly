@@ -34,13 +34,14 @@ jib = "3.5.2"
 junit = "4.13.2"
 kbigint = "0.5.0"
 kermit = "2.0.8"
-koin = "4.2.0-beta2"
+koin = "4.2.0-beta3"
 kotest = "6.1.0"
 kotlin = "2.3.0"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.9.0"
 ktor = "3.3.3"
+log4j = "2.25.3"
 logback = "1.5.24"
 logback-loki = "2.0.2"
 material = "1.13.0"
@@ -50,6 +51,7 @@ moduleGraph = "0.13.0"
 postgresql = "42.7.9"
 protobuf-gradle = "0.9.6"
 protobufJavalite = "4.33.4"
+rethis = "0.3.9"
 sqldelight = "2.2.1"
 violations = "4.1.2"
 
@@ -151,6 +153,8 @@ ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "k
 ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validation", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j"}
+log4j-slf4j = { module = "org.apache.logging.log4j:log4j-slf4j-impl", version.ref = "log4j"}
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logback-loki-appender = { module = "com.github.loki4j:loki-logback-appender", version.ref = "logback-loki" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -159,6 +163,7 @@ metrox-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.re
 metrox-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metro" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
+rethis = { module = "eu.vendeli:rethis", version.ref = "rethis"}
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-androidx-paging3 = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
@@ -176,6 +181,13 @@ ktor-server = [
     "ktor-server-default-headers",
     "ktor-server-netty",
     "ktor-server-openapi"
+]
+server-logs = [
+    "logback-classic",
+    "logback-loki-appender",
+    "koin-logger-slf4j",
+    "log4j-core",
+    "log4j-slf4j"
 ]
 exposed = [
     "exposed-core",
