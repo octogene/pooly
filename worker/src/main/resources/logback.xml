@@ -7,4 +7,6 @@
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
+    <logger name="okhttp3.internal.concurrent.TaskRunner" level="ERROR" />
+    <logger name="io.opentelemetry.javaagent" level="ERROR" />
 </configuration>

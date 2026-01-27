@@ -18,8 +18,15 @@ application {
     applicationDefaultJvmArgs = listOf(
         "-Xms256m",
         "-Xmx512m",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseShenandoahGC",
+        "-XX:ShenandoahGCMode=generational",
+        "-XX:+UseCompactObjectHeaders",
         "-XX:+PrintFlagsFinal",
         "-XX:StartFlightRecording:" +
+                "jdk.SafepointLatency#enabled=true, + " +
+                "jdk.CPUTimeSample#enabled=true," +
+                "jdk.CPUTimeSample#throttle=500/s," +
                 "filename=pooly.jfr"
     )
 }
@@ -40,9 +47,9 @@ ktor {
     }
 
     docker {
-        customBaseImage.set("amazoncorretto:24-headless")
+        customBaseImage.set("amazoncorretto:25-headless")
         localImageName.set("pooly")
-        jreVersion.set(JavaVersion.VERSION_24)
+        jreVersion.set(JavaVersion.VERSION_25)
         imageTag.set("${project.version}")
 
         jib {
@@ -50,7 +57,7 @@ ktor {
                 image = "pooly"
             }
             from {
-                image = "amazoncorretto:24-headless"
+                image = "amazoncorretto:25-headless"
             }
             extraDirectories {
                 paths {
