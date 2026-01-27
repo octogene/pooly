@@ -1,3 +1,4 @@
+import org.jetbrains.compose.reload.gradle.project
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -16,7 +17,15 @@ jib {
         image = "pooly-worker"
     }
     from {
-        image = "amazoncorretto:24-headless"
+        image = "amazoncorretto:25-headless"
+    }
+    extraDirectories {
+        paths {
+            path {
+                setFrom(project(":server").layout.buildDirectory.dir("tmp/javaagent"))
+                into = "/extras"
+            }
+        }
     }
 }
 

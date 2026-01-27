@@ -33,3 +33,8 @@ scrape_configs:
       - targets: ["otel-collector:8889"]
         labels:
           app: "pooly"
+
+  # Scrape Valkey metrics from exporter
+  - job_name: "valkey_exporter"
+    static_configs:
+      - targets: [ 'cache-exporter:9121' ]
