@@ -4,12 +4,14 @@ import dev.octogene.pooly.common.db.repository.PrizeRepository
 import dev.octogene.pooly.common.db.repository.UserRepository
 import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.core.Prize
+import dev.octogene.pooly.server.cache.CacheType
 import dev.octogene.pooly.server.prize.PrizeController
 import dev.octogene.pooly.server.user.User
 import dev.octogene.pooly.server.user.UserController
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val testUserModule = { users: List<User>, prizes: List<Prize> ->
+val testUserModule = { users: List<User>, prizes: List<Prize>, cacheType: CacheType ->
     module {
         single<UserRepository> {
             FakeUserRepository(users.associate {
@@ -26,7 +28,7 @@ val testUserModule = { users: List<User>, prizes: List<Prize> ->
             FakePrizeRepository(prizes)
         }
         single<PrizeController> {
-            PrizeController(get(), get(), get())
+            PrizeController(get(named(cacheType)), get(), get(), get())
         }
         single<WalletRepository> {
             FakeWalletRepository()

@@ -1,6 +1,8 @@
 package dev.octogene.pooly.server.test
 
 import arrow.core.Either
+import dev.octogene.pooly.common.db.repository.Page
+import dev.octogene.pooly.common.db.repository.PageRequest
 import dev.octogene.pooly.common.db.repository.PrizeRepository
 import dev.octogene.pooly.common.db.repository.RepositoryError
 import dev.octogene.pooly.core.Address
@@ -15,5 +17,12 @@ class FakePrizeRepository(
 
     override suspend fun getAllPrizes(wallets: List<Address>): Either<RepositoryError.DatabaseError, List<Prize>> {
         return Either.Right(prizes)
+    }
+
+    override suspend fun getAllPrizesPaged(
+        wallets: List<Address>,
+        pageRequest: PageRequest
+    ): Either<RepositoryError, Page<Prize>> {
+        TODO("Not yet implemented")
     }
 }

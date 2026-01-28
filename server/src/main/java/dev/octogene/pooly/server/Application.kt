@@ -1,8 +1,6 @@
 package dev.octogene.pooly.server
 
 import com.auth0.jwt.interfaces.JWTVerifier
-import com.github.loki4j.client.pipeline.PipelineConfig.json
-import com.github.loki4j.client.pipeline.PipelineConfig.protobuf
 import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
 import com.sksamuel.cohort.cpu.ProcessCpuHealthCheck
@@ -19,7 +17,6 @@ import dev.octogene.pooly.server.di.persistenceModule
 import dev.octogene.pooly.server.di.securityModule
 import dev.octogene.pooly.server.prize.prizesRoute
 import dev.octogene.pooly.server.user.usersRoute
-import io.ktor.events.EventDefinition
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.server.application.Application
@@ -84,6 +81,8 @@ fun Application.app(config: AppConfig) {
         json()
         protobuf()
     }
+
+    initialization(config)
 }
 
 fun Application.dependencies(config: AppConfig) {
@@ -96,7 +95,9 @@ fun Application.dependencies(config: AppConfig) {
             securityModule(config.security)
         )
     }
+}
 
+fun Application.initialization(config: AppConfig) {
     launch {
         checkDatabaseInitialization(get())
     }

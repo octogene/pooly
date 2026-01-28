@@ -28,10 +28,6 @@ class InMemoryCacheClient(
     private val cleanupInterval: Duration = 10.minutes,
     private val logger: Logger = LoggerFactory.getLogger(InMemoryCacheClient::class.java)
 ) : CacheClient {
-
-    @OptIn(ExperimentalSerializationApi::class)
-    private val serializer = DynamicLookupSerializer()
-
     suspend fun runBackgroundCleanup() = withContext(Dispatchers.IO) {
         logger.info("Starting background cleanup")
         while (isActive) {
@@ -67,11 +63,23 @@ class InMemoryCacheClient(
         }
     }
 
-    @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-    override suspend fun set(key: String, value: Any) {
-        logger.debug("Setting value for key {} with type {}", key, value::class.simpleName)
+    override suspend fun <T : Any> set(
+        key: String,
+        value: T,
+        ttl: Duration,
+        type: KSerializer<T>
+    ) {
+        set(key, value, Clock.System.now().plus(ttl), type)
+    }
+
+    override suspend fun <T : Any> set(
+        key: String,
+        value: T,
+        expireAt: Instant,
+        type: KSerializer<T>
+    ) {
         val jsonString = try {
-            json.encodeToString(serializer, value)
+            json.encodeToString(type, value)
         } catch (e: SerializationException) { // Catching the specific exception
             logger.error(
                 "Error serializing value for key {} with type {}: {}",
@@ -85,15 +93,6 @@ class InMemoryCacheClient(
             return
         }
         cache[key] = jsonString
-        cacheTTL[key] = Clock.System.now().plus(defaultTTL)
-    }
-
-    override suspend fun set(key: String, value: Any, ttl: Duration) {
-        set(key, value, Clock.System.now().plus(ttl))
-    }
-
-    override suspend fun set(key: String, value: Any, expireAt: Instant) {
-        set(key, value)
         cacheTTL[key] = expireAt
     }
 }
