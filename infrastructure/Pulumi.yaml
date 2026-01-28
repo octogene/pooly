@@ -1,0 +1,10 @@
+name: infrastructure
+description: Pooly infrastructure
+runtime: java
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: java-gradle
+  pulumi:autonaming:
+    value:
+      mode: verbatim
