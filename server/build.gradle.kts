@@ -32,18 +32,10 @@ application {
 }
 
 ktor {
-    @OptIn(OpenApiPreview::class)
-    // Two issues:
-    // - Generation should work with 2.3.0 once KTOR-9130 resolved
-    // - The preview runs on a isolated compilation which ignores serialization which
-    //  causes issues for the resolution of the config.
-    // Should be usable with 3.4.0
     openApi {
-        title = "Pooly"
-        contact = "me@octogene.dev"
-        summary = "Service for the Pooly mobile application"
-        version = "${project.version}"
-        license = "MIT"
+        enabled = true
+        codeInferenceEnabled = true
+        onlyCommented = false
     }
 
     docker {
@@ -113,20 +105,13 @@ kotlin {
     }
 }
 
-// Once buildOpenApi works
-// tasks.processResources {
-//    dependsOn("buildOpenApi")
-// }
-
 dependencies {
     implementation(project(":common:core"))
     implementation(project(":common:db"))
     implementation(libs.argon2)
     implementation(libs.bundles.ktor.server)
-    implementation(libs.ktor.serialization.kotlinx.protobuf)
-    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.server.routing.openapi)
     implementation(libs.arrow.raise.ktor.server)
-    implementation(libs.ktor.server.auth.jwt)
     implementation(libs.cohort.ktor)
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.core)

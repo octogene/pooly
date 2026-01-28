@@ -2,7 +2,9 @@ package dev.octogene.pooly.server.test
 
 import com.auth0.jwt.interfaces.JWTVerifier
 import dev.octogene.pooly.core.Prize
+import dev.octogene.pooly.server.cache.CacheType
 import dev.octogene.pooly.server.config.AppConfig
+import dev.octogene.pooly.server.config.CacheConfig
 import dev.octogene.pooly.server.config.DbConfig
 import dev.octogene.pooly.server.config.HashingConfig
 import dev.octogene.pooly.server.config.JwtConfig
@@ -23,6 +25,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.testApp(
@@ -33,8 +36,8 @@ fun Application.testApp(
     install(Koin) {
         slf4jLogger()
         modules(
-            persistenceModule(config.database),
-            testUserModule(users, prizes),
+            persistenceModule(config.database, config.cache),
+            testUserModule(users, prizes, config.cache.type),
             securityModule(config.security)
         )
     }
@@ -75,5 +78,12 @@ val testAppConfig = AppConfig(
     security = SecurityConfig(
         jwt = JwtConfig("test"),
         hashing = HashingConfig("Argon2id", 2, 20000, 1)
+    ),
+    cache = CacheConfig(
+        type = CacheType.INMEMORY,
+        host = "localhost",
+        port = 5437,
+        defaultTTL = 2.minutes,
+        cleanupInterval = 1.minutes
     )
 )
