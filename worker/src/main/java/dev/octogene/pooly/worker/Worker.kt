@@ -45,7 +45,7 @@ class Worker(
             if (addresses != null) {
                 val (draws, newVaults) = fetchDrawsAndVaults(addresses)
                 syncVaultsAndPrizes(newVaults, draws).onLeft {
-                    logger.error("Error syncing vaults and prizes", it)
+                    logger.error("Error syncing vaults and prizes: {}", it)
                 }
             } else {
                 logger.info("No wallets found in database")
@@ -60,13 +60,12 @@ class Worker(
         draws: List<GraphDraw>
     ) = either {
         vaultRepository.insertVaults(newVaults, ChainNetwork.BASE).bind()
-        val prizes = draws.groupBy { it.vault }.flatMap { (vault, draws) ->
-            val vault = vaultRepository.getVaultFromAddress(vault).bind()
-            draws.map { draw -> draw.toPrize(draw, vault) }
-        }
-        prizeRepository.insertPrizes(prizes).onLeft {
-            logger.error("Error inserting prizes", it)
-        }.bind()
+        val prizes =
+            draws.filter { it.vault.isNotEmpty() }.groupBy { it.vault }.flatMap { (vault, draws) ->
+                val vault = vaultRepository.getVaultFromAddress(vault).bind()
+                draws.map { draw -> draw.toPrize(draw, vault) }
+            }
+        prizeRepository.insertPrizes(prizes).bind()
     }
 
     private fun GraphDraw.toPrize(
