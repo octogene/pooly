@@ -33,14 +33,16 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include(":composeApp")
-include(":thegraph")
-include(":rpc")
-include(":pooltogether")
-//include(":shared")
-include(":settings")
-include(":server")
-include("common:core")
-include(":worker")
-include(":common:db")
-include(":common:mobile")
+include(
+    ":common:core",
+    ":common:db",
+    ":common:mobile",
+    ":composeApp",
+    ":infrastructure",
+    ":pooltogether",
+    ":rpc",
+    ":server",
+    ":settings",
+    ":thegraph",
+    ":worker",
+)
