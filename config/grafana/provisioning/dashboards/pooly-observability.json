@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -26,69 +26,273 @@
         "type": "tempo",
         "uid": "tempo"
       },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 0
       },
       "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortOrder": "Newest"
+      },
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "tempo",
             "uid": "tempo"
           },
+          "filters": [
+            {
+              "id": "c60a5767",
+              "operator": "=",
+              "scope": "span"
+            }
+          ],
           "limit": 20,
-          "queryType": "traceqlSearch",
+          "metricsQueryType": "range",
+          "query": "{resource.service.name = \"api\" && span.http.response.status_code != 0 }",
+          "queryType": "traceql",
           "refId": "A",
-          "query": "{}",
+          "serviceMapUseNativeHistograms": false,
           "tableType": "traces"
         }
       ],
-      "title": "Recent Traces",
-      "type": "table",
-      "options": {
-        "sortOrder": "Newest"
-      }
+      "title": "Api Calls Traces",
+      "type": "table"
     },
     {
       "datasource": {
         "type": "loki",
         "uid": "loki"
       },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 12
       },
       "id": 6,
       "options": {
         "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
         "enableLogDetails": true,
         "prettifyLogMessage": false,
         "showCommonLabels": false,
+        "showControls": false,
         "showLabels": false,
         "showTime": true,
         "sortOrder": "Descending",
         "wrapLogMessage": false
       },
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service_name=\"pooly\"}",
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{service_name=\"api\"}",
+          "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Application Logs",
+      "title": "Api Logs",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "grafana-pyroscope-datasource",
+        "uid": "pyroscope"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 7,
+      "options": {},
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-pyroscope-datasource",
+            "uid": "pyroscope"
+          },
+          "groupBy": [],
+          "labelSelector": "{service_name=\"api\"}",
+          "profileTypeId": "process_cpu:cpu:nanoseconds:cpu:nanoseconds",
+          "queryType": "profile",
+          "refId": "A",
+          "spanSelector": []
+        }
+      ],
+      "title": "Api Performance Profile",
+      "type": "flamegraph"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortOrder": "Newest"
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "filters": [
+            {
+              "id": "c60a5767",
+              "operator": "=",
+              "scope": "span"
+            }
+          ],
+          "limit": 20,
+          "metricsQueryType": "range",
+          "query": "{span.db.system =~ \"postgresql|mysql\"}",
+          "queryType": "traceql",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "traces"
+        }
+      ],
+      "title": "Database Query Traces",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 50
+      },
+      "id": 8,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showControls": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{service_name=\"worker\"}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Worker Logs",
       "type": "logs"
     }
   ],
-  "schemaVersion": 39,
+  "preload": false,
+  "schemaVersion": 42,
   "tags": [
     "pooly",
     "observability"
@@ -97,13 +301,10 @@
     "list": [
       {
         "current": {
-          "selected": false,
           "text": "5m",
           "value": "5m"
         },
-        "hide": 0,
         "includeAll": false,
-        "multi": false,
         "name": "interval",
         "options": [
           {
@@ -128,7 +329,6 @@
           }
         ],
         "query": "1m,5m,15m,1h",
-        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -141,6 +341,5 @@
   "timezone": "browser",
   "title": "Pooly Observability Dashboard",
   "uid": "pooly-observability",
-  "version": 0,
-  "weekStart": ""
+  "version": 11
 }
