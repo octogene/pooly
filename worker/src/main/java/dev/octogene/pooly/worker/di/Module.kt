@@ -33,10 +33,10 @@ val workerModule = { config: AppConfig ->
         }
         // Dummy
         single<(String) -> String>(named("password-hasher")) {
-            { rawPassword ->
+            {
+                    rawPassword ->
                 rawPassword
             }
         }
     }
 }
-
