@@ -14,10 +14,14 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val repositoriesModule = module {
-    singleOf(::PrizeRepositoryImpl) bind PrizeRepository::class
+    single<PrizeRepository> {
+        PrizeRepositoryImpl(database = get())
+    }
     single<UserRepository> {
         UserRepositoryImpl(get(), get(named("password-hasher")))
     }
-    singleOf(::VaultRepositoryImpl) bind VaultRepository::class
+    single<VaultRepository> {
+        VaultRepositoryImpl(database = get())
+    }
     singleOf(::WalletRepositoryImpl) bind WalletRepository::class
 }

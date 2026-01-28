@@ -12,6 +12,8 @@ import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.select
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import kotlin.time.Clock
 
 interface VaultRepository {
@@ -24,7 +26,8 @@ interface VaultRepository {
 }
 
 internal class VaultRepositoryImpl(
-    private val database: Database
+    private val database: Database,
+    private val logger: Logger = LoggerFactory.getLogger(VaultRepository::class.java)
 ) : VaultRepository {
     override suspend fun getVaultFromAddress(address: String): Either<RepositoryError, Vault> =
         suspendTransactionOrRaise(database) {
@@ -54,6 +57,11 @@ internal class VaultRepositoryImpl(
         network: ChainNetwork
     ): Either<RepositoryError, Unit> =
         suspendTransactionOrRaise(database) {
+            if (vaults.isEmpty()) {
+                logger.debug("No vaults to insert")
+                return@suspendTransactionOrRaise
+            }
+
             Vaults.batchInsert(vaults, ignore = true) { vault ->
                 set(Vaults.id, vault.address.value)
                 set(Vaults.name, vault.name)

@@ -20,6 +20,8 @@ import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 interface PrizeRepository {
 
@@ -34,7 +36,8 @@ interface PrizeRepository {
 }
 
 internal class PrizeRepositoryImpl(
-    private val database: Database
+    private val database: Database,
+    private val logger: Logger = LoggerFactory.getLogger(PrizeRepository::class.java)
 ) : PrizeRepository {
 
     override suspend fun getAllPrizes(
@@ -76,13 +79,23 @@ internal class PrizeRepositoryImpl(
     override suspend fun insertPrizes(
         prizes: List<Prize>
     ): Either<RepositoryError, Unit> = suspendTransactionOrRaise(database) {
+        if (prizes.isEmpty()) {
+            logger.debug("No prizes to insert")
+            return@suspendTransactionOrRaise
+        }
+
         val uniqueVaultAddresses = prizes.map { it.vault.address.value }.distinct()
+        logger.debug("Inserting {} prizes for {} vaults", prizes.size, uniqueVaultAddresses.size)
 
         val vaults = VaultEntity.find { Vaults.id inList uniqueVaultAddresses }
             .associateBy { it.id.value }
+        logger.debug("Found {} vaults", vaults.size)
 
         val missingVaults = uniqueVaultAddresses.filter { it !in vaults.keys }
-        ensure(missingVaults.isNotEmpty()) {
+
+        ensure(missingVaults.isEmpty()) {
+            logger.error("Found {} missing vaults", missingVaults.size)
+            logger.debug("Missing vaults: {}", missingVaults)
             RepositoryError.NotFound("Vault", missingVaults.joinToString(", "))
         }
 
