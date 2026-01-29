@@ -3,11 +3,6 @@ package dev.octogene.pooly.infrastructure
 import com.pulumi.Config
 import com.pulumi.Context
 import com.pulumi.Pulumi
-import com.pulumi.asset.FileAsset
-import com.pulumi.command.remote.CommandArgs
-import com.pulumi.command.remote.CopyToRemote
-import com.pulumi.command.remote.CopyToRemoteArgs
-import com.pulumi.command.remote.inputs.ConnectionArgs
 import com.pulumi.core.Output
 import com.pulumi.hcloud.HcloudFunctions.getImage
 import com.pulumi.hcloud.HcloudFunctions.getPrimaryIp
@@ -22,9 +17,7 @@ import com.pulumi.hcloud.inputs.GetImageArgs
 import com.pulumi.hcloud.inputs.GetPrimaryIpArgs
 import com.pulumi.hcloud.inputs.GetSshKeysArgs
 import com.pulumi.hcloud.inputs.ServerPublicNetArgs
-import com.pulumi.resources.CustomResourceOptions
 import java.io.File
-import com.pulumi.command.remote.Command as RemoteCommand
 
 class Infrastructure {
     private lateinit var projectConfiguration: ProjectConfiguration
@@ -34,10 +27,7 @@ class Infrastructure {
         Pulumi.run { context ->
             this@Infrastructure.context = context
             loadConfig(context.config())
-            val (primaryIpv6, primaryIpv4) = createPrimaryIps(
-                projectConfiguration.createIp,
-                context
-            )
+            val (primaryIpv6, primaryIpv4) = createPrimaryIps()
             val publicNetArgs = createPublicNetArgs(primaryIpv4, primaryIpv6)
             val standardSshKeys = setSshKeys()
             val dockerImageId = getDockerImageId()
@@ -114,11 +104,8 @@ class Infrastructure {
         }
     }
 
-    private fun createPrimaryIps(
-        needsIpCreation: Boolean,
-        stack: Context
-    ): Pair<Output<out Any?>, Output<out Any?>?> {
-        val prefix = "${stack.projectName()}-${stack.stackName()}"
+    private fun createPrimaryIps(): Pair<Output<out Any?>, Output<out Any?>?> {
+        val prefix = "${context.projectName()}-${context.stackName()}"
         return if (projectConfiguration.createIp) {
             val primaryIpv4 = if (projectConfiguration.enableIpv4) {
                 PrimaryIp(
