@@ -3,15 +3,20 @@ package dev.octogene.pooly.server.security
 import de.mkammerer.argon2.Argon2Factory
 import de.mkammerer.argon2.Argon2Factory.Argon2Types
 
-class PasswordHasher(
+interface PasswordHasher {
+    fun hash(password: String): String
+    fun verify(plainPassword: String, hashedPassword: String): Boolean
+}
+
+class Argon2PasswordHasher(
     argon2Type: String,
     private val iterations: Int,
     private val memory: Int,
     private val parallelism: Int
-) {
+): PasswordHasher {
     private val argon2 = Argon2Factory.create(getType(argon2Type))
 
-    fun hashPassword(password: String): String {
+    override fun hash(password: String): String {
         val passwordBytes = password.toByteArray()
         val hash = try {
             argon2.hash(iterations, memory, parallelism, passwordBytes)
@@ -21,9 +26,9 @@ class PasswordHasher(
         return hash
     }
 
-    fun checkPassword(password: String, hash: String): Boolean {
+    override fun verify(plainPassword: String, hashedPassword: String): Boolean {
         return try {
-            argon2.verify(hash, password.toByteArray())
+            argon2.verify(hashedPassword, plainPassword.toByteArray())
         } catch (e: Exception) {
             false
         }

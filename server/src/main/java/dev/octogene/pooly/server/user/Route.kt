@@ -16,12 +16,12 @@ fun Route.usersRoute() {
     val userController: UserController by inject()
 
     postOrRaise("/register") {
-        val user = call.receiveOrRaise<User>("Invalid user").bind()
+        val user = call.receiveOrRaise<RegisterUserRequest>("Invalid user").bind()
         userController.createUser(user.username, user.email, user.password)
     }
 
     postOrRaise("/login") {
-        val credentials = call.receiveOrRaise<UserCredential>("Invalid credentials").bind()
+        val credentials = call.receiveOrRaise<LoginUserRequest>("Invalid credentials").bind()
         userController.login(credentials)
     }
 

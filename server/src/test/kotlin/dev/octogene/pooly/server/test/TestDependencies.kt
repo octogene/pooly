@@ -6,23 +6,27 @@ import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.server.cache.CacheType
 import dev.octogene.pooly.server.prize.PrizeController
-import dev.octogene.pooly.server.user.User
+import dev.octogene.pooly.server.security.PasswordHasher
+import dev.octogene.pooly.server.user.RegisterUserRequest
 import dev.octogene.pooly.server.user.UserController
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val testUserModule = { users: List<User>, prizes: List<Prize>, cacheType: CacheType ->
+val testUserModule = { users: List<RegisterUserRequest>, prizes: List<Prize>, cacheType: CacheType ->
     module {
         single<UserRepository> {
-            FakeUserRepository(users.associate {
+            val passwordHasher = get<PasswordHasher>()
+            val userByUsername = users.associate {
                 it.username to dev.octogene.pooly.core.User(
                     it.username,
-                    it.email
+                    it.email,
+                    passwordHasher.hash(it.password)
                 )
-            }.toMutableMap())
+            }.toMutableMap()
+            FakeUserRepository(userByUsername, passwordHasher)
         }
         single<UserController> {
-            UserController(get(), get(), get())
+            UserController(get(), get(), get(), get())
         }
         single<PrizeRepository> {
             FakePrizeRepository(prizes)

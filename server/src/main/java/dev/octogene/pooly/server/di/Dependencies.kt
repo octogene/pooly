@@ -13,6 +13,7 @@ import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.prize.PrizeController
 import dev.octogene.pooly.server.security.JwtGenerator
 import dev.octogene.pooly.server.security.PasswordHasher
+import dev.octogene.pooly.server.security.Argon2PasswordHasher
 import dev.octogene.pooly.server.user.UserController
 import eu.vendeli.rethis.ReThis
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -68,8 +69,8 @@ val controllerModule = { cacheType: CacheType ->
 
 val securityModule = { config: SecurityConfig ->
     module {
-        single {
-            PasswordHasher(
+        single<PasswordHasher> {
+            Argon2PasswordHasher(
                 config.hashing.argon2Type,
                 config.hashing.iterations,
                 config.hashing.memory,
@@ -81,7 +82,7 @@ val securityModule = { config: SecurityConfig ->
         single<(String) -> String>(named("password-hasher")) {
             { password: String ->
                 val passwordHasher = get<PasswordHasher>()
-                passwordHasher.hashPassword(password)
+                passwordHasher.hash(password)
             }
         }
 
