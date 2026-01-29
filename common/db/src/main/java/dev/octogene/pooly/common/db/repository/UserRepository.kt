@@ -52,6 +52,7 @@ internal class UserRepositoryImpl(
                 Users.id,
                 Users.username,
                 Users.email,
+                Users.passwordHash
             )
             .where { Users.username eq username }
             .singleOrNull()
@@ -61,6 +62,7 @@ internal class UserRepositoryImpl(
         User(
             username = resultRow[Users.username],
             email = resultRow[Users.email],
+            passwordHash = resultRow[Users.passwordHash]
         )
     }
 
@@ -71,7 +73,11 @@ internal class UserRepositoryImpl(
             val userEntity = UserEntity.find { Users.username eq username }.singleOrNull()
             ensureNotNull(userEntity) { RepositoryError.NotFound("User", username) }
 
-            val user = User(username = userEntity.username, email = userEntity.email)
+            val user = User(
+                username = userEntity.username,
+                email = userEntity.email,
+                passwordHash = userEntity.passwordHash
+            )
             val wallets = userEntity.walletAddresses.map { Address.unsafeFrom(it.id.value) }
 
             UserWithWallets(user, wallets)

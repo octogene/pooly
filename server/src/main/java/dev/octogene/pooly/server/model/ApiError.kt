@@ -9,6 +9,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.ContentTransformationException
 import kotlinx.serialization.Serializable
+import org.slf4j.Logger
 
 @Serializable
 data class ApiError(
@@ -18,38 +19,45 @@ data class ApiError(
 
 fun mapToResponse(error: DomainError): Response {
     return when (error) {
-        is InvalidField -> Response(
+        is InvalidField -> apiErrorResponseOf(
             HttpStatusCode.BadRequest,
-            ApiError(error.message, HttpStatusCode.BadRequest.value)
+            error.message
         )
     }
 }
 
-fun mapToResponse(error: RepositoryError): Response {
+fun mapToResponse(error: RepositoryError, logger: Logger? = null): Response {
     return when (error) {
-        is RepositoryError.DatabaseError -> Response(
-            HttpStatusCode.InternalServerError,
-            ApiError(error.message, HttpStatusCode.InternalServerError.value)
-        )
+        is RepositoryError.DatabaseError -> {
+            logger?.error("Database error: {}", error.message)
+            apiErrorResponseOf(
+                HttpStatusCode.InternalServerError,
+                "Internal server error"
+            )
+        }
 
-        is RepositoryError.NotFound -> Response(
+        is RepositoryError.NotFound -> apiErrorResponseOf(
             HttpStatusCode.NotFound,
-            ApiError("Unable to find ${error.identifier}", HttpStatusCode.NotFound.value)
+            "Unable to find ${error.identifier}"
         )
 
-        is RepositoryError.AlreadyExists -> Response(
+        is RepositoryError.AlreadyExists -> apiErrorResponseOf(
             HttpStatusCode.BadRequest,
-            ApiError("Failed to create resource, it already exists.", HttpStatusCode.BadRequest.value)
+            "Failed to create resource, it already exists."
         )
     }
 }
 
 fun mapToResponse(throwable: Throwable, message: String): Response {
     return when (throwable) {
-        is ContentTransformationException, is BadRequestException -> Response(
+        is ContentTransformationException, is BadRequestException -> apiErrorResponseOf(
             HttpStatusCode.BadRequest,
-            ApiError(message, HttpStatusCode.BadRequest.value)
+            message
         )
         else -> Response(HttpStatusCode.InternalServerError)
     }
 }
+
+
+fun apiErrorResponseOf(status: HttpStatusCode, message: String) =
+    Response(status, ApiError(message, status.value))

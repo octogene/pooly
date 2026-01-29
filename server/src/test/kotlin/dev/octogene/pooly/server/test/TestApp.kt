@@ -13,7 +13,7 @@ import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.di.persistenceModule
 import dev.octogene.pooly.server.di.securityModule
 import dev.octogene.pooly.server.routing
-import dev.octogene.pooly.server.user.User
+import dev.octogene.pooly.server.user.RegisterUserRequest
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -30,7 +30,7 @@ import kotlin.time.Duration.Companion.minutes
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.testApp(
     config: AppConfig,
-    users: List<User> = emptyList(),
+    users: List<RegisterUserRequest> = emptyList(),
     prizes: List<Prize> = emptyList()
 ) {
     install(Koin) {

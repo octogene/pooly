@@ -5,14 +5,12 @@ import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.core.Vault
 import dev.octogene.pooly.server.security.Token
-import dev.octogene.pooly.server.user.User
+import dev.octogene.pooly.server.user.RegisterUserRequest
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -31,7 +29,7 @@ class PrizesRouteTest {
         application {
             testApp(
                 testAppConfig,
-                listOf(User("testuser", "password", "test@example.com")),
+                listOf(RegisterUserRequest("testuser", "password", "test@example.com")),
                 listOf(
                     Prize(
                         payout = BigInteger("223338444"),
@@ -51,18 +49,8 @@ class PrizesRouteTest {
         }
         val client = createClient { install(ContentNegotiation) { json() } }
 
-        val credentialsJson = """
-            {
-                "username": "testuser",
-                "password": "password"
-            }
-        """.trimIndent()
-
-        val loginResponse = client.post("/api/v1/login") {
-            contentType(ContentType.Application.Json)
-            accept(ContentType.Application.Json)
-            setBody(credentialsJson)
-        }.body<Token>()
+        val loginResponse =
+            client.loginUser("testuser", "password").body<Token>()
 
         val prizesResponse = client.get("/api/v1/prizes") {
             contentType(ContentType.Application.Json)

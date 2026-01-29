@@ -5,9 +5,11 @@ import dev.octogene.pooly.common.db.repository.RepositoryError
 import dev.octogene.pooly.common.db.repository.UserRepository
 import dev.octogene.pooly.core.User
 import dev.octogene.pooly.core.UserWithWallets
+import dev.octogene.pooly.server.security.PasswordHasher
 
 class FakeUserRepository(
-    private val users: MutableMap<String, User> = mutableMapOf<String, User>()
+    private val users: MutableMap<String, User> = mutableMapOf(),
+    private val passwordHasher: PasswordHasher
 ) : UserRepository {
 
     override suspend fun createUser(
@@ -15,7 +17,7 @@ class FakeUserRepository(
         email: String,
         password: String
     ): Either<RepositoryError, Unit> {
-        users[name] = User(name, email)
+        users[name] = User(name, email, passwordHasher.hash(password))
         return Either.Right(Unit)
     }
 
