@@ -18,8 +18,7 @@ interface CacheClient {
 
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
 suspend inline fun <reified T : Any> CacheClient.get(key: String): Option<T> {
-    val serializer = DynamicLookupSerializer() as KSerializer<T>
-    return get(key, serializer)
+    return get(key, serializer<T>())
 }
 
 @OptIn(InternalSerializationApi::class)

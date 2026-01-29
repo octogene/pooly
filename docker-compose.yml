@@ -93,7 +93,7 @@ services:
       - common-net
   cache:
     image: valkey/valkey:9.0.1-alpine
-    command: valkey-server --port 6379
+    command: valkey-server --port 6379 --loglevel debug
     ports:
       - "6379:6379"
     volumes:

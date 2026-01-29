@@ -1,6 +1,7 @@
 package dev.octogene.pooly.server.cache
 
 import arrow.core.Option
+import arrow.core.none
 import arrow.core.toOption
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.command.serde.get
@@ -22,7 +23,12 @@ class ValkeyCacheClient(
 
     override suspend fun <T : Any> get(key: String, serializer: KSerializer<T>): Option<T> {
         logger.debug("Getting value for key {}", key)
-        return client.get(key = key, serializer).toOption()
+        return try {
+            client.get(key = key, serializer).toOption()
+        } catch (e: Exception) {
+            logger.error("Failed to fetch $key: {}", e.message)
+            none()
+        }
     }
 
     override suspend fun <T : Any> set(
@@ -41,13 +47,17 @@ class ValkeyCacheClient(
         type: KSerializer<T>
     ) {
         logger.debug("Setting value for key {} (expireAt: {})", key, expireAt)
-        client.set(
-            key = key,
-            value = value,
-            serializer = type,
-            options = arrayOf(
-                SetExpire.ExAt(expireAt),
+        try {
+            client.set(
+                key = key,
+                value = value,
+                serializer = type,
+                options = arrayOf(
+                    SetExpire.ExAt(expireAt),
+                )
             )
-        )
+        } catch (e: Exception) {
+            logger.error("Failed to set $key : {}", e.message)
+        }
     }
 }
