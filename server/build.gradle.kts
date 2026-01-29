@@ -1,5 +1,4 @@
 import buildlogic.DownloadArtifactTask
-import io.ktor.plugin.OpenApiPreview
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -86,8 +85,6 @@ ktor {
         environmentVariable("PYROSCOPE_PROFILER_EVENT", "itimer")
         environmentVariable("PYROSCOPE_PROFILER_LOCK", "10ms")
         environmentVariable("PYROSCOPE_PROFILER_ALLOC", "512k")
-        environmentVariable("AWS_REGION", "us-east-1")
-        environmentVariable("LISTEN_ADDRESS", "0.0.0.0:8080")
     }
 }
 
