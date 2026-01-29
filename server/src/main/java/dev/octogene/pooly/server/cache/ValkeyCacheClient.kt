@@ -2,16 +2,13 @@ package dev.octogene.pooly.server.cache
 
 import arrow.core.Option
 import arrow.core.toOption
-import dev.octogene.pooly.server.serialization.DynamicLookupSerializer
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.command.serde.get
 import eu.vendeli.rethis.command.serde.set
 import eu.vendeli.rethis.shared.request.string.SetExpire
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.reflect.KClass
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
