@@ -41,11 +41,13 @@ class PrizeController(
                     prizeRepository.getAllPrizes(wallets)
                         .map { prizes ->
                             // Since draws run daily, we can have a long and precise expiration
-                            cacheClient.set(
-                                cacheKey,
-                                prizes,
-                                defaultCacheExpirationAt
-                            )
+                            if (prizes.isNotEmpty()) {
+                                cacheClient.set(
+                                    cacheKey,
+                                    prizes,
+                                    defaultCacheExpirationAt
+                                )
+                            }
                             Response(HttpStatusCode.OK, prizes)
                         }.mapLeft(::mapToResponse).bind()
                 },
