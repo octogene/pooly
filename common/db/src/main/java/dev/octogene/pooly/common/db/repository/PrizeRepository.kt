@@ -14,7 +14,10 @@ import dev.octogene.pooly.common.db.table.VaultEntity
 import dev.octogene.pooly.common.db.table.Vaults
 import dev.octogene.pooly.common.db.table.toPrize
 import dev.octogene.pooly.core.Address
+import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.core.Prize
+import dev.octogene.pooly.core.Vault
+import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -22,6 +25,7 @@ import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.math.BigInteger
 
 interface PrizeRepository {
 
@@ -44,10 +48,29 @@ internal class PrizeRepositoryImpl(
         wallets: List<Address>
     ): Either<RepositoryError, List<Prize>> = suspendTransactionOrRaise(database, readOnly = true) {
         val walletRawAddresses = wallets.map { it.value }
-        Prizes
-            .selectAll()
-            .where { Prizes.winnerAddress inList walletRawAddresses }
-            .map { PrizeEntity.wrapRow(it).toPrize() }
+        Prizes.join(
+            Vaults,
+            onColumn = vaultId,
+            otherColumn = Vaults.id,
+            joinType = JoinType.INNER
+        ).selectAll()
+            .where { winnerAddress inList walletRawAddresses }
+            .map {
+                val vault = Vault(
+                    address = Address.unsafeFrom(it[Vaults.id].value),
+                    name = it[Vaults.name],
+                    symbol = it[Vaults.tokenSymbol],
+                    decimals = it[Vaults.tokenDecimals],
+                    network = ChainNetwork.valueOf(it[Vaults.chainNetwork]),
+                )
+                Prize(
+                    payout = BigInteger(it[amount]),
+                    timestamp = it[Prizes.timestamp],
+                    winner = Address.unsafeFrom(it[winnerAddress]),
+                    vault = vault,
+                    transactionHash = it[transactionHash]
+                )
+            }
     }
 
     override suspend fun getAllPrizesPaged(
@@ -57,12 +80,12 @@ internal class PrizeRepositoryImpl(
         val walletRawAddresses = wallets.map { it.value }
         val totalCount = Prizes
             .selectAll()
-            .where { Prizes.winnerAddress inList walletRawAddresses }
+            .where { winnerAddress inList walletRawAddresses }
             .count()
 
         val items = Prizes
             .selectAll()
-            .where { Prizes.winnerAddress inList walletRawAddresses }
+            .where { winnerAddress inList walletRawAddresses }
             .orderBy(Prizes.timestamp to SortOrder.DESC)
             .offset(pageRequest.offset)
             .limit(pageRequest.pageSize)
@@ -99,7 +122,7 @@ internal class PrizeRepositoryImpl(
             RepositoryError.NotFound("Vault", missingVaults.joinToString(", "))
         }
 
-        Prizes.batchInsert(prizes, ignore = true) { prize ->
+        Prizes.batchInsert(prizes, ignore = true, shouldReturnGeneratedValues = false) { prize ->
             val vault = vaults.getValue(prize.vault.address.value)
             set(vaultId, vault.id.value)
             set(winnerAddress, prize.winner.value)

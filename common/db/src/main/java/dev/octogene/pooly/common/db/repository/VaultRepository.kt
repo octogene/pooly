@@ -2,6 +2,7 @@ package dev.octogene.pooly.common.db.repository
 
 import arrow.core.Either
 import dev.octogene.pooly.common.db.suspendTransactionOrRaise
+import dev.octogene.pooly.common.db.table.Prizes.network
 import dev.octogene.pooly.common.db.table.VaultEntity
 import dev.octogene.pooly.common.db.table.Vaults
 import dev.octogene.pooly.core.Address
@@ -18,6 +19,7 @@ import kotlin.time.Clock
 
 interface VaultRepository {
     suspend fun getVaultFromAddress(address: String): Either<RepositoryError, Vault>
+    suspend fun getVaultsFromAddress(addresses: Iterable<String>): Either<RepositoryError, List<Vault>>
     suspend fun findUnknownVaults(expectedVaultAddresses: List<String>): Either<RepositoryError, List<String>>
     suspend fun insertVaults(
         vaults: List<Vault>,
@@ -30,7 +32,7 @@ internal class VaultRepositoryImpl(
     private val logger: Logger = LoggerFactory.getLogger(VaultRepository::class.java)
 ) : VaultRepository {
     override suspend fun getVaultFromAddress(address: String): Either<RepositoryError, Vault> =
-        suspendTransactionOrRaise(database) {
+        suspendTransactionOrRaise(database, readOnly = true) {
             val vault = VaultEntity.find { Vaults.id eq address }.single()
             Vault(
                 Address.unsafeFrom(vault.id.value),
@@ -39,6 +41,19 @@ internal class VaultRepositoryImpl(
                 vault.tokenDecimals,
                 ChainNetwork.valueOf(vault.chainNetwork)
             )
+        }
+
+    override suspend fun getVaultsFromAddress(addresses: Iterable<String>): Either<RepositoryError, List<Vault>> =
+        suspendTransactionOrRaise(database, readOnly = true) {
+            VaultEntity.find { Vaults.id inList addresses }.map { vault ->
+                Vault(
+                    Address.unsafeFrom(vault.id.value),
+                    vault.name,
+                    vault.tokenSymbol,
+                    vault.tokenDecimals,
+                    ChainNetwork.valueOf(vault.chainNetwork)
+                )
+            }
         }
 
     override suspend fun findUnknownVaults(expectedVaultAddresses: List<String>): Either<RepositoryError, List<String>> =
@@ -62,7 +77,11 @@ internal class VaultRepositoryImpl(
                 return@suspendTransactionOrRaise
             }
 
-            Vaults.batchInsert(vaults, ignore = true) { vault ->
+            Vaults.batchInsert(
+                vaults,
+                ignore = true,
+                shouldReturnGeneratedValues = false
+            ) { vault ->
                 set(Vaults.id, vault.address.value)
                 set(Vaults.name, vault.name)
                 set(Vaults.chainNetwork, network.name)
@@ -73,3 +92,11 @@ internal class VaultRepositoryImpl(
             }
         }
 }
+
+internal fun VaultEntity.toVault() = Vault(
+    address = Address.unsafeFrom(id.value),
+    name = name,
+    symbol = tokenSymbol,
+    decimals = tokenDecimals,
+    network = ChainNetwork.valueOf(this.chainNetwork)
+)

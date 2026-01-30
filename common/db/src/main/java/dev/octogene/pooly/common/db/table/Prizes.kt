@@ -19,7 +19,7 @@ object Prizes : LongIdTable("prizes") {
     val network = varchar("network", NETWORK_NAME_LENGTH).index()
     val timestamp = timestamp("timestamp")
     val transactionHash = varchar("transaction_hash", TX_HASH_LENGTH).index()
-    val vaultId = varchar("vault_id", ADDRESS_LENGTH).references(Vaults.id) // Foreign key to Vaults
+    val vaultId = varchar("vault_id", ADDRESS_LENGTH).references(Vaults.id).index()
     val winnerAddress = varchar("winner_address", ADDRESS_LENGTH)
 
     init {
@@ -52,4 +52,12 @@ internal fun PrizeEntity.toPrize(): Prize = Prize(
         decimals = vault.tokenDecimals,
         network = ChainNetwork.valueOf(network)
     )
+)
+
+internal fun PrizeEntity.toPrize(vault: Vault): Prize = Prize(
+    payout = amount.toBigInteger(),
+    timestamp = timestamp,
+    winner = Address.unsafeFrom(winnerAddress),
+    transactionHash = transactionHash,
+    vault = vault
 )
