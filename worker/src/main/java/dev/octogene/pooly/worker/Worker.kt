@@ -1,6 +1,5 @@
 package dev.octogene.pooly.worker
 
-import arrow.core.raise.context.bind
 import arrow.core.raise.either
 import dev.octogene.pooly.common.db.checkDatabaseInitialization
 import dev.octogene.pooly.common.db.repository.PrizeRepository
@@ -60,9 +59,11 @@ class Worker(
         draws: List<GraphDraw>
     ) = either {
         vaultRepository.insertVaults(newVaults, ChainNetwork.BASE).bind()
-        val prizes =
-            draws.filter { it.vault.isNotEmpty() }.groupBy { it.vault }.flatMap { (vault, draws) ->
-                val vault = vaultRepository.getVaultFromAddress(vault).bind()
+        val drawsByVaultId = draws.filter { it.vault.isNotEmpty() }.groupBy { it.vault }
+        val vaultById =
+            drawsByVaultId.keys.associateWith { vault -> vaultRepository.getVaultFromAddress(vault).bind() }
+        val prizes = drawsByVaultId.flatMap { (vault, draws) ->
+                val vault = vaultById.getValue(vault)
                 draws.map { draw -> draw.toPrize(draw, vault) }
             }
         prizeRepository.insertPrizes(prizes).bind()
