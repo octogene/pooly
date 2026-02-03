@@ -1,7 +1,7 @@
 package dev.octogene.pooly.server.cache
 
+import arrow.core.Either
 import arrow.core.Option
-import dev.octogene.pooly.server.serialization.DynamicLookupSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -14,6 +14,7 @@ interface CacheClient {
     suspend fun <T : Any> get(key: String, type: KSerializer<T>): Option<T>
     suspend fun <T : Any> set(key: String, value: T, ttl: Duration, type: KSerializer<T>)
     suspend fun <T : Any> set(key: String, value: T, expireAt: Instant, type: KSerializer<T>)
+    suspend fun clearByPattern(pattern: String): Either<Throwable, Long>
 }
 
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)

@@ -1,7 +1,10 @@
 package dev.octogene.pooly.server.cache
 
+import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
+import arrow.core.raise.either
+import arrow.core.right
 import arrow.core.toOption
 import dev.octogene.pooly.server.serialization.DynamicLookupSerializer
 import kotlinx.coroutines.Dispatchers
@@ -94,5 +97,14 @@ class InMemoryCacheClient(
         }
         cache[key] = jsonString
         cacheTTL[key] = expireAt
+    }
+
+    override suspend fun clearByPattern(pattern: String): Either<Throwable, Long> = either {
+        val filter = pattern.toRegex()
+        val keysToDelete = cache.keys.filter { filter.matches(it) }
+        keysToDelete.forEach { key ->
+            cache.remove(key)
+        }
+        keysToDelete.size.toLong()
     }
 }

@@ -11,15 +11,17 @@ import dev.octogene.pooly.server.config.CacheConfig
 import dev.octogene.pooly.server.config.DbConfig
 import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.prize.PrizeController
+import dev.octogene.pooly.server.security.Argon2PasswordHasher
 import dev.octogene.pooly.server.security.JwtGenerator
 import dev.octogene.pooly.server.security.PasswordHasher
-import dev.octogene.pooly.server.security.Argon2PasswordHasher
 import dev.octogene.pooly.server.user.UserController
-import eu.vendeli.rethis.ReThis
+import io.lettuce.core.RedisClient
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 
 val persistenceModule = { dbConfig: DbConfig, cacheConfig: CacheConfig ->
     module {
@@ -35,14 +37,15 @@ val persistenceModule = { dbConfig: DbConfig, cacheConfig: CacheConfig ->
                 )
             }
         }
+
         single {
-            ReThis(
-                host = cacheConfig.host,
-                port = cacheConfig.port
-            )
+            RedisClient.create("redis://${cacheConfig.host}:${cacheConfig.port}")
+        }.onClose {
+            it?.close()
         }
+
         single<CacheClient>(named(CacheType.VALKEY)) {
-            ValkeyCacheClient(get(), cacheConfig.defaultTTL)
+            ValkeyCacheClient(get(), get(), cacheConfig.defaultTTL)
         }
         single<CacheClient>(named(CacheType.INMEMORY)) {
             InMemoryCacheClient(
@@ -50,6 +53,7 @@ val persistenceModule = { dbConfig: DbConfig, cacheConfig: CacheConfig ->
                 cleanupInterval = cacheConfig.cleanupInterval
             )
         }
+        single<Json> { Json }
     }
 }
 
