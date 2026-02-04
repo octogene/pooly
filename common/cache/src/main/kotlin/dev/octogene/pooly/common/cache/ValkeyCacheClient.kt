@@ -1,4 +1,4 @@
-package dev.octogene.pooly.server.cache
+package dev.octogene.pooly.common.cache
 
 import arrow.core.Either
 import arrow.core.Option
@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
-class ValkeyCacheClient(
+internal class ValkeyCacheClient(
     private val lettuceClient: RedisClient,
     private val json: Json,
     val defaultTTL: Duration = 10.minutes,

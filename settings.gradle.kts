@@ -46,3 +46,5 @@ include(
     ":thegraph",
     ":worker",
 )
+include(":common:cache")
+include(":common:backend")

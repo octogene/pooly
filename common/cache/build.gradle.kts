@@ -1,0 +1,27 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    alias(libs.plugins.jetbrains.kotlin.jvm)
+    alias(libs.plugins.kotlin.plugin.serialization)
+}
+java {
+    sourceCompatibility = JavaVersion.VERSION_24
+    targetCompatibility = JavaVersion.VERSION_24
+}
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_24
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+}
+
+dependencies {
+    implementation(project(":common:core"))
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.lettuce.core)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(platform(libs.arrow.stack))
+    implementation(libs.arrow.core)
+}

@@ -1,18 +1,14 @@
-package dev.octogene.pooly.server.cache
+package dev.octogene.pooly.common.cache
 
 import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.raise.either
-import arrow.core.right
 import arrow.core.toOption
-import dev.octogene.pooly.server.serialization.DynamicLookupSerializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -23,7 +19,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
-class InMemoryCacheClient(
+internal class InMemoryCacheClient(
     private val cache: MutableMap<String, String> = mutableMapOf(),
     private val cacheTTL: MutableMap<String, Instant> = mutableMapOf(),
     private val json: Json = Json,
