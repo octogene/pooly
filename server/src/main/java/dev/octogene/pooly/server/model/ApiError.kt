@@ -6,6 +6,9 @@ import dev.octogene.pooly.common.db.repository.RepositoryError
 import dev.octogene.pooly.core.DomainError
 import dev.octogene.pooly.core.InvalidField
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.BadRequest
+import io.ktor.http.HttpStatusCode.Companion.InternalServerError
+import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.ContentTransformationException
 import kotlinx.serialization.Serializable
@@ -31,7 +34,7 @@ fun mapToResponse(error: RepositoryError, logger: Logger? = null): Response {
         is RepositoryError.DatabaseError -> {
             logger?.error("Database error: {}", error.message)
             apiErrorResponseOf(
-                HttpStatusCode.InternalServerError,
+                InternalServerError,
                 "Internal server error"
             )
         }
@@ -54,7 +57,25 @@ fun mapToResponse(throwable: Throwable, message: String): Response {
             HttpStatusCode.BadRequest,
             message
         )
-        else -> Response(HttpStatusCode.InternalServerError)
+        else -> Response(InternalServerError)
+    }
+}
+
+fun mapToResponse(error: ApplicationError.AuthenticationError): Response {
+    return when (error) {
+        is ApplicationError.AuthenticationError.InternalError -> apiErrorResponseOf(
+            InternalServerError,
+            message = "Server failure, please retry later"
+        )
+        ApplicationError.AuthenticationError.InvalidCredentials,
+        is ApplicationError.AuthenticationError.UserNotFound -> apiErrorResponseOf(
+            Unauthorized,
+            "Invalid credentials"
+        )
+        is ApplicationError.AuthenticationError.UserAlreadyExists -> apiErrorResponseOf(
+            BadRequest,
+            "User already exists"
+        )
     }
 }
 

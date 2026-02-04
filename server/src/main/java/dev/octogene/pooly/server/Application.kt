@@ -5,23 +5,27 @@ import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
 import com.sksamuel.cohort.cpu.ProcessCpuHealthCheck
 import com.sksamuel.cohort.memory.FreememHealthCheck
+import dev.octogene.pooly.common.cache.CacheClient
+import dev.octogene.pooly.common.cache.di.cacheModule
 import dev.octogene.pooly.common.db.checkDatabaseInitialization
 import dev.octogene.pooly.common.db.di.repositoriesModule
-import dev.octogene.pooly.server.cache.CacheClient
-import dev.octogene.pooly.server.cache.CacheType
-import dev.octogene.pooly.server.cache.InMemoryCacheClient
+import dev.octogene.pooly.common.db.migration.MigrationManager
+import dev.octogene.pooly.server.admin.adminRoutes
 import dev.octogene.pooly.server.config.AppConfig
 import dev.octogene.pooly.server.config.Metrics
 import dev.octogene.pooly.server.di.controllerModule
 import dev.octogene.pooly.server.di.persistenceModule
 import dev.octogene.pooly.server.di.securityModule
+import dev.octogene.pooly.server.model.ApiKeyPrincipal
 import dev.octogene.pooly.server.prize.prizesRoute
 import dev.octogene.pooly.server.user.usersRoute
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.apikey.apiKey
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.config.ApplicationConfig
@@ -40,6 +44,7 @@ import org.koin.ktor.ext.get
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import org.slf4j.LoggerFactory
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -55,7 +60,9 @@ fun main(args: Array<String>) {
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.app(config: AppConfig) {
-    install(CallLogging)
+    install(CallLogging) {
+        logger = LoggerFactory.getLogger("CallLogging")
+    }
 
     dependencies(config)
 
@@ -69,6 +76,16 @@ fun Application.app(config: AppConfig) {
                 credential.payload.getClaim("username").asString()?.let {
                     JWTPrincipal(credential.payload)
                 }
+            }
+        }
+        apiKey("auth-admin") {
+            validate { keyFromHeader ->
+                // TODO: Use a DB
+                val expectedApiKey = config.security.apikey
+                application.environment.log.error("Key from admin $expectedApiKey")
+                keyFromHeader
+                    .takeIf { it == expectedApiKey }
+                    ?.let { ApiKeyPrincipal(keyFromHeader) }
             }
         }
     }
@@ -89,7 +106,8 @@ fun Application.dependencies(config: AppConfig) {
     install(Koin) {
         slf4jLogger()
         modules(
-            persistenceModule(config.database, config.cache),
+            persistenceModule(config.database),
+            cacheModule(config.cache),
             repositoriesModule,
             controllerModule(config.cache.type),
             securityModule(config.security)
@@ -99,14 +117,12 @@ fun Application.dependencies(config: AppConfig) {
 
 fun Application.initialization(config: AppConfig) {
     launch {
-        checkDatabaseInitialization(get())
+        checkDatabaseInitialization(get(), this@initialization.log)
+        val migrationManager by inject<MigrationManager>()
+        migrationManager.migrate()
     }
-
-    if (config.cache.type == CacheType.INMEMORY) {
-        launch {
-            val cache = get<CacheClient>(named(config.cache.type)) as InMemoryCacheClient
-            cache.runBackgroundCleanup()
-        }
+    launch {
+        get<CacheClient>(named(config.cache.type)).initialize()
     }
 }
 
@@ -115,6 +131,7 @@ fun Application.routing() {
         route("/api/v1") {
             usersRoute()
             prizesRoute()
+            adminRoutes()
         }
     }
 }
