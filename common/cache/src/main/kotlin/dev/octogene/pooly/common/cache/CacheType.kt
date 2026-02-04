@@ -1,4 +1,4 @@
-package dev.octogene.pooly.server.cache
+package dev.octogene.pooly.common.cache
 
 enum class CacheType {
     INMEMORY,

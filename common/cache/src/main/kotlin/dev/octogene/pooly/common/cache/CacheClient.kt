@@ -1,12 +1,16 @@
-package dev.octogene.pooly.server.cache
+package dev.octogene.pooly.common.cache
 
 import arrow.core.Either
 import arrow.core.Option
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.serializer
+import org.koin.core.qualifier.named
 import kotlin.time.Duration
 import kotlin.time.Instant
 
@@ -15,6 +19,13 @@ interface CacheClient {
     suspend fun <T : Any> set(key: String, value: T, ttl: Duration, type: KSerializer<T>)
     suspend fun <T : Any> set(key: String, value: T, expireAt: Instant, type: KSerializer<T>)
     suspend fun clearByPattern(pattern: String): Either<Throwable, Long>
+
+    suspend fun initialize() = withContext(Dispatchers.IO) {
+        when (this) {
+            is InMemoryCacheClient -> launch { runBackgroundCleanup() }
+            else -> {}
+        }
+    }
 }
 
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
@@ -29,7 +40,11 @@ suspend inline fun <reified T : Any> CacheClient.set(key: String, value: T, expi
 }
 
 @OptIn(InternalSerializationApi::class)
-suspend inline fun <reified E : Any> CacheClient.set(key: String, values: List<E>, expireAt: Instant) {
+suspend inline fun <reified E : Any> CacheClient.set(
+    key: String,
+    values: List<E>,
+    expireAt: Instant
+) {
     val serializer = ListSerializer(E::class.serializer())
     set(key, values, expireAt, serializer)
 }
