@@ -1,10 +1,11 @@
 package dev.octogene.pooly.server.test
 
 import com.auth0.jwt.interfaces.JWTVerifier
+import dev.octogene.pooly.common.cache.CacheType
+import dev.octogene.pooly.common.cache.config.CacheConfig
+import dev.octogene.pooly.common.cache.di.cacheModule
 import dev.octogene.pooly.core.Prize
-import dev.octogene.pooly.server.cache.CacheType
 import dev.octogene.pooly.server.config.AppConfig
-import dev.octogene.pooly.server.config.CacheConfig
 import dev.octogene.pooly.server.config.DbConfig
 import dev.octogene.pooly.server.config.HashingConfig
 import dev.octogene.pooly.server.config.JwtConfig
@@ -18,6 +19,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.apikey.apiKey
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -36,7 +38,8 @@ fun Application.testApp(
     install(Koin) {
         slf4jLogger()
         modules(
-            persistenceModule(config.database, config.cache),
+            persistenceModule(config.database),
+            cacheModule(config.cache),
             testUserModule(users, prizes, config.cache.type),
             securityModule(config.security)
         )
@@ -52,6 +55,11 @@ fun Application.testApp(
                 credential.payload.getClaim("username").asString()?.let {
                     JWTPrincipal(credential.payload)
                 }
+            }
+        }
+        apiKey("auth-admin") {
+            validate { apiKeyFromHeader ->
+                apiKeyFromHeader == "admin_api_key"
             }
         }
     }
@@ -77,7 +85,8 @@ val testAppConfig = AppConfig(
     ),
     security = SecurityConfig(
         jwt = JwtConfig("test"),
-        hashing = HashingConfig("Argon2id", 2, 20000, 1)
+        hashing = HashingConfig("Argon2id", 2, 20000, 1),
+        apikey = "admin_api_key"
     ),
     cache = CacheConfig(
         type = CacheType.INMEMORY,

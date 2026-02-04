@@ -3,21 +3,22 @@ package dev.octogene.pooly.server.test
 import arrow.core.Either
 import dev.octogene.pooly.common.db.repository.RepositoryError
 import dev.octogene.pooly.common.db.repository.UserRepository
+import dev.octogene.pooly.core.PasswordHash
 import dev.octogene.pooly.core.User
+import dev.octogene.pooly.core.UserRole
 import dev.octogene.pooly.core.UserWithWallets
-import dev.octogene.pooly.server.security.PasswordHasher
 
 class FakeUserRepository(
-    private val users: MutableMap<String, User> = mutableMapOf(),
-    private val passwordHasher: PasswordHasher
+    private val users: MutableMap<String, User> = mutableMapOf()
 ) : UserRepository {
 
     override suspend fun createUser(
-        name: String,
+        username: String,
         email: String,
-        password: String
+        passwordHash: PasswordHash,
+        role: UserRole
     ): Either<RepositoryError, Unit> {
-        users[name] = User(name, email, passwordHasher.hash(password))
+        users[username] = User(username, email, passwordHash, role)
         return Either.Right(Unit)
     }
 

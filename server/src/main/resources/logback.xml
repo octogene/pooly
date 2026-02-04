@@ -4,15 +4,15 @@
             <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <http>
-            <url>http://loki:3100/loki/api/v1/push</url>
-        </http>
-    </appender>
-    <root level="INFO">
+<!--    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">-->
+<!--        <http>-->
+<!--            <url>http://loki:3100/loki/api/v1/push</url>-->
+<!--        </http>-->
+<!--    </appender>-->
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="dev.octogene.pooly.server" level="DEBUG"/>
+    <logger name="dev.octogene.pooly" level="DEBUG"/>
     <logger name="io.netty" level="INFO"/>
     <logger name="okhttp3.internal.concurrent.TaskRunner" level="ERROR" />
     <logger name="io.opentelemetry.javaagent" level="ERROR" />

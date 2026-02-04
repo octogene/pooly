@@ -2,16 +2,13 @@ package dev.octogene.pooly.server.user
 
 import arrow.core.raise.Raise
 import arrow.core.raise.context.bind
-import arrow.core.raise.context.ensure
 import arrow.raise.ktor.server.response.Response
 import arrow.raise.ktor.server.response.Response.Companion.Response
 import dev.octogene.pooly.common.db.repository.UserRepository
 import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.core.Address
-import dev.octogene.pooly.server.model.apiErrorResponseOf
 import dev.octogene.pooly.server.model.mapToResponse
-import dev.octogene.pooly.server.security.JwtGenerator
-import dev.octogene.pooly.server.security.PasswordHasher
+import dev.octogene.pooly.server.security.AuthenticationService
 import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
@@ -21,31 +18,27 @@ import org.slf4j.LoggerFactory
 class UserController(
     private val commonUserRepository: UserRepository,
     private val walletRepository: WalletRepository,
-    private val jwtGenerator: JwtGenerator,
-    private val passwordHasher: PasswordHasher
+    private val authenticationService: AuthenticationService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(UserController::class.java)
 
     context(_: Raise<Response>)
     suspend fun createUser(name: String, email: String, password: String): Response {
-        return commonUserRepository.createUser(name, email, password)
+        return authenticationService.register(name, email, password)
             .map { Response(Created, "User $name created") }
             .mapLeft {
-                logger.error("Error creating user {} : {}", name, it.message)
+                logger.error("Error creating user {} : {}", name, it)
                 mapToResponse(it)
             }.bind()
     }
 
     context(_: Raise<Response>)
     suspend fun login(credential: LoginUserRequest): Response {
-        val user = commonUserRepository.findUserByUsername(credential.username).mapLeft {
-            mapToResponse(it, logger)
+        val user = authenticationService.login(credential.username, credential.password).mapLeft {
+            mapToResponse(it)
         }.bind()
-
-        ensure(passwordHasher.verify(credential.password, user.passwordHash)) {
-            apiErrorResponseOf(Unauthorized, "Invalid password")
-        }
-        return Response(OK, jwtGenerator.createToken(credential.username))
+        val token = authenticationService.generateToken(user)
+        return Response(OK, token)
     }
 
     context(_: Raise<Response>)

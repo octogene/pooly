@@ -1,8 +1,8 @@
 package dev.octogene.pooly.server.config
 
-import dev.octogene.pooly.server.cache.CacheType
+import dev.octogene.pooly.common.cache.config.CacheConfig
+import dev.zacsweers.redacted.annotations.Redacted
 import kotlinx.serialization.Serializable
-import kotlin.time.Duration
 
 @Serializable
 data class AppConfig(
@@ -26,20 +26,11 @@ data class DbConfig(
     val username: String,
     val password: String
 )
-
-@Serializable
-data class CacheConfig(
-    val type: CacheType,
-    val host: String,
-    val port: Int,
-    val defaultTTL: Duration,
-    val cleanupInterval: Duration
-)
-
 @Serializable
 data class SecurityConfig(
     val jwt: JwtConfig,
-    val hashing: HashingConfig
+    val hashing: HashingConfig,
+    val apikey: String
 )
 
 @Serializable
