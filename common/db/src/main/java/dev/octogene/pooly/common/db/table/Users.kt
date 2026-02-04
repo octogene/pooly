@@ -2,8 +2,11 @@ package dev.octogene.pooly.common.db.table
 
 import dev.octogene.pooly.common.db.MAX_USERNAME_LENGTH
 import dev.octogene.pooly.common.db.MAX_VARCHAR_LENGTH
+import dev.octogene.pooly.core.UserRole
+import org.jetbrains.exposed.v1.core.charLength
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.core.lessEq
 import org.jetbrains.exposed.v1.dao.LongEntity
 import org.jetbrains.exposed.v1.dao.LongEntityClass
 import org.jetbrains.exposed.v1.datetime.timestamp
@@ -12,7 +15,9 @@ internal object Users : LongIdTable("users") {
     val createdAt = timestamp("created_at")
     val email = varchar("email", MAX_VARCHAR_LENGTH).nullable()
     val passwordHash = varchar("password_hash", MAX_VARCHAR_LENGTH)
+    
     val username = varchar("username", MAX_USERNAME_LENGTH).uniqueIndex()
+    val role = enumeration<UserRole>("role").default(UserRole.USER)
 }
 
 internal class UserEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -23,4 +28,5 @@ internal class UserEntity(id: EntityID<Long>) : LongEntity(id) {
     var email by Users.email
     var passwordHash by Users.passwordHash
     var username by Users.username
+    var role by Users.role
 }

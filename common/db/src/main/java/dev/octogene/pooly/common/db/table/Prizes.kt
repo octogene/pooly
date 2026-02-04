@@ -17,10 +17,10 @@ import org.jetbrains.exposed.v1.datetime.timestamp
 object Prizes : LongIdTable("prizes") {
     val amount = varchar("amount", MAX_AMOUNT_LENGTH)
     val network = varchar("network", NETWORK_NAME_LENGTH).index()
-    val timestamp = timestamp("timestamp")
-    val transactionHash = varchar("transaction_hash", TX_HASH_LENGTH).index()
+    val timestamp = timestamp("timestamp").index()
+    val transactionHash = varchar("transaction_hash", TX_HASH_LENGTH)
     val vaultId = varchar("vault_id", ADDRESS_LENGTH).references(Vaults.id).index()
-    val winnerAddress = varchar("winner_address", ADDRESS_LENGTH)
+    val winnerAddress = varchar("winner_address", ADDRESS_LENGTH).index()
 
     init {
         uniqueIndex(vaultId, transactionHash, winnerAddress)

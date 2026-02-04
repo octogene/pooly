@@ -22,9 +22,11 @@ import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.batchInsert
+import org.jetbrains.exposed.v1.jdbc.explain
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.lang.ScopedValue.where
 import java.math.BigInteger
 
 interface PrizeRepository {
@@ -48,29 +50,30 @@ internal class PrizeRepositoryImpl(
         wallets: List<Address>
     ): Either<RepositoryError, List<Prize>> = suspendTransactionOrRaise(database, readOnly = true) {
         val walletRawAddresses = wallets.map { it.value }
-        Prizes.join(
+        val allPrizesWithVaultsQuery = Prizes.join(
             Vaults,
             onColumn = vaultId,
             otherColumn = Vaults.id,
             joinType = JoinType.INNER
         ).selectAll()
             .where { winnerAddress inList walletRawAddresses }
-            .map {
-                val vault = Vault(
-                    address = Address.unsafeFrom(it[Vaults.id].value),
-                    name = it[Vaults.name],
-                    symbol = it[Vaults.tokenSymbol],
-                    decimals = it[Vaults.tokenDecimals],
-                    network = ChainNetwork.valueOf(it[Vaults.chainNetwork]),
-                )
-                Prize(
-                    payout = BigInteger(it[amount]),
-                    timestamp = it[Prizes.timestamp],
-                    winner = Address.unsafeFrom(it[winnerAddress]),
-                    vault = vault,
-                    transactionHash = it[transactionHash]
-                )
-            }
+
+        allPrizesWithVaultsQuery.map {
+            val vault = Vault(
+                address = Address.unsafeFrom(it[Vaults.id].value),
+                name = it[Vaults.name],
+                symbol = it[Vaults.tokenSymbol],
+                decimals = it[Vaults.tokenDecimals],
+                network = ChainNetwork.valueOf(it[Vaults.chainNetwork]),
+            )
+            Prize(
+                payout = BigInteger(it[amount]),
+                timestamp = it[Prizes.timestamp],
+                winner = Address.unsafeFrom(it[winnerAddress]),
+                vault = vault,
+                transactionHash = it[transactionHash]
+            )
+        }
     }
 
     override suspend fun getAllPrizesPaged(
