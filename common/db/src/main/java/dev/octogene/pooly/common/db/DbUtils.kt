@@ -13,19 +13,21 @@ import dev.octogene.pooly.common.db.table.Wallets
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.JdbcTransaction
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.postgresql.util.PSQLException
+import org.slf4j.Logger
 
 internal suspend fun <T> suspendTransactionOrRaise(
     database: Database,
     readOnly: Boolean = false,
-    block: suspend context(Raise<RepositoryError>) () -> T,
+    block: suspend context(Raise<RepositoryError>) JdbcTransaction.() -> T,
 ): Either<RepositoryError, T> = either {
     catch(
         block = {
             suspendTransaction(database, readOnly = readOnly) {
-                block(this@either)
+                block(this@suspendTransaction)
             }
         },
         catch = { throwable: Throwable ->
@@ -56,7 +58,7 @@ fun handleSQLException(throwable: ExposedSQLException) = when (throwable.cause) 
     else -> DatabaseError(throwable.message ?: "Unknown SQL error")
 }
 
-suspend fun checkDatabaseInitialization(database: Database) {
+suspend fun checkDatabaseInitialization(database: Database, logger: Logger) {
     suspendTransaction(database) {
         SchemaUtils.create(Users, Wallets, Vaults, Prizes)
     }
