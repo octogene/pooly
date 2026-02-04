@@ -18,7 +18,7 @@ val repositoriesModule = module {
         PrizeRepositoryImpl(database = get())
     }
     single<UserRepository> {
-        UserRepositoryImpl(get(), get(named("password-hasher")))
+        UserRepositoryImpl(database = get(), passwordHasher = get())
     }
     single<VaultRepository> {
         VaultRepositoryImpl(database = get())
