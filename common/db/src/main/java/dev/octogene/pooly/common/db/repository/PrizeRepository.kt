@@ -22,7 +22,6 @@ import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.batchInsert
-import org.jetbrains.exposed.v1.jdbc.explain
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

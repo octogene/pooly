@@ -105,6 +105,8 @@ kotlin {
 dependencies {
     implementation(project(":common:core"))
     implementation(project(":common:db"))
+    implementation(project(":common:cache"))
+    implementation(project(":common:backend"))
     implementation(libs.argon2)
     implementation(libs.bundles.ktor.server)
     implementation(libs.ktor.server.routing.openapi)
@@ -119,7 +121,9 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.bundles.exposed)
     implementation(libs.bundles.server.logs)
-    implementation(libs.rethis)
+    implementation(libs.ktor.server.auth.api.key)
+    implementation(libs.kotlinx.coroutines.reactive)
+    implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.content.negotiation)
@@ -137,7 +141,7 @@ tasks.named("setupJibLocal") {
 tasks.register<DownloadArtifactTask>("downloadOTELAgent") {
     description = "Downloads the AWS OTEL Java agent artifact"
     group = "custom"
-    val agentVersion = "v2.20.0"
+    val agentVersion = "v2.24.0"
     artifactUrl =
         "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/$agentVersion/opentelemetry-javaagent.jar"
     val outputDir = layout.buildDirectory.dir("tmp/javaagent")

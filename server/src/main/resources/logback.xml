@@ -1,7 +1,15 @@
 <configuration>
+    <define name="rootLevel" class="dev.octogene.pooly.server.config.LoggingPropertiesDefiner">
+        <propertyLookupKey>rootLevel</propertyLookupKey>
+    </define>
+    <variable scope="context" name="logPattern" value="%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${rootLevel}</level>
+        </filter>
         <encoder>
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n</pattern>
+            <pattern>${logPattern}</pattern>
         </encoder>
     </appender>
 <!--    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">-->
@@ -9,11 +17,11 @@
 <!--            <url>http://loki:3100/loki/api/v1/push</url>-->
 <!--        </http>-->
 <!--    </appender>-->
-    <root level="DEBUG">
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="dev.octogene.pooly" level="DEBUG"/>
-    <logger name="io.netty" level="INFO"/>
-    <logger name="okhttp3.internal.concurrent.TaskRunner" level="ERROR" />
-    <logger name="io.opentelemetry.javaagent" level="ERROR" />
+    <logger name="dev.octogene.pooly" level="debug" />
+    <logger name="io.netty" level="info" />
+    <logger name="okhttp3.internal.concurrent.TaskRunner" level="error" />
+    <logger name="io.opentelemetry.javaagent" level="error" />
 </configuration>

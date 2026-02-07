@@ -12,6 +12,8 @@ import org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
+import kotlin.io.path.Path
+import kotlin.io.path.listDirectoryEntries
 import kotlin.time.Clock
 
 fun main() {
@@ -53,9 +55,13 @@ fun generateMigrationScript(name: String? = null, tableNames: List<String>) {
         }
     )
 
+    val migrationFiles =
+        Path(MIGRATIONS_DIRECTORY).listDirectoryEntries("V$timestamp*")
+    val nextSequence = migrationFiles.size + 1
+
     MigrationUtils.generateMigrationScript(
         *tables,
         scriptDirectory = MIGRATIONS_DIRECTORY,
-        scriptName = "${timestamp}__$name",
+        scriptName = "V$timestamp.${nextSequence}__$name",
     )
 }

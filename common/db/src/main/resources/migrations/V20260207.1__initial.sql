@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS users (id BIGSERIAL PRIMARY KEY, created_at TIMESTAMP NOT NULL, email VARCHAR(255) NULL, password_hash VARCHAR(255) NOT NULL, username VARCHAR(50) NOT NULL, "role" INT DEFAULT 0 NOT NULL);
+ALTER TABLE users ADD CONSTRAINT users_username_unique UNIQUE (username);
+CREATE TABLE IF NOT EXISTS vaults (vault_address VARCHAR(42) PRIMARY KEY, chain_network VARCHAR(20) NOT NULL, created_at TIMESTAMP NOT NULL, "name" VARCHAR(255) NOT NULL, token_address VARCHAR(42) NOT NULL, token_decimals INT NOT NULL, token_symbol VARCHAR(20) NOT NULL);
+CREATE INDEX vaults_chain_network ON vaults (chain_network);
+CREATE INDEX vaults_token_address ON vaults (token_address);
+CREATE TABLE IF NOT EXISTS prizes (id BIGSERIAL PRIMARY KEY, amount VARCHAR(100) NOT NULL, network VARCHAR(20) NOT NULL, "timestamp" TIMESTAMP NOT NULL, transaction_hash VARCHAR(66) NOT NULL, vault_id VARCHAR(42) NOT NULL, winner_address VARCHAR(42) NOT NULL, CONSTRAINT fk_prizes_vault_id__vault_address FOREIGN KEY (vault_id) REFERENCES vaults(vault_address) ON DELETE RESTRICT ON UPDATE RESTRICT);
+CREATE INDEX prizes_network ON prizes (network);
+CREATE INDEX prizes_timestamp ON prizes ("timestamp");
+CREATE INDEX prizes_vault_id ON prizes (vault_id);
+CREATE INDEX prizes_winner_address ON prizes (winner_address);
+ALTER TABLE prizes ADD CONSTRAINT prizes_vault_id_transaction_hash_winner_address_unique UNIQUE (vault_id, transaction_hash, winner_address);
+CREATE TABLE IF NOT EXISTS wallet_addresses (address VARCHAR(42) PRIMARY KEY, created_at TIMESTAMP NOT NULL, user_id BIGINT NOT NULL, CONSTRAINT fk_wallet_addresses_user_id__id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT);
+CREATE SEQUENCE IF NOT EXISTS users_id_seq START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775807;
+CREATE SEQUENCE IF NOT EXISTS prizes_id_seq START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775807;

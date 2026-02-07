@@ -1,1 +1,0 @@
-ALTER TABLE users ADD "role" INT DEFAULT 0 NOT NULL;

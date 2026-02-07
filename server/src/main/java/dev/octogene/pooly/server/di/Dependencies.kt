@@ -3,12 +3,13 @@ package dev.octogene.pooly.server.di
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.JWTVerifier
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import dev.octogene.pooly.common.backend.security.PasswordHasher
 import dev.octogene.pooly.common.backend.security.PasswordVerifier
 import dev.octogene.pooly.common.cache.CacheType
 import dev.octogene.pooly.common.db.migration.MigrationManager
 import dev.octogene.pooly.server.admin.AdminController
-import dev.octogene.pooly.server.admin.ClearCacheRequest
 import dev.octogene.pooly.server.config.DbConfig
 import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.prize.PrizeController
@@ -17,37 +18,40 @@ import dev.octogene.pooly.server.security.AuthenticationService
 import dev.octogene.pooly.server.security.JwtGenerator
 import dev.octogene.pooly.server.user.UserController
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
+import javax.sql.DataSource
+
 
 val persistenceModule = { dbConfig: DbConfig ->
     module {
-        single {
-            if (dbConfig.driver == "org.h2.Driver") {
-                Database.connect(
-                    url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MYSQL;",
-                    driver = dbConfig.driver
-                )
-            } else {
-                Database.connect(
-                    url = "jdbc:postgresql://${dbConfig.host}:${dbConfig.port}/${dbConfig.name}",
-                    driver = dbConfig.driver,
-                    user = dbConfig.username,
+        single<HikariDataSource> {
+            val config = HikariConfig().apply {
+                if (dbConfig.driver == "org.h2.Driver") {
+                    jdbcUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MYSQL;"
+                    driverClassName = dbConfig.driver
+                } else {
+                    jdbcUrl = "jdbc:postgresql://${dbConfig.host}:${dbConfig.port}/${dbConfig.name}"
+                    driverClassName = dbConfig.driver
+                    username = dbConfig.username
                     password = dbConfig.password
-                )
+                    maximumPoolSize = 6
+                    isReadOnly = false
+                    transactionIsolation = "TRANSACTION_SERIALIZABLE"
+                }
             }
-        }
+            HikariDataSource(config)
+        } bind DataSource::class
+
+        single { Database.connect(datasource = get<HikariDataSource>()) }
+
         single {
             MigrationManager(
-                databaseUrl = "jdbc:postgresql://${dbConfig.host}:${dbConfig.port}/${dbConfig.name}",
-                databaseUser = dbConfig.username,
-                databasePassword = dbConfig.password,
+                dataSource = get(),
                 migrationsLocation = "migrations/",
                 baselineOnMigrate = false
             )

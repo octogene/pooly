@@ -2,13 +2,13 @@ package dev.octogene.pooly.common.db.repository
 
 import arrow.core.Either
 import arrow.core.raise.context.ensureNotNull
-import dev.octogene.pooly.core.PasswordHash
 import dev.octogene.pooly.common.backend.security.PasswordHasher
 import dev.octogene.pooly.common.db.suspendTransactionOrRaise
 import dev.octogene.pooly.common.db.table.UserEntity
 import dev.octogene.pooly.common.db.table.Users
 import dev.octogene.pooly.common.db.table.Users.role
 import dev.octogene.pooly.core.Address
+import dev.octogene.pooly.core.PasswordHash
 import dev.octogene.pooly.core.User
 import dev.octogene.pooly.core.UserRole
 import dev.octogene.pooly.core.UserWithWallets

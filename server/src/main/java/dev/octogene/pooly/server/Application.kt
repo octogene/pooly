@@ -4,10 +4,10 @@ import com.auth0.jwt.interfaces.JWTVerifier
 import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
 import com.sksamuel.cohort.cpu.ProcessCpuHealthCheck
+import com.sksamuel.cohort.logback.LogbackManager
 import com.sksamuel.cohort.memory.FreememHealthCheck
 import dev.octogene.pooly.common.cache.CacheClient
 import dev.octogene.pooly.common.cache.di.cacheModule
-import dev.octogene.pooly.common.db.checkDatabaseInitialization
 import dev.octogene.pooly.common.db.di.repositoriesModule
 import dev.octogene.pooly.common.db.migration.MigrationManager
 import dev.octogene.pooly.server.admin.adminRoutes
@@ -45,6 +45,8 @@ import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import org.slf4j.LoggerFactory
+import java.net.ConnectException
+import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -117,10 +119,14 @@ fun Application.dependencies(config: AppConfig) {
 
 fun Application.initialization(config: AppConfig) {
     launch {
-        checkDatabaseInitialization(get(), this@initialization.log)
-        val migrationManager by inject<MigrationManager>()
-        migrationManager.migrate()
+        try {
+            get<MigrationManager>().migrate()
+        } catch (error: ConnectException) {
+            log.error("Failed to connect to the database : {}", error.message)
+            exitProcess(1)
+        }
     }
+
     launch {
         get<CacheClient>(named(config.cache.type)).initialize()
     }
@@ -141,5 +147,8 @@ fun Application.metrics(metrics: Metrics) {
         register(FreememHealthCheck.mb(metrics.minFreeMem), 30.seconds, 1.minutes)
         register(ProcessCpuHealthCheck(metrics.maxLoad), 30.seconds, 1.minutes)
     }
-    install(Cohort) { healthcheck("/health", healthChecks) }
+    install(Cohort) {
+        logManager = LogbackManager
+        healthcheck("/health", healthChecks)
+    }
 }
