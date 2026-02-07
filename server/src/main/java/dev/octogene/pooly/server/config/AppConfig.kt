@@ -11,7 +11,8 @@ data class AppConfig(
     val metrics: Metrics,
     val database: DbConfig,
     val cache: CacheConfig,
-    val security: SecurityConfig
+    val security: SecurityConfig,
+    val loglevel: String
 )
 
 @Serializable

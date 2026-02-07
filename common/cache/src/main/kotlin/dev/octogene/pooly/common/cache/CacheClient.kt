@@ -10,7 +10,6 @@ import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.serializer
-import org.koin.core.qualifier.named
 import kotlin.time.Duration
 import kotlin.time.Instant
 
@@ -60,4 +59,3 @@ suspend inline fun <reified E : Any> CacheClient.set(key: String, values: List<E
     val serializer = ListSerializer(E::class.serializer())
     set(key, values, ttl, serializer)
 }
-
