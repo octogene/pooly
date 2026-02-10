@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.bundles.exposed)
     implementation(libs.exposed.kotlin.datetime)
     implementation(libs.logback.classic)
+    implementation(libs.hikari)
 }

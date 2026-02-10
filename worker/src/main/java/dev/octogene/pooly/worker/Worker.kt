@@ -1,23 +1,19 @@
 package dev.octogene.pooly.worker
 
 import arrow.core.raise.either
-import dev.octogene.pooly.common.db.checkDatabaseInitialization
 import dev.octogene.pooly.common.db.repository.PrizeRepository
 import dev.octogene.pooly.common.db.repository.VaultRepository
 import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.core.ChainNetwork
-import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.core.Vault
 import dev.octogene.pooly.ptgraph.api.PoolTogetherGraphQLClient
 import dev.octogene.pooly.ptgraph.api.model.GraphDraw
+import dev.octogene.pooly.ptgraph.api.model.toPrize
 import dev.octogene.pooly.rpc.PoolTogetherRPCClient
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import org.jetbrains.exposed.v1.jdbc.Database
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.time.Clock
@@ -27,7 +23,6 @@ import kotlin.time.Instant
 class Worker(
     private val rpcClient: PoolTogetherRPCClient,
     private val graphClient: PoolTogetherGraphQLClient,
-    private val database: Database,
     private val vaultRepository: VaultRepository,
     private val prizeRepository: PrizeRepository,
     private val walletRepository: WalletRepository,
@@ -36,7 +31,6 @@ class Worker(
 ) {
     private var lastCheckTimeStamp: Instant? = null
     suspend fun run() = coroutineScope {
-        checkDatabaseInitialization(database)
         logger.info("Starting worker")
 
         while (isActive) {
@@ -63,22 +57,11 @@ class Worker(
         val vaultById =
             drawsByVaultId.keys.associateWith { vault -> vaultRepository.getVaultFromAddress(vault).bind() }
         val prizes = drawsByVaultId.flatMap { (vault, draws) ->
-                val vault = vaultById.getValue(vault)
-                draws.map { draw -> draw.toPrize(draw, vault) }
-            }
+            val vault = vaultById.getValue(vault)
+            draws.map { draw -> draw.toPrize(draw, vault) }
+        }
         prizeRepository.insertPrizes(prizes).bind()
     }
-
-    private fun GraphDraw.toPrize(
-        draw: GraphDraw,
-        vault: Vault
-    ): Prize = Prize(
-        winner = Address.unsafeFrom(draw.winner),
-        payout = draw.payout,
-        transactionHash = draw.transactionHash,
-        timestamp = draw.timestamp.toInstant(TimeZone.UTC),
-        vault = vault
-    )
 
     private suspend fun fetchDrawsAndVaults(addresses: List<Address>): Pair<List<GraphDraw>, List<Vault>> {
         logger.info("Getting draws for {} addresses", addresses.size)
@@ -87,13 +70,27 @@ class Worker(
             chainNetwork = ChainNetwork.BASE,
             after = null
         )
-        logger.info("Found {} draws", draws.size)
-        val unknownVaultsAddresses =
-            vaultRepository.findUnknownVaults(draws.map { it.vault }.distinct()).getOrNull()
-                ?: emptyList()
-        logger.info("found {} unknown vaults", unknownVaultsAddresses.size)
-        val newVaults = rpcClient.getVaultInfoFromAdresses(unknownVaultsAddresses)
-        logger.info("found {} new vaults", newVaults.size)
-        return Pair(draws, newVaults)
+        if (draws.isNotEmpty()) {
+            lastCheckTimeStamp = Clock.System.now()
+        }
+        val vaults = draws.map { it.vault }.distinct()
+        val unknownVaultsAddresses = vaultRepository.findUnknownVaults(vaults).onLeft {
+            logger.error("Error finding unknown vaults: {}", it)
+        }.getOrNull()
+        val newVaults = if (unknownVaultsAddresses?.isNotEmpty() == true) {
+            logger.info("Found {} unknown vaults", unknownVaultsAddresses.size)
+            val newVaults = rpcClient.getVaultInfoFromAdresses(unknownVaultsAddresses)
+            if (unknownVaultsAddresses.size != newVaults.size) {
+                logger.warn(
+                    "Got {} new vaults out of {} unknown",
+                    newVaults.size,
+                    unknownVaultsAddresses.size
+                )
+            }
+            newVaults
+        } else {
+            emptyList()
+        }
+        return draws to newVaults
     }
 }

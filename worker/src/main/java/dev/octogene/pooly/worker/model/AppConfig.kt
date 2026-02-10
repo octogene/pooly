@@ -3,13 +3,15 @@ package dev.octogene.pooly.worker.model
 import kotlin.time.Duration
 
 data class AppConfig(
-    val db: DbConfig,
+    val database: DbConfig,
     val checkInterval: Duration,
 )
 
 data class DbConfig(
-    val url: String,
+    val host: String,
+    val port: Int,
+    val name: String,
     val driver: String,
-    val user: String,
+    val username: String,
     val password: String,
 )

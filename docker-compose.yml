@@ -53,7 +53,9 @@ services:
   pooly-worker:
     image: pooly-worker:latest
     environment:
-      - DB_URL=jdbc:postgresql://db:5432/pooly_db
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=pooly_db
       - DB_DRIVER=org.postgresql.Driver
       - DB_PASSWORD=pooly_password
       - DB_USERNAME=pooly_user

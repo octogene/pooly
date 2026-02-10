@@ -1,7 +1,9 @@
 app:
-  checkInterval: "${CHECK_INTERVAL:-5m}"
-  db:
-    url: "${DB_URL:-jdbc:h2:mem:test;DB_CLOSE_DELAY=-1}"
+  checkInterval: "${CHECK_INTERVAL:-PT1H}"
+  database:
     driver: "${DB_DRIVER:-org.h2.Driver}"
-    user: "${DB_USERNAME:-user}"
+    host: "${DB_HOST:-localhost}"
+    port: "${DB_PORT:-5432}"
+    name: "${DB_NAME:-pooly}"
+    username: "${DB_USERNAME:-user}"
     password: "${DB_PASSWORD:-password}"
