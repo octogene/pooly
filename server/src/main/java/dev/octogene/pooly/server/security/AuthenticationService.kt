@@ -21,7 +21,7 @@ class AuthenticationService(
     private val userRepository: UserRepository,
     private val passwordHasher: PasswordHasher,
     private val passwordVerifier: PasswordVerifier,
-    private val jwtGenerator: JwtGenerator,
+    private val jwtManager: JwtManager,
     private val logger: Logger = LoggerFactory.getLogger(AuthenticationService::class.java)
 ) {
     suspend fun login(username: String, plainPassword: String): Either<AuthenticationError, User> =
@@ -65,7 +65,7 @@ class AuthenticationService(
     }
 
     fun generateToken(user: User): Token {
-        return jwtGenerator.createToken(user.username)
+        return jwtManager.createToken(user.username, user.role)
     }
 }
     

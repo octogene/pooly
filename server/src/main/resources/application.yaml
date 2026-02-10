@@ -26,4 +26,7 @@ app:
       parallelism: "$HASHING_ARGON2_PARALLELISM:1"
     jwt:
       secret: "$JWT_SECRET:e0df4b2b82be5c9bb10de9cd1f"
+      issuer: "$JWT_ISSUER:octogene.dev"
+      audience: "$JWT_AUDIENCE:pooly-api"
+      expiration: "$JWT_EXPIRATION:P7D"
     apikey: "$API_KEY:ecb9e77f-339b-4bb7-85e2-6ddb53e8ea8a"

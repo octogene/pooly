@@ -6,6 +6,13 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.docker.compose)
+    alias(libs.plugins.benchmark)
+    alias(libs.plugins.all.open)
+    alias(libs.plugins.redacted)
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
 }
 
 application {
@@ -110,6 +117,7 @@ dependencies {
     implementation(libs.argon2)
     implementation(libs.bundles.ktor.server)
     implementation(libs.ktor.server.routing.openapi)
+    implementation(libs.ktor.server.openapi)
     implementation(libs.arrow.raise.ktor.server)
     implementation(libs.cohort.ktor)
     implementation(platform(libs.arrow.stack))
