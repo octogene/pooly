@@ -28,6 +28,7 @@ import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.testApp(
@@ -74,6 +75,7 @@ fun Application.testApp(
 val testAppConfig = AppConfig(
     host = "localhost",
     port = 8080,
+    loglevel = "debug",
     metrics = Metrics(512, 0.75),
     database = DbConfig(
         host = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
@@ -84,7 +86,7 @@ val testAppConfig = AppConfig(
         password = "pooly"
     ),
     security = SecurityConfig(
-        jwt = JwtConfig("test"),
+        jwt = JwtConfig("test", "octogene.dev", "pooly-api", 10.seconds),
         hashing = HashingConfig("Argon2id", 2, 20000, 1),
         apikey = "admin_api_key"
     ),

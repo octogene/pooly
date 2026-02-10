@@ -1,26 +1,31 @@
 package dev.octogene.pooly.server.security
 
-import com.auth0.jwt.JWT
+import com.auth0.jwt.JWTCreator
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.JWTVerifier
+import dev.octogene.pooly.core.UserRole
 import kotlinx.serialization.Serializable
-import kotlin.math.sign
 import kotlin.time.Clock
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
-class JwtGenerator(
-    private val secret: String
-) {
+class JwtManager(
+    private val algorithm: Algorithm,
+    private val creator: JWTCreator.Builder,
+    private val verifier: JWTVerifier,
+    private val expiration: Duration = 7.days
+): JWTVerifier by verifier {
+
     // TODO: Proper JWT generation
-    fun createToken(username: String): Token {
-        val expiration = (Clock.System.now() + 7.days)
-        val token = JWT.create()
-            .withAudience("audience")
-            .withIssuer("issuer")
-            .withClaim("username", username)
+    fun createToken(username: String, role: UserRole): Token {
+        val expiration = (Clock.System.now() + expiration)
+        val token = creator
             .withExpiresAt(expiration.toJavaInstant())
-            .sign(Algorithm.HMAC256(secret))
+            .withClaim("role", role.name)
+            .withClaim("username", username)
+            .sign(algorithm)
 
         return Token(
             token = token,

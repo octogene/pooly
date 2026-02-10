@@ -15,7 +15,7 @@ import dev.octogene.pooly.server.config.SecurityConfig
 import dev.octogene.pooly.server.prize.PrizeController
 import dev.octogene.pooly.server.security.Argon2PasswordHasher
 import dev.octogene.pooly.server.security.AuthenticationService
-import dev.octogene.pooly.server.security.JwtGenerator
+import dev.octogene.pooly.server.security.JwtManager
 import dev.octogene.pooly.server.user.UserController
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -87,7 +87,7 @@ val securityModule = { config: SecurityConfig ->
                 userRepository = get(),
                 passwordHasher = get(),
                 passwordVerifier = get(),
-                jwtGenerator = get()
+                jwtManager = get()
             )
         }
 
@@ -101,15 +101,18 @@ val securityModule = { config: SecurityConfig ->
         } binds arrayOf(PasswordHasher::class, PasswordVerifier::class)
 
         single {
-            JwtGenerator(config.jwt.secret)
-        }
-
-        single<JWTVerifier> {
-            JWT
-                .require(Algorithm.HMAC256(config.jwt.secret))
-                .withAudience("audience")
-                .withIssuer("issuer")
-                .build()
-        }
+            val algorithm = Algorithm.HMAC256(config.jwt.secret)
+            JwtManager(
+                creator = JWT.create()
+                    .withAudience(config.jwt.audience)
+                    .withIssuer(config.jwt.issuer),
+                algorithm = algorithm,
+                verifier = JWT
+                    .require(algorithm)
+                    .withAudience(config.jwt.audience)
+                    .withIssuer(config.jwt.issuer)
+                    .build()
+            )
+        } bind JWTVerifier::class
     }
 }

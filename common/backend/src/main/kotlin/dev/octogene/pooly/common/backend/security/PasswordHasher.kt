@@ -11,4 +11,3 @@ interface PasswordHasher {
      */
     fun hash(password: String): PasswordHash
 }
-

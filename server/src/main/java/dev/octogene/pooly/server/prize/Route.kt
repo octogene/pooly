@@ -37,19 +37,6 @@ fun Route.prizesRoute() {
         }.describe {
             summary = "All prizes"
             description = "Retrieve all prizes for the current user"
-            requestBody {
-                header(HttpHeaders.Authorization, "Bearer [JWT Token]") {
-                    description = "JWT Token"
-                    required = true
-                }
-                header(
-                    HttpHeaders.IfModifiedSince,
-                    "<day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT"
-                ) {
-                    description = "If-Modified-Since"
-                    required = false
-                }
-            }
             parameters {
                 // TODO: Check for conditional fields
                 query("page") {

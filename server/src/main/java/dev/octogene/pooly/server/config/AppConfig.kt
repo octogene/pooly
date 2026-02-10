@@ -3,6 +3,7 @@ package dev.octogene.pooly.server.config
 import dev.octogene.pooly.common.cache.config.CacheConfig
 import dev.zacsweers.redacted.annotations.Redacted
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
 
 @Serializable
 data class AppConfig(
@@ -43,4 +44,9 @@ data class HashingConfig(
 )
 
 @Serializable
-data class JwtConfig(val secret: String)
+data class JwtConfig(
+    val secret: String,
+    val issuer: String,
+    val audience: String,
+    val expiration: Duration
+)

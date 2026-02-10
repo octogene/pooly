@@ -19,6 +19,7 @@ import dev.octogene.pooly.server.di.securityModule
 import dev.octogene.pooly.server.model.ApiKeyPrincipal
 import dev.octogene.pooly.server.prize.prizesRoute
 import dev.octogene.pooly.server.user.usersRoute
+import io.ktor.openapi.OpenApiInfo
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.server.application.Application
@@ -34,6 +35,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.openapi.openAPI
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
@@ -120,7 +122,8 @@ fun Application.dependencies(config: AppConfig) {
 fun Application.initialization(config: AppConfig) {
     launch {
         try {
-            get<MigrationManager>().migrate()
+            val migrationManager: MigrationManager by inject()
+            migrationManager.migrate()
         } catch (error: ConnectException) {
             log.error("Failed to connect to the database : {}", error.message)
             exitProcess(1)
@@ -128,13 +131,21 @@ fun Application.initialization(config: AppConfig) {
     }
 
     launch {
-        get<CacheClient>(named(config.cache.type)).initialize()
+        val cacheClient: CacheClient by inject(named(config.cache.type))
+        cacheClient.initialize()
     }
 }
 
 fun Application.routing() {
     routing {
         route("/api/v1") {
+            openAPI(path = "openapi") {
+                info = OpenApiInfo(
+                    title = "Pooly API",
+                    version = "1.0.0",
+                    description = "A PoolTogether prize checker API for the Pooly app"
+                )
+            }
             usersRoute()
             prizesRoute()
             adminRoutes()
