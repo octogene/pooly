@@ -24,7 +24,7 @@ bouncy-castle = "1.83"
 changelog = "2.5.0"
 cohort = "2.8.2"
 composeHotReload = "1.0.0"
-detekt = "1.23.8"
+detekt = "2.0.0-alpha.2"
 docker-compose = "0.17.21"
 ethers = "1.6.0"
 exposed = "1.0.0"
@@ -105,8 +105,8 @@ compose-runtime = { module = "androidx.compose.runtime:runtime" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
-detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt-rules-ktlint-wrapper = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
+detekt-gradle-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 ethers-abi = { module = "io.kriptal.ethers:ethers-abi" }
 ethers-bom = { module = "io.kriptal.ethers:ethers-bom", version.ref = "ethers" }
 ethers-core = { module = "io.kriptal.ethers:ethers-core" }
@@ -234,7 +234,7 @@ apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "benchmark" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 docker-compose = { id = "com.avast.gradle.docker-compose", version.ref = "docker-compose" }
 ethers-abigen = { id = "io.kriptal.ethers.abigen-plugin", version.ref = "ethers" }
 gradle-buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "gradle-buildconfig" }

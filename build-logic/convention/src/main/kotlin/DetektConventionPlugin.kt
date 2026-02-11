@@ -1,11 +1,10 @@
 
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.DetektCreateBaselineTask
+import dev.detekt.gradle.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.internal.impldep.org.apache.commons.compress.harmony.pack200.PackingUtils.config
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.register
@@ -25,13 +24,13 @@ private fun Project.setupDetekt() {
     val catalog = versionCatalog
 
     allprojects {
-        plugins.apply("io.gitlab.arturbosch.detekt")
+        plugins.apply("dev.detekt")
 
         extensions.configure<DetektExtension> {
-            parallel = true
-            buildUponDefaultConfig = true
+            parallel.set(true)
+            buildUponDefaultConfig.set(true)
             config.from(file("$rootDir/config/detekt.yml"))
-            baseline = file("${rootProject.rootDir}/config/baseline.xml")
+            baseline.set(file("${rootProject.rootDir}/config/baseline.xml"))
         }
 
         tasks.register("detektAll") {
@@ -42,13 +41,13 @@ private fun Project.setupDetekt() {
         tasks.register<Detekt>("detektFormat") {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             config.from(file("$rootDir/config/detekt.yml"))
-            buildUponDefaultConfig = true
-            autoCorrect = true
+            buildUponDefaultConfig.set(true)
+            autoCorrect.set(true)
         }
 
         tasks.register("detektFormatAll") {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
-            dependsOn(tasks.withType<Detekt>().filter { it.name.contains("Format") })
+            dependsOn(tasks.withType<Detekt>().filter { it.name == "detektFormat" })
         }
 
         tasks.configureEach {
@@ -67,21 +66,20 @@ private fun Project.setupDetekt() {
 
             reports {
                 html.required.set(false)
-                xml.required.set(false)
                 sarif.required.set(true)
-                md.required.set(false)
+                markdown.required.set(false)
             }
         }
 
         tasks.withType<Detekt>().configureEach {
-            jvmTarget = "21"
+            jvmTarget.set("25")
         }
         tasks.withType<DetektCreateBaselineTask>().configureEach {
-            jvmTarget = "21"
+            jvmTarget.set("25")
         }
 
         dependencies {
-            catalog?.findLibrary("detekt.formatting")?.ifPresent {
+            catalog?.findLibrary("detekt-rules-ktlint-wrapper")?.ifPresent {
                 "detektPlugins"(it)
             }
         }
@@ -92,7 +90,6 @@ private fun Project.checkIsRootProject() {
     check(this == rootProject) { "Plugin can only be applied to root project" }
 }
 
-private fun Task.getFamily(): Family? =
-    Family.entries.firstOrNull { family ->
-        name.contains(other = family.name, ignoreCase = true)
-    }
+private fun Task.getFamily(): Family? = Family.entries.firstOrNull { family ->
+    name.contains(other = family.name, ignoreCase = true)
+}
