@@ -3,9 +3,11 @@ package dev.octogene.pooly.ptgraph.api
 import arrow.core.Either
 import arrow.core.raise.context.bind
 import arrow.core.raise.context.either
+import arrow.fx.coroutines.parMap
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import dev.octogene.pooly.core.ChainNetwork
+import dev.octogene.pooly.ptgraph.api.model.DrawResult
 import dev.octogene.pooly.ptgraph.api.model.GraphDraw
 import dev.octogene.pooly.ptgraph.api.model.GraphQLResponse
 import dev.octogene.pooly.ptgraph.api.model.GraphQLServiceError
@@ -17,6 +19,8 @@ import java.math.BigInteger
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
+
+private const val MAX_CONCURRENCY = 3
 
 class PoolTogetherGraphQLClient(
     chainNetworks: List<ChainNetwork> = ChainNetwork.entries,
@@ -80,6 +84,19 @@ class PoolTogetherGraphQLClient(
             }
         }
     }
+
+    @OptIn(ExperimentalTime::class)
+    suspend fun getAllDraws(
+        addresses: List<String>,
+        after: Long? = null,
+        chainNetworks: List<ChainNetwork>
+    ): DrawResult {
+        return chainNetworks.parMap(concurrency = MAX_CONCURRENCY) { chainNetwork ->
+            val draws = getAllDraws(addresses, chainNetwork, after)
+            chainNetwork to draws
+        }.toMap()
+    }
+
 
     private fun DrawsByAddressesQuery.PrizeClaim.toGraphDraw(): GraphDraw? {
         val instant = timestamp.toInstant()
