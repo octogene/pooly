@@ -32,6 +32,7 @@ import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.getAs
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.HttpRequestLifecycle
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -66,6 +67,10 @@ fun main(args: Array<String>) {
 fun Application.app(config: AppConfig) {
     install(CallLogging) {
         logger = LoggerFactory.getLogger("CallLogging")
+    }
+
+    install(HttpRequestLifecycle) {
+        cancelCallOnClose = true
     }
 
     dependencies(config)
