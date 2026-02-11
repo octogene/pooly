@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(platform(libs.arrow.stack))
     implementation(libs.arrow.core)
+    implementation(libs.arrow.coroutines)
     implementation(libs.arrow.resilience)
     implementation(libs.apollo.runtime)
     testImplementation(libs.junit)
