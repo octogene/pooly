@@ -20,8 +20,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.log4j.core)
-    implementation(libs.log4j.slf4j)
+    implementation(libs.slf4j.api)
+    implementation(libs.logback.classic)
     implementation(libs.pulumi)
     implementation(libs.pulumi.hcloud)
     implementation(libs.pulumi.command)
