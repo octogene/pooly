@@ -9,11 +9,15 @@ import arrow.core.right
 import arrow.core.toOption
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.RedisClient
+import io.lettuce.core.RedisException
 import io.lettuce.core.SetArgs
+import io.lettuce.core.api.sync.multi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import sun.jvm.hotspot.HelloWorld.e
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -36,8 +40,11 @@ internal class ValkeyCacheClient(
                 logger.debug("Getting string of ${data.length} length")
                 json.decodeFromString(deserializer = serializer, data)
             }.toOption()
-        } catch (e: Exception) {
-            logger.error("Failed to fetch $key: {}", e.message)
+        } catch (error: RedisException) {
+            logger.error("Failed to fetch $key: {}", error.message)
+            none()
+        } catch (error: SerializationException) {
+            logger.error("Failed to deserialize $key: {}", error.message)
             none()
         }
     }
@@ -65,22 +72,25 @@ internal class ValkeyCacheClient(
                 json.encodeToString(serializer = type, value),
                 SetArgs.Builder.exAt(expireAt.toJavaInstant())
             )
-        } catch (e: Exception) {
-            logger.error("Failed to set $key : {}", e.message)
+        } catch (error: RedisException) {
+            logger.error("Failed to set $key: {}", error.message)
+        } catch (error: SerializationException) {
+            logger.error("Failed to serialize $key: {}", error.message)
         }
     }
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
-    // TODO: Improve arrow usage
     override suspend fun clearByPattern(pattern: String): Either<Throwable, Long> = either {
         return try {
             val keys = connection.sync().keys(pattern)
             keys?.let { keys ->
-                logger.debug("Clearing ${keys?.size ?: 0} keys")
-                connection.sync().del(*keys.toTypedArray())
+                logger.debug("Clearing ${keys.size} keys")
+                connection.sync().multi {
+                    keys.forEach { key -> del(key) }
+                }
             }
             keys.size.toLong().right()
-        } catch (e: Throwable) {
+        } catch (e: RedisException) {
             logger.error("Failed to clear cache : {}", e.message)
             e.left()
         }
