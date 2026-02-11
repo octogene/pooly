@@ -23,7 +23,6 @@ internal class InMemoryCacheClient(
     private val cache: MutableMap<String, String> = mutableMapOf(),
     private val cacheTTL: MutableMap<String, Instant> = mutableMapOf(),
     private val json: Json = Json,
-    private val defaultTTL: Duration = 2.minutes,
     private val cleanupInterval: Duration = 10.minutes,
     private val logger: Logger = LoggerFactory.getLogger(InMemoryCacheClient::class.java)
 ) : CacheClient {
@@ -51,7 +50,7 @@ internal class InMemoryCacheClient(
         return try {
             val decodedValue = json.decodeFromString(type, jsonString)
             decodedValue.toOption()
-        } catch (e: Exception) {
+        } catch (e: SerializationException) {
             logger.error(
                 "Error deserializing value for key '{}' to type {}: {}",
                 key,
@@ -79,16 +78,13 @@ internal class InMemoryCacheClient(
     ) {
         val jsonString = try {
             json.encodeToString(type, value)
-        } catch (e: SerializationException) { // Catching the specific exception
+        } catch (e: SerializationException) {
             logger.error(
                 "Error serializing value for key {} with type {}: {}",
                 key,
                 value::class.simpleName,
                 e.message
             )
-            return
-        } catch (e: Exception) {
-            logger.error("Unexpected error during serialization for key {}: {}", key, e.message)
             return
         }
         cache[key] = jsonString
