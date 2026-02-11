@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '24'
@@ -69,7 +69,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '24'
@@ -95,3 +95,54 @@ jobs:
             **/build/test-results/
             **/build/reports/tests/
           retention-days: 7
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [build, test]
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '24'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Download Java agents
+        run: |
+          ./gradlew :server:downloadOTELAgent :server:downloadPyroscopeAgent
+
+      - name: Build and push server image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew :server:jib \
+            -Djib.to.image=ghcr.io/${{ github.repository }}/server \
+            -Djib.to.tags=${{ github.sha }},latest \
+            -Djib.to.auth.username=${{ github.actor }} \
+            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }} \
+            -Djib.console=plain
+
+      - name: Build and push worker image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew :worker:jib \
+            -Djib.to.image=ghcr.io/${{ github.repository }}/worker \
+            -Djib.to.tags=${{ github.sha }},latest \
+            -Djib.to.auth.username=${{ github.actor }} \
+            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }} \
+            -Djib.console=plain
