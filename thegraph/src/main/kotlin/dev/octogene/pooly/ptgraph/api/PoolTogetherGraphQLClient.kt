@@ -11,9 +11,6 @@ import dev.octogene.pooly.ptgraph.api.model.GraphQLResponse
 import dev.octogene.pooly.ptgraph.api.model.GraphQLServiceError
 import dev.octogene.pooly.thegraph.DrawsByAddressesQuery
 import kotlinx.coroutines.delay
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.math.BigInteger
@@ -84,16 +81,22 @@ class PoolTogetherGraphQLClient(
         }
     }
 
-    private fun DrawsByAddressesQuery.PrizeClaim.toGraphDraw() = timestamp.toLocalDateTime()?.let {
-        GraphDraw(
-            id = draw.drawId,
-            payout = BigInteger(payout),
-            // TODO: Convert to Instant, need to make sure of the initial format (epoch ?)
-            timestamp = it,
-            winner = winner,
-            vault = prizeVault.id,
-            transactionHash = draw.txHash
-        )
+    private fun DrawsByAddressesQuery.PrizeClaim.toGraphDraw(): GraphDraw? {
+        val instant = timestamp.toInstant()
+        if (instant == null) {
+            logger.error("Failed to map prize claim {} to graph draw", this)
+        }
+
+        return instant?.let {
+            GraphDraw(
+                id = draw.drawId,
+                payout = BigInteger(payout),
+                timestamp = it,
+                winner = winner,
+                vault = prizeVault.id,
+                transactionHash = draw.txHash
+            )
+        }
     }
 
     private suspend fun handleHttpErrorException(error: GraphQLServiceError.HttpError) {
@@ -129,10 +132,7 @@ class PoolTogetherGraphQLClient(
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun String.toLocalDateTime(): LocalDateTime? {
-        return this.toLongOrNull()?.let {
-            Instant.fromEpochSeconds(it)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-        }
+    private fun String.toInstant(): Instant? {
+        return this.toLongOrNull()?.let { Instant.fromEpochSeconds(it) }
     }
 }
