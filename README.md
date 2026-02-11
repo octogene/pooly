@@ -128,15 +128,34 @@ application whether on the frontend or the backend.
     'theme': 'neutral'
   }
 }%%
+
 graph LR
-    :composeApp --> :shared
-    :composeApp --> :pooltogether
-    :composeApp --> :settings
-    :rpc --> :shared
-    :thegraph --> :shared
-    :pooltogether --> :shared
-    :pooltogether --> :rpc
-    :pooltogether --> :thegraph
-    :pooltogether --> :settings
-    :settings --> :shared
+  subgraph :common
+    :common:db["db"]
+    :common:core["core"]
+    :common:backend["backend"]
+    :common:mobile["mobile"]
+    :common:cache["cache"]
+  end
+  :common:db --> :common:core
+  :common:db --> :common:backend
+  :thegraph --> :common:core
+  :rpc --> :common:core
+  :settings --> :common:mobile
+  :common:mobile --> :common:core
+  :composeApp --> :common:mobile
+  :composeApp --> :pooltogether
+  :composeApp --> :settings
+  :pooltogether --> :common:mobile
+  :pooltogether --> :settings
+  :server --> :common:core
+  :server --> :common:db
+  :server --> :common:cache
+  :server --> :common:backend
+  :common:backend --> :common:core
+  :common:cache --> :common:core
+  :worker --> :common:core
+  :worker --> :common:db
+  :worker --> :rpc
+  :worker --> :thegraph
 ```
