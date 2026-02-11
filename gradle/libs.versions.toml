@@ -34,7 +34,7 @@ gradle-buildconfig = "6.0.7"
 h2 = "2.4.240"
 hikari = "7.0.2"
 hoplite = "2.9.0"
-jib = "3.5.2"
+jib = "3.5.3"
 junit = "4.13.2"
 kbigint = "0.5.0"
 kermit = "2.0.8"
@@ -48,11 +48,11 @@ kotlinx-serialization = "1.10.0"
 ktor = "3.4.0"
 lettuce = "7.2.1.RELEASE"
 slf4j = "2.0.17"
-logback = "1.5.27"
+logback = "1.5.29"
 logback-loki = "2.0.3"
 material = "1.13.0"
 material3 = "1.5.0-alpha13"
-metro = "0.10.2"
+metro = "0.10.3"
 moduleGraph = "0.13.0"
 postgresql = "42.7.9"
 protobuf-gradle = "0.9.6"
@@ -248,6 +248,7 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moduleGraph = { id = "dev.iurysouza.modulegraph", version.ref = "moduleGraph" }
 pooly-detekt = { id = "dev.octogene.pooly.detekt" }
+pooly-kotlin = { id = "dev.octogene.pooly.kotlin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf-gradle" }
 redacted = { id = "dev.zacsweers.redacted", version.ref = "redacted" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
