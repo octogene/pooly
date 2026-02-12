@@ -10,7 +10,7 @@ sealed interface GraphQLServiceError {
         val statusCode: Int,
         val headers: Map<String, String>,
         val message: String?,
-        val cause: Throwable?
+        val cause: Throwable?,
     ) : RuntimeError
     data class GraphQLErrors(val errors: List<Error>) : GraphQLServiceError
     data class UnexpectedError(val error: Throwable) : GraphQLServiceError
