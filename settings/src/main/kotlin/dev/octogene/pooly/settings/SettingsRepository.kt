@@ -26,10 +26,8 @@ interface SettingsRepository {
 
 @Inject
 @ContributesBinding(AppScope::class)
-class SettingsRepositoryImpl(
-    private val queries: NetworkStateQueries,
-    private val walletQueries: WalletQueries
-) : SettingsRepository {
+class SettingsRepositoryImpl(private val queries: NetworkStateQueries, private val walletQueries: WalletQueries) :
+    SettingsRepository {
 
     override fun setNetworks(networks: List<String>) {
         val db = queries.selectAllNetworks()
@@ -39,10 +37,9 @@ class SettingsRepositoryImpl(
         queries.toggleNetworkState(network)
     }
 
-    override fun observeNetworks(): Flow<List<ChainNetwork>> =
-        queries.selectAllNetworks().asFlow().map { queries ->
-            queries.executeAsList().filter { it.isActive }.map { it.name }
-        }
+    override fun observeNetworks(): Flow<List<ChainNetwork>> = queries.selectAllNetworks().asFlow().map { queries ->
+        queries.executeAsList().filter { it.isActive }.map { it.name }
+    }
 
     override fun setRpcFor(network: ChainNetwork, rpc: String) {
         queries.setRpc(rpc, network)

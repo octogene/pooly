@@ -14,9 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 @ContributesIntoMap(AppScope::class)
 @ViewModelKey(SettingsViewModel::class)
 @Inject
-class SettingsViewModel(
-    private val repository: SettingsRepository,
-) : ViewModel() {
+class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
 
     val activeNetworks: StateFlow<List<ChainNetwork>> =
         repository.observeNetworks().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())

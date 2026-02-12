@@ -45,10 +45,7 @@ import dev.octogene.pooly.core.ChainNetwork
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
-fun SettingsScreen(
-    modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = metroViewModel(),
-) {
+fun SettingsScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = metroViewModel()) {
     val activeNetworks by viewModel.activeNetworks.collectAsStateWithLifecycle(emptyList<ChainNetwork>())
     val trackedWallets by viewModel.trackedWallets.collectAsState()
 
@@ -58,21 +55,21 @@ fun SettingsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {},
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
                 Icon(
                     painterResource(dev.octogene.pooly.common.mobile.R.drawable.baseline_add_24),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
                 )
             }
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text("Networks")
             Chains(activeNetworks, { viewModel.toggleNetwork(it) })
@@ -84,11 +81,7 @@ fun SettingsScreen(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun Chains(
-    networks: List<ChainNetwork>,
-    onNetwork: (ChainNetwork) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun Chains(networks: List<ChainNetwork>, onNetwork: (ChainNetwork) -> Unit, modifier: Modifier = Modifier) {
     val allNetworks = remember { ChainNetwork.entries.toTypedArray() }
 
     FlowRow(
@@ -96,7 +89,7 @@ fun Chains(
             .padding(8.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         for (i in 0 until allNetworks.size) {
             val icon = when (allNetworks[i]) {
@@ -111,7 +104,7 @@ fun Chains(
                 icon,
                 allNetworks[i] in networks,
                 allNetworks[i],
-                onNetwork
+                onNetwork,
             )
         }
     }
@@ -132,10 +125,10 @@ private fun NetworkButton(
         shapes = ToggleButtonShapes(
             shape = CircleShape,
             pressedShape = CircleShape,
-            checkedShape = RectangleShape
+            checkedShape = RectangleShape,
         ),
         onCheckedChange = { onClick(network) },
-        contentPadding = PaddingValues(4.dp)
+        contentPadding = PaddingValues(4.dp),
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -145,7 +138,7 @@ private fun NetworkButton(
             Image(
                 painter = painterResource(icon),
                 contentDescription = network.name,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
             Text(
                 network.name.capitalize(Locale.current),
@@ -156,7 +149,7 @@ private fun NetworkButton(
                     fontWeight = FontWeight.W800,
                     fontStyle = FontStyle.Italic,
                 ),
-                maxLines = 1
+                maxLines = 1,
             )
         }
     }
@@ -169,21 +162,21 @@ fun Wallets(wallets: List<String>, modifier: Modifier = Modifier) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(0.5f),
                     text = wallets[it],
                     overflow = TextOverflow.MiddleEllipsis,
-                    maxLines = 1
+                    maxLines = 1,
                 )
                 IconButton(
 //                    modifier = Modifier.weight(0.5f),
-                    onClick = { /*TODO*/ }
+                    onClick = { /*TODO*/ },
                 ) {
                     Icon(
                         painterResource(dev.octogene.pooly.common.mobile.R.drawable.baseline_delete_24),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
             }
@@ -198,7 +191,7 @@ fun ChainsPreview() {
         Chains(
             networks = listOf(ChainNetwork.BASE, ChainNetwork.OPTIMISM),
             onNetwork = {},
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
