@@ -5,16 +5,16 @@ import arrow.core.raise.either
 import kotlinx.serialization.Serializable
 import kotlin.math.ceil
 
-data class PageRequest(
-    val page: Int,
-    val pageSize: Int
-) {
+data class PageRequest(val page: Int, val pageSize: Int) {
     companion object {
-        fun create(page: Int = 1, pageSize: Int? = 20) = either {
-            val pageSize = pageSize ?: 20
-            ensure(page >= 1) { "Page must be >= 1" }
-            ensure(pageSize >= 1) { "Page size must be >= 1" }
-            ensure(pageSize <= 100) { "Page size must be <= 1000" }
+        private const val DEFAULT_PAGE_SIZE = 20
+        private const val DEFAULT_MIN_PAGE = 1
+        private const val DEFAULT_MAX_PAGE_SIZE = 1
+        fun create(page: Int, pageSize: Int?) = either {
+            val pageSize = pageSize ?: DEFAULT_PAGE_SIZE
+            ensure(page >= DEFAULT_MIN_PAGE) { "Page must be >= 1" }
+            ensure(pageSize >= DEFAULT_MIN_PAGE) { "Page size must be >= 1" }
+            ensure(pageSize <= DEFAULT_MAX_PAGE_SIZE) { "Page size must be <= 1000" }
             PageRequest(page, pageSize)
         }
     }
@@ -24,12 +24,7 @@ data class PageRequest(
 }
 
 @Serializable
-data class Page<T>(
-    val items: List<T>,
-    val totalCount: Long,
-    val page: Int,
-    val pageSize: Int
-) {
+data class Page<T>(val items: List<T>, val totalCount: Long, val page: Int, val pageSize: Int) {
     val totalPages: Int = ceil(totalCount.toDouble() / pageSize).toInt()
     val hasNext: Boolean = page < totalPages
     val hasPrevious: Boolean = page > 1

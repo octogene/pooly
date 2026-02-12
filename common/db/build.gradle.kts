@@ -30,8 +30,7 @@ dependencies {
     implementation(libs.arrow.core)
 }
 
-// TODO: Build a migration plugin
-//  or wait for EXPOSED-755 (Gradle migration plugin)
+//  EXPOSED-755 (Gradle migration plugin) should make this removable
 tasks.register<JavaExec>("generateMigrationScript") {
     group = "application"
     description = "Generate a migration script in the path src/main/resources/migrations"

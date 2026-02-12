@@ -1,23 +1,26 @@
 package dev.octogene.pooly.common.db.table
 
 import dev.octogene.pooly.common.db.ADDRESS_LENGTH
-import org.jetbrains.exposed.v1.core.Column
+import dev.octogene.pooly.common.db.table.Wallets.userId
+import org.jetbrains.exposed.v1.core.dao.id.CompositeID
+import org.jetbrains.exposed.v1.core.dao.id.CompositeIdTable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
-import org.jetbrains.exposed.v1.core.dao.id.IdTable
-import org.jetbrains.exposed.v1.dao.Entity
+import org.jetbrains.exposed.v1.dao.CompositeEntity
 import org.jetbrains.exposed.v1.dao.EntityClass
 import org.jetbrains.exposed.v1.datetime.timestamp
 
-object Wallets : IdTable<String>("wallet_addresses") {
-    override val id: Column<EntityID<String>> = varchar("address", ADDRESS_LENGTH).entityId()
-    override val primaryKey = PrimaryKey(id)
+object Wallets : CompositeIdTable("wallet_addresses") {
+    val address = varchar("address", ADDRESS_LENGTH).entityId()
     val createdAt = timestamp("created_at")
-    val userId = long("user_id").references(Users.id)
+    val userId = long("user_id").references(Users.id).entityId()
+
+    override val primaryKey = PrimaryKey(userId, address)
 }
 
-class WalletEntity(id: EntityID<String>) : Entity<String>(id) {
-    companion object : EntityClass<String, WalletEntity>(Wallets)
+class WalletEntity(id: EntityID<CompositeID>) : CompositeEntity(id) {
+    companion object : EntityClass<CompositeID, WalletEntity>(Wallets)
 
+    var address by Wallets.address
     var createdAt by Wallets.createdAt
     var userId by Wallets.userId
 }

@@ -21,15 +21,12 @@ interface VaultRepository {
     suspend fun getVaultFromAddress(address: String): Either<RepositoryError, Vault>
     suspend fun getVaultsFromAddress(addresses: Iterable<String>): Either<RepositoryError, List<Vault>>
     suspend fun findUnknownVaults(expectedVaultAddresses: List<String>): Either<RepositoryError, List<String>>
-    suspend fun insertVaults(
-        vaults: List<Vault>,
-        network: ChainNetwork
-    ): Either<RepositoryError, Unit>
+    suspend fun insertVaults(vaults: List<Vault>, network: ChainNetwork): Either<RepositoryError, Unit>
 }
 
 internal class VaultRepositoryImpl(
     private val database: Database,
-    private val logger: Logger = LoggerFactory.getLogger(VaultRepository::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(VaultRepository::class.java),
 ) : VaultRepository {
     override suspend fun getVaultFromAddress(address: String): Either<RepositoryError, Vault> =
         suspendTransactionOrRaise(database, readOnly = true) {
@@ -39,7 +36,7 @@ internal class VaultRepositoryImpl(
                 vault.name,
                 vault.tokenSymbol,
                 vault.tokenDecimals,
-                ChainNetwork.valueOf(vault.chainNetwork)
+                ChainNetwork.valueOf(vault.chainNetwork),
             )
         }
 
@@ -51,26 +48,24 @@ internal class VaultRepositoryImpl(
                     vault.name,
                     vault.tokenSymbol,
                     vault.tokenDecimals,
-                    ChainNetwork.valueOf(vault.chainNetwork)
+                    ChainNetwork.valueOf(vault.chainNetwork),
                 )
             }
         }
 
-    override suspend fun findUnknownVaults(expectedVaultAddresses: List<String>): Either<RepositoryError, List<String>> =
-        suspendTransactionOrRaise(database, readOnly = true) {
-            val knownVaultIds = Vaults
-                .select(Vaults.id)
-                .where { Vaults.id inList expectedVaultAddresses }
-                .map { it[Vaults.id].value }
-                .toSet()
+    override suspend fun findUnknownVaults(
+        expectedVaultAddresses: List<String>,
+    ): Either<RepositoryError, List<String>> = suspendTransactionOrRaise(database, readOnly = true) {
+        val knownVaultIds = Vaults
+            .select(Vaults.id)
+            .where { Vaults.id inList expectedVaultAddresses }
+            .map { it[Vaults.id].value }
+            .toSet()
 
-            expectedVaultAddresses.filterNot { it in knownVaultIds }
-        }
+        expectedVaultAddresses.filterNot { it in knownVaultIds }
+    }
 
-    override suspend fun insertVaults(
-        vaults: List<Vault>,
-        network: ChainNetwork
-    ): Either<RepositoryError, Unit> =
+    override suspend fun insertVaults(vaults: List<Vault>, network: ChainNetwork): Either<RepositoryError, Unit> =
         suspendTransactionOrRaise(database) {
             if (vaults.isEmpty()) {
                 logger.debug("No vaults to insert")
@@ -80,7 +75,7 @@ internal class VaultRepositoryImpl(
             Vaults.batchInsert(
                 vaults,
                 ignore = true,
-                shouldReturnGeneratedValues = false
+                shouldReturnGeneratedValues = false,
             ) { vault ->
                 set(Vaults.id, vault.address.value)
                 set(Vaults.name, vault.name)
@@ -98,5 +93,5 @@ internal fun VaultEntity.toVault() = Vault(
     name = name,
     symbol = tokenSymbol,
     decimals = tokenDecimals,
-    network = ChainNetwork.valueOf(this.chainNetwork)
+    network = ChainNetwork.valueOf(this.chainNetwork),
 )

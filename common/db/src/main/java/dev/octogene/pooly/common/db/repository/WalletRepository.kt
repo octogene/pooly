@@ -15,71 +15,57 @@ import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
-import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import kotlin.time.Clock
 
 interface WalletRepository {
     suspend fun getAllWalletAddresses(): Either<RepositoryError, List<Address>>
-    suspend fun addWallets(
-        username: String,
-        addresses: List<Address>
-    ): Either<RepositoryError, Unit>
+    suspend fun addWallets(username: String, addresses: List<Address>): Either<RepositoryError, Unit>
 
-    suspend fun removeWallets(
-        username: String,
-        addresses: List<Address>
-    ): Either<RepositoryError, Int>
+    suspend fun removeWallets(username: String, addresses: List<Address>): Either<RepositoryError, Int>
 
     suspend fun getWalletsForUser(username: String): Either<RepositoryError, List<Address>>
 }
 
-internal class WalletRepositoryImpl(
-    private val database: Database
-) : WalletRepository {
+internal class WalletRepositoryImpl(private val database: Database) : WalletRepository {
 
-    override suspend fun getAllWalletAddresses(): Either<RepositoryError, List<Address>> =
-        Either.catch {
-            suspendTransaction(database) {
-                WalletEntity.wrapRows(Wallets.selectAll())
-                    .map { Address.unsafeFrom(it.id.value) }
-                    .toList()
+    override suspend fun getAllWalletAddresses(): Either<RepositoryError, List<Address>> = Either.catch {
+        suspendTransaction(database) {
+            WalletEntity.wrapRows(Wallets.select(Wallets.address).withDistinct(true))
+                .map { Address.unsafeFrom(it.address.value) }
+                .toList()
+        }
+    }.mapLeft { RepositoryError.DatabaseError(it.message ?: "Unknown error") }
+
+    override suspend fun addWallets(username: String, addresses: List<Address>): Either<RepositoryError, Unit> =
+        suspendTransactionOrRaise(database) {
+            val user = UserEntity.find { Users.username eq username }.firstOrNull()
+            ensureNotNull(user) { RepositoryError.NotFound("User", username) }
+            val createdAt = Clock.System.now()
+            Wallets.batchInsert(addresses, ignore = true) { address ->
+                set(Wallets.userId, user.id.value)
+                set(Wallets.address, address.value)
+                set(Wallets.createdAt, createdAt)
             }
-        }.mapLeft { RepositoryError.DatabaseError(it.message ?: "Unknown error") }
-
-    override suspend fun addWallets(
-        username: String,
-        addresses: List<Address>
-    ): Either<RepositoryError, Unit> = suspendTransactionOrRaise(database) {
-        val user = UserEntity.find { Users.username eq username }.firstOrNull()
-        ensureNotNull(user) { RepositoryError.NotFound("User", username) }
-        val createdAt = Clock.System.now()
-        Wallets.batchInsert(addresses, ignore = true) { address ->
-            set(Wallets.userId, user.id.value)
-            set(Wallets.id, address.value)
-            set(Wallets.createdAt, createdAt)
         }
-    }
 
-    override suspend fun removeWallets(
-        username: String,
-        addresses: List<Address>
-    ): Either<RepositoryError, Int> = suspendTransactionOrRaise(database) {
-        val user = UserEntity.find { Users.username eq username }.firstOrNull()
-        ensureNotNull(user) { RepositoryError.NotFound("User", username) }
-        Wallets.deleteWhere {
-            (Wallets.userId eq user.id.value) and (Wallets.id inList addresses.map { it.value })
+    override suspend fun removeWallets(username: String, addresses: List<Address>): Either<RepositoryError, Int> =
+        suspendTransactionOrRaise(database) {
+            val user = UserEntity.find { Users.username eq username }.firstOrNull()
+            ensureNotNull(user) { RepositoryError.NotFound("User", username) }
+            Wallets.deleteWhere {
+                (Wallets.userId eq user.id.value) and (Wallets.address inList addresses.map { it.value })
+            }
         }
-    }
 
-    override suspend fun getWalletsForUser(
-        username: String
-    ): Either<RepositoryError, List<Address>> = suspendTransactionOrRaise(database) {
-        val user = UserEntity.find { Users.username eq username }.firstOrNull()
-        ensureNotNull(user) { RepositoryError.NotFound("User", username) }
-        WalletEntity
-            .find { Wallets.userId eq userId }
-            .map { Address.unsafeFrom(it.id.value) }
-            .toList()
-    }
+    override suspend fun getWalletsForUser(username: String): Either<RepositoryError, List<Address>> =
+        suspendTransactionOrRaise(database) {
+            val user = UserEntity.find { Users.username eq username }.firstOrNull()
+            ensureNotNull(user) { RepositoryError.NotFound("User", username) }
+            WalletEntity
+                .find { Wallets.userId eq userId }
+                .map { Address.unsafeFrom(it.address.value) }
+                .toList()
+        }
 }
