@@ -27,7 +27,7 @@ class DrawsRepository(
     private val drawQueries: DrawQueries,
     private val walletQueries: WalletQueries,
     private val vaultQueries: VaultQueries,
-    private val client: PoolyApiClientImpl
+    private val client: PoolyApiClientImpl,
 ) {
 
     suspend fun updateDraws() {
@@ -45,9 +45,7 @@ class DrawsRepository(
         drawQueries.getLatestDrawForWallet(address)
     }
 
-    fun getAllDraws(): Flow<Query<GetAllDraws>> {
-        return drawQueries.getAllDraws().asFlow()
-    }
+    fun getAllDraws(): Flow<Query<GetAllDraws>> = drawQueries.getAllDraws().asFlow()
 
     fun getAllDrawsPaged(): Flow<PagingData<Prize>> {
         val pager = Pager(
@@ -59,7 +57,7 @@ class DrawsRepository(
                     context = Dispatchers.IO,
                     queryProvider = drawQueries::getAllDrawsPaged,
                 )
-            }
+            },
         )
         return pager.flow.map { pagingData ->
             pagingData.map {
@@ -73,9 +71,9 @@ class DrawsRepository(
                         symbol = it.symbol,
                         address = Address.unsafeFrom(it.vaultAddress),
                         network = it.network,
-                        // TODO: Add decimals to db
-                        decimals = 18
-                    )
+                        // Narrowing is ok as decimals is always a very small number (e.g. 18)
+                        decimals = it.decimals.toInt(),
+                    ),
                 )
             }
         }
