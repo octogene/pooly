@@ -26,7 +26,7 @@ fun main() {
         url = dbUrl,
         driver = "org.postgresql.Driver",
         user = dbUser,
-        password = dbPassword
+        password = dbPassword,
     )
 
     transaction(postgresql) {
@@ -52,7 +52,7 @@ fun generateMigrationScript(name: String? = null, tableNames: List<String>) {
             year()
             monthNumber()
             day()
-        }
+        },
     )
 
     val migrationFiles =
@@ -60,8 +60,8 @@ fun generateMigrationScript(name: String? = null, tableNames: List<String>) {
     val nextSequence = migrationFiles.size + 1
 
     MigrationUtils.generateMigrationScript(
-        *tables,
         scriptDirectory = MIGRATIONS_DIRECTORY,
         scriptName = "V$timestamp.${nextSequence}__$name",
+        tables = tables,
     )
 }

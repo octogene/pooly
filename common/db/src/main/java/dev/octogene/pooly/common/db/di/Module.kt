@@ -9,7 +9,6 @@ import dev.octogene.pooly.common.db.repository.VaultRepositoryImpl
 import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.common.db.repository.WalletRepositoryImpl
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -18,7 +17,7 @@ val repositoriesModule = module {
         PrizeRepositoryImpl(database = get())
     }
     single<UserRepository> {
-        UserRepositoryImpl(database = get(), passwordHasher = get())
+        UserRepositoryImpl(database = get())
     }
     single<VaultRepository> {
         VaultRepositoryImpl(database = get())

@@ -50,8 +50,8 @@ internal fun PrizeEntity.toPrize(): Prize = Prize(
         name = vault.name,
         symbol = vault.tokenSymbol,
         decimals = vault.tokenDecimals,
-        network = ChainNetwork.valueOf(network)
-    )
+        network = ChainNetwork.valueOf(network),
+    ),
 )
 
 internal fun PrizeEntity.toPrize(vault: Vault): Prize = Prize(
@@ -59,5 +59,5 @@ internal fun PrizeEntity.toPrize(vault: Vault): Prize = Prize(
     timestamp = timestamp,
     winner = Address.unsafeFrom(winnerAddress),
     transactionHash = transactionHash,
-    vault = vault
+    vault = vault,
 )
