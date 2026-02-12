@@ -7,6 +7,7 @@ import dev.octogene.pooly.common.db.table.UserEntity
 import dev.octogene.pooly.common.db.table.Users
 import dev.octogene.pooly.common.db.table.WalletEntity
 import dev.octogene.pooly.common.db.table.Wallets
+import dev.octogene.pooly.common.db.table.Wallets.address
 import dev.octogene.pooly.common.db.table.Wallets.userId
 import dev.octogene.pooly.core.Address
 import org.jetbrains.exposed.v1.core.and
@@ -32,8 +33,8 @@ internal class WalletRepositoryImpl(private val database: Database) : WalletRepo
 
     override suspend fun getAllWalletAddresses(): Either<RepositoryError, List<Address>> = Either.catch {
         suspendTransaction(database) {
-            WalletEntity.wrapRows(Wallets.select(Wallets.address).withDistinct(true))
-                .map { Address.unsafeFrom(it.address.value) }
+            Wallets.select(Wallets.address).withDistinct(true)
+                .map { Address.unsafeFrom(it[Wallets.address].value) }
                 .toList()
         }
     }.mapLeft { RepositoryError.DatabaseError(it.message ?: "Unknown error") }
