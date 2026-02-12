@@ -1,6 +1,6 @@
 
 ### Create user
-POST {{base_url}}/register
+POST {{base_url}}/users
 Content-Type: application/json
 Accept: application/json
 
@@ -11,7 +11,7 @@ Accept: application/json
 }
 
 ### Invalid create user body
-POST {{base_url}}/register
+POST {{base_url}}/users/me
 Content-Type: application/json
 Accept: application/json
 
@@ -21,7 +21,7 @@ Accept: application/json
 }
 
 ### Login
-POST {{base_url}}/login
+POST {{base_url}}/auth/tokens
 Content-Type: application/json
 Accept: application/json
 
@@ -35,7 +35,7 @@ Accept: application/json
 %}
 
 ### Add wallet
-POST {{base_url}}/wallets
+POST {{base_url}}/users/me/wallets
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -46,13 +46,61 @@ Authorization: Bearer {{auth_token}}
   "0x800c0ee9e3f8ea44b6f240ebd68bba5745ce9013"
 ]
 
+### Delete wallet
+DELETE {{base_url}}/users/me/wallets
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+[
+  "0x800c0ee9e3f8ea44b6f240ebd68bba5745ce9013"
+]
+
 ### Get wallets
-GET {{base_url}}/wallets
+GET {{base_url}}/users/me/wallets
 Accept: application/json
 Authorization: Bearer {{auth_token}}
 
 
 ### Get prizes
-GET {{base_url}}/prizes
+GET {{base_url}}/users/me/prizes
 Accept: application/json
 Authorization: Bearer {{auth_token}}
+
+### Admin ###
+
+### Clear cache
+DELETE {{base_url}}/admin/cache
+Accept: application/json
+X-Api-Key: {{admin_api_key}}
+
+### Create admin account
+POST {{base_url}}/admin/users
+Content-Type: application/json
+Accept: application/json
+X-Api-Key: {{admin_api_key}}
+
+{
+  "username": "{{admin_user}}",
+  "password": "{{admin_password}}",
+  "email": "{{admin_user}}@email.com"
+}
+
+### Admin login
+POST {{base_url}}/auth/tokens
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{admin_user}}",
+  "password": "{{admin_password}}"
+}
+
+> {%
+ client.global.set("auth_admin_token", response.body.token);
+%}
+
+### Clear cache with admin token
+DELETE {{base_url}}/admin/cache
+Accept: application/json
+Authorization: Bearer {{auth_admin_token}}

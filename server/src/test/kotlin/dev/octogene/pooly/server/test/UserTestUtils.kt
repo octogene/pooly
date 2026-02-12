@@ -10,18 +10,14 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
-suspend fun HttpClient.registerUser(
-    username: String,
-    password: String,
-    email: String
-): HttpResponse {
+suspend fun HttpClient.registerUser(username: String, password: String, email: String): HttpResponse {
     val newUserJson = RegisterUserRequest(
         username,
         password,
-        email
+        email,
     )
 
-    val response = post("/api/v1/register") {
+    val response = post("/api/v1/users/me") {
         contentType(ContentType.Application.Json)
         accept(ContentType.Application.Json)
         setBody(newUserJson)
@@ -29,13 +25,10 @@ suspend fun HttpClient.registerUser(
     return response
 }
 
-suspend fun HttpClient.loginUser(
-    username: String,
-    password: String
-): HttpResponse {
+suspend fun HttpClient.loginUser(username: String, password: String): HttpResponse {
     val credentialsJson = LoginUserRequest(username, password)
 
-    return post("/api/v1/login") {
+    return post("/api/v1/auth/tokens") {
         contentType(ContentType.Application.Json)
         accept(ContentType.Application.Json)
         setBody(credentialsJson)

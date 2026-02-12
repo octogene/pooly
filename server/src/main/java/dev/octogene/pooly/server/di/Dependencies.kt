@@ -26,7 +26,6 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-
 val persistenceModule = { dbConfig: DbConfig ->
     module {
         single<HikariDataSource> {
@@ -53,7 +52,7 @@ val persistenceModule = { dbConfig: DbConfig ->
             MigrationManager(
                 dataSource = get(),
                 migrationsLocation = "migrations/",
-                baselineOnMigrate = false
+                baselineOnMigrate = false,
             )
         }
 
@@ -69,12 +68,13 @@ val controllerModule = { cacheType: CacheType ->
                 cacheClient = get(named(cacheType)),
                 prizeRepository = get(),
                 walletRepository = get(),
-                userRepository = get()
+                userRepository = get(),
             )
         }
         single {
             AdminController(
-                cacheClient = get(named(cacheType))
+                cacheClient = get(named(cacheType)),
+                authenticationService = get()
             )
         }
     }
@@ -87,7 +87,7 @@ val securityModule = { config: SecurityConfig ->
                 userRepository = get(),
                 passwordHasher = get(),
                 passwordVerifier = get(),
-                jwtManager = get()
+                jwtManager = get(),
             )
         }
 
@@ -96,7 +96,7 @@ val securityModule = { config: SecurityConfig ->
                 config.hashing.argon2Type,
                 config.hashing.iterations,
                 config.hashing.memory,
-                config.hashing.parallelism
+                config.hashing.parallelism,
             )
         } binds arrayOf(PasswordHasher::class, PasswordVerifier::class)
 
@@ -111,7 +111,7 @@ val securityModule = { config: SecurityConfig ->
                     .require(algorithm)
                     .withAudience(config.jwt.audience)
                     .withIssuer(config.jwt.issuer)
-                    .build()
+                    .build(),
             )
         } bind JWTVerifier::class
     }

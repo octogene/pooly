@@ -22,7 +22,7 @@ val testUserModule = { users: List<RegisterUserRequest>, prizes: List<Prize>, ca
                     it.username,
                     it.email,
                     passwordHasher.hash(it.password),
-                    UserRole.USER
+                    UserRole.USER,
                 )
             }.toMutableMap()
             FakeUserRepository(userByUsername)

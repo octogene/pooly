@@ -10,8 +10,9 @@ class Argon2PasswordHasher(
     argon2Type: String,
     private val iterations: Int,
     private val memory: Int,
-    private val parallelism: Int
-): PasswordHasher, PasswordVerifier {
+    private val parallelism: Int,
+) : PasswordHasher,
+    PasswordVerifier {
     private val argon2 = Argon2Factory.create(getType(argon2Type))
 
     override fun hash(password: String): PasswordHash {
@@ -24,16 +25,12 @@ class Argon2PasswordHasher(
         return PasswordHash(hash)
     }
 
-    override fun verify(plain: String, hash: PasswordHash): Boolean {
-        return try {
-            argon2.verify(hash.content, plain.toByteArray())
-        } catch (e: Exception) {
-            false
-        }
+    override fun verify(plain: String, hash: PasswordHash): Boolean = try {
+        argon2.verify(hash.content, plain.toByteArray())
+    } catch (e: Exception) {
+        false
     }
 
-    private fun getType(type: String): Argon2Types {
-        return Argon2Types.entries.find { it.name == type }
-            ?: Argon2Types.ARGON2id
-    }
+    private fun getType(type: String): Argon2Types = Argon2Types.entries.find { it.name == type }
+        ?: Argon2Types.ARGON2id
 }

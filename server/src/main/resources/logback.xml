@@ -24,4 +24,5 @@
     <logger name="io.netty" level="info" />
     <logger name="okhttp3.internal.concurrent.TaskRunner" level="error" />
     <logger name="io.opentelemetry.javaagent" level="error" />
+    <logger name="com.github.jknack.handlebars.internal.HbsParserFactory" level="error" />
 </configuration>

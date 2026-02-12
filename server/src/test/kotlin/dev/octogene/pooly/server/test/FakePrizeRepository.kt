@@ -8,20 +8,17 @@ import dev.octogene.pooly.common.db.repository.RepositoryError
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.core.Prize
 
-class FakePrizeRepository(
-    private val prizes: List<Prize> = emptyList()
-): PrizeRepository {
+class FakePrizeRepository(private val prizes: List<Prize> = emptyList()) : PrizeRepository {
     override suspend fun insertPrizes(prizes: List<Prize>): Either<RepositoryError, Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getAllPrizes(wallets: List<Address>): Either<RepositoryError.DatabaseError, List<Prize>> {
-        return Either.Right(prizes)
-    }
+    override suspend fun getAllPrizes(wallets: List<Address>): Either<RepositoryError.DatabaseError, List<Prize>> =
+        Either.Right(prizes)
 
     override suspend fun getAllPrizesPaged(
         wallets: List<Address>,
-        pageRequest: PageRequest
+        pageRequest: PageRequest,
     ): Either<RepositoryError, Page<Prize>> {
         TODO("Not yet implemented")
     }

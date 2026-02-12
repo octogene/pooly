@@ -24,7 +24,7 @@ class PrizeController(
     private val prizeRepository: PrizeRepository,
     private val walletRepository: WalletRepository,
     private val userRepository: UserRepository,
-    private val defaultCacheExpirationAt: Instant = getNextDayAt(LocalTime(21, 0))
+    private val defaultCacheExpirationAt: Instant = getNextDayAt(LocalTime(21, 0)),
 ) {
     context(_: Raise<Response>)
     suspend fun getAllPrizes(username: String): Response {
@@ -45,7 +45,7 @@ class PrizeController(
                                 cacheClient.set(
                                     cacheKey,
                                     prizes,
-                                    defaultCacheExpirationAt
+                                    defaultCacheExpirationAt,
                                 )
                             }
                             Response(HttpStatusCode.OK, prizes)
@@ -53,15 +53,12 @@ class PrizeController(
                 },
                 ifSome = {
                     Response(HttpStatusCode.OK, it)
-                })
+                },
+            )
     }
 
     context(_: Raise<Response>)
-    suspend fun getAllPrizesByPage(
-        username: String,
-        page: Int,
-        pageSize: Int?
-    ): Response {
+    suspend fun getAllPrizesByPage(username: String, page: Int, pageSize: Int?): Response {
         val user = userRepository.findUserByUsername(username).mapLeft {
             Response(Unauthorized, "Unknown user, credentials must be outdated")
         }.bind()

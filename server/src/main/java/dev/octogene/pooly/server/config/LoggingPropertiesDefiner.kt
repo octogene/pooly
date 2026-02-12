@@ -19,9 +19,7 @@ class LoggingPropertiesDefiner : PropertyDefinerBase() {
         setLoggingLevel()
     }
 
-    override fun getPropertyValue(): String {
-        return properties.getValue(propertyLookupKey)
-    }
+    override fun getPropertyValue(): String = properties.getValue(propertyLookupKey)
 
     private fun setLoggingLevel() {
         val config = ApplicationConfig("application.yaml")

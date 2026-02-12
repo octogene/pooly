@@ -11,22 +11,25 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
 
 @ExperimentalSerializationApi
-class DynamicLookupSerializer: KSerializer<Any> {
+class DynamicLookupSerializer : KSerializer<Any> {
     override val descriptor: SerialDescriptor = ContextualSerializer(
         Any::class,
         null,
-        emptyArray()
+        emptyArray(),
     ).descriptor
 
     @OptIn(InternalSerializationApi::class)
     override fun serialize(encoder: Encoder, value: Any) {
-        when(value) {
+        when (value) {
             is ArrayList<*> -> {
                 encoder.encodeSerializableValue(ListSerializer(DynamicLookupSerializer()), value)
                 return
             }
+
             else -> {
-                val actualSerializer = encoder.serializersModule.getContextual(value::class) ?: value::class.serializer()
+                val actualSerializer = encoder.serializersModule.getContextual(
+                    value::class,
+                ) ?: value::class.serializer()
                 encoder.encodeSerializableValue(actualSerializer as KSerializer<Any>, value)
             }
         }

@@ -15,8 +15,8 @@ class JwtManager(
     private val algorithm: Algorithm,
     private val creator: JWTCreator.Builder,
     private val verifier: JWTVerifier,
-    private val expiration: Duration = 7.days
-): JWTVerifier by verifier {
+    private val expiration: Duration = 7.days,
+) : JWTVerifier by verifier {
 
     // TODO: Proper JWT generation
     fun createToken(username: String, role: UserRole): Token {
@@ -29,13 +29,10 @@ class JwtManager(
 
         return Token(
             token = token,
-            expiration = expiration
+            expiration = expiration,
         )
     }
 }
 
 @Serializable
-data class Token(
-    val token: String,
-    val expiration: Instant
-)
+data class Token(val token: String, val expiration: Instant)
