@@ -6,5 +6,5 @@ enum class ChainNetwork(val id: Long) {
     ARBITRUM(42161L),
     SCROLL(534352L),
     GNOSIS(100L),
-    WORLD(480L)
+    WORLD(480L),
 }

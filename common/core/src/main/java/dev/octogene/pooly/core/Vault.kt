@@ -8,5 +8,5 @@ data class Vault(
     val name: String,
     val symbol: String,
     val decimals: Int,
-    val network: ChainNetwork
+    val network: ChainNetwork,
 )

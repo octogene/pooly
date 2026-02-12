@@ -11,5 +11,5 @@ data class Prize(
     val timestamp: Instant,
     val winner: Address,
     val vault: Vault,
-    val transactionHash: String
+    val transactionHash: String,
 )
