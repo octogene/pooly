@@ -31,14 +31,14 @@ buildConfig {
     useKotlinOutput { internalVisibility = false }
     buildConfigField(
         "ALCHEMY_KEY",
-        gradleLocalProperties(rootProject.rootDir, providers).getProperty("alchemy.key")
+        gradleLocalProperties(rootProject.rootDir, providers).getProperty("alchemy.key"),
     )
     buildConfigField(
         "POOLY_USER",
-        gradleLocalProperties(rootProject.rootDir, providers).getProperty("pooly.user")
+        gradleLocalProperties(rootProject.rootDir, providers).getProperty("pooly.user"),
     )
     buildConfigField(
         "POOLY_PASSWORD",
-        gradleLocalProperties(rootProject.rootDir, providers).getProperty("pooly.password")
+        gradleLocalProperties(rootProject.rootDir, providers).getProperty("pooly.password"),
     )
 }

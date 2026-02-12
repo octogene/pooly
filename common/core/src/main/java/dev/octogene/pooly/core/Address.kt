@@ -24,7 +24,7 @@ value class Address private constructor(val value: String) {
             ensure(rawAddress.startsWith("0x") && rawAddress.length == ADDRESS_LENGTH) {
                 InvalidField(
                     "address",
-                    "Invalid address length"
+                    "Invalid address length",
                 )
             }
             Address(rawAddress)
