@@ -24,7 +24,7 @@ internal class InMemoryCacheClient(
     private val cacheTTL: MutableMap<String, Instant> = mutableMapOf(),
     private val json: Json = Json,
     private val cleanupInterval: Duration = 10.minutes,
-    private val logger: Logger = LoggerFactory.getLogger(InMemoryCacheClient::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(InMemoryCacheClient::class.java),
 ) : CacheClient {
     suspend fun runBackgroundCleanup() = withContext(Dispatchers.IO) {
         logger.info("Starting background cleanup")
@@ -40,10 +40,7 @@ internal class InMemoryCacheClient(
         }
     }
 
-    override suspend fun <T : Any> get(
-        key: String,
-        type: KSerializer<T>
-    ): Option<T> {
+    override suspend fun <T : Any> get(key: String, type: KSerializer<T>): Option<T> {
         logger.debug("Getting value for key {} with type {}", key, type.descriptor.serialName)
         val jsonString = cache[key] ?: return None
 
@@ -55,27 +52,17 @@ internal class InMemoryCacheClient(
                 "Error deserializing value for key '{}' to type {}: {}",
                 key,
                 type.descriptor.serialName,
-                e.message
+                e.message,
             )
             None
         }
     }
 
-    override suspend fun <T : Any> set(
-        key: String,
-        value: T,
-        ttl: Duration,
-        type: KSerializer<T>
-    ) {
+    override suspend fun <T : Any> set(key: String, value: T, ttl: Duration, type: KSerializer<T>) {
         set(key, value, Clock.System.now().plus(ttl), type)
     }
 
-    override suspend fun <T : Any> set(
-        key: String,
-        value: T,
-        expireAt: Instant,
-        type: KSerializer<T>
-    ) {
+    override suspend fun <T : Any> set(key: String, value: T, expireAt: Instant, type: KSerializer<T>) {
         val jsonString = try {
             json.encodeToString(type, value)
         } catch (e: SerializationException) {
@@ -83,7 +70,7 @@ internal class InMemoryCacheClient(
                 "Error serializing value for key {} with type {}: {}",
                 key,
                 value::class.simpleName,
-                e.message
+                e.message,
             )
             return
         }

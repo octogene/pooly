@@ -18,13 +18,10 @@ val cacheModule = { config: CacheConfig ->
             it?.close()
         }
         single<CacheClient>(named(CacheType.VALKEY)) {
-            ValkeyCacheClient(get(), get(), config.defaultTTL)
+            ValkeyCacheClient(get(), get())
         }
         single<CacheClient>(named(CacheType.INMEMORY)) {
-            InMemoryCacheClient(
-                defaultTTL = config.defaultTTL,
-                cleanupInterval = config.cleanupInterval
-            )
+            InMemoryCacheClient(cleanupInterval = config.cleanupInterval,)
         }
     }
 }

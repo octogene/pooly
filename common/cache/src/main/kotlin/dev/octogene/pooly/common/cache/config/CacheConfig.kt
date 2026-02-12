@@ -10,5 +10,5 @@ data class CacheConfig(
     val host: String,
     val port: Int,
     val defaultTTL: Duration,
-    val cleanupInterval: Duration
+    val cleanupInterval: Duration,
 )

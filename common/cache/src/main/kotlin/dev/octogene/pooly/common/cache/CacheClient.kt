@@ -20,7 +20,7 @@ interface CacheClient {
     suspend fun clearByPattern(pattern: String): Either<Throwable, Long>
 
     suspend fun initialize() = withContext(Dispatchers.IO) {
-        when (this) {
+        when (this@CacheClient) {
             is InMemoryCacheClient -> launch { runBackgroundCleanup() }
             else -> {}
         }
@@ -28,9 +28,7 @@ interface CacheClient {
 }
 
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-suspend inline fun <reified T : Any> CacheClient.get(key: String): Option<T> {
-    return get(key, serializer<T>())
-}
+suspend inline fun <reified T : Any> CacheClient.get(key: String): Option<T> = get(key, serializer<T>())
 
 @OptIn(InternalSerializationApi::class)
 suspend inline fun <reified T : Any> CacheClient.set(key: String, value: T, expireAt: Instant) {
@@ -39,11 +37,7 @@ suspend inline fun <reified T : Any> CacheClient.set(key: String, value: T, expi
 }
 
 @OptIn(InternalSerializationApi::class)
-suspend inline fun <reified E : Any> CacheClient.set(
-    key: String,
-    values: List<E>,
-    expireAt: Instant
-) {
+suspend inline fun <reified E : Any> CacheClient.set(key: String, values: List<E>, expireAt: Instant) {
     val serializer = ListSerializer(E::class.serializer())
     set(key, values, expireAt, serializer)
 }
