@@ -18,8 +18,8 @@ android {
             excludes.addAll(
                 listOf(
                     "/META-INF/{AL2.0,LGPL2.1}",
-                    "/META-INF/DEPENDENCIES"
-                )
+                    "/META-INF/DEPENDENCIES",
+                ),
             )
         }
     }

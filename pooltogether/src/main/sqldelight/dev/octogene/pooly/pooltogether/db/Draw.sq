@@ -40,7 +40,8 @@ SELECT
     Draw.transactionHash,
     Vault.name,
     Vault.symbol,
-    Vault.network
+    Vault.network,
+    Vault.decimals
 FROM Draw
 INNER JOIN Vault ON Draw.vaultAddress = Vault.address
 ORDER BY Draw.timestamp DESC;
@@ -59,7 +60,8 @@ SELECT
     Draw.transactionHash,
     Vault.name,
     Vault.symbol,
-    Vault.network
+    Vault.network,
+    Vault.decimals
 FROM Draw
 INNER JOIN Vault ON Draw.vaultAddress = Vault.address
 ORDER BY Draw.timestamp DESC

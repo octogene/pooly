@@ -25,16 +25,13 @@ class PoolTogetherContainer {
         client: PoolyApiClientImpl,
         walletQueries: WalletQueries,
         drawQueries: DrawQueries,
-        vaultQueries: VaultQueries
+        vaultQueries: VaultQueries,
     ): PoolTogetherRepository = PoolTogetherRepository(client, walletQueries, vaultQueries, drawQueries)
 
     @Provides
-    fun providesPoolyApiClient(
-        drawQueries: DrawQueries,
-        httpClient: HttpClient
-    ): PoolyApiClient = PoolyApiClientImpl(
+    fun providesPoolyApiClient(drawQueries: DrawQueries, httpClient: HttpClient): PoolyApiClient = PoolyApiClientImpl(
         drawQueries = drawQueries,
-        httpClient = httpClient
+        httpClient = httpClient,
     )
 
     @Provides

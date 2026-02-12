@@ -22,32 +22,30 @@ class PoolTogetherRepository(
     private val client: PoolyApiClient,
     private val walletQueries: WalletQueries,
     private val vaultQueries: VaultQueries,
-    private val drawQueries: DrawQueries
+    private val drawQueries: DrawQueries,
 ) {
 
-    fun getAllDraws(): Flow<List<Prize>> {
-        return drawQueries.getAllDraws()
-            .asFlow()
-            .mapToList(Dispatchers.IO)
-            .map { allDraws ->
-                Logger.i { "Mapping ${allDraws.size} draws to Prize objects" }
-                allDraws.map { draws ->
-                    Prize(
-                        payout = BigInteger(draws.amount),
-                        timestamp = Instant.fromEpochSeconds(draws.timestamp),
-                        winner = Address.unsafeFrom(draws.walletAddress),
-                        transactionHash = draws.transactionHash,
-                        vault = Vault(
-                            address = Address.unsafeFrom(draws.vaultAddress),
-                            name = draws.name,
-                            symbol = draws.symbol,
-                            decimals = 18,
-                            network = draws.network
-                        )
-                    )
-                }
+    fun getAllDraws(): Flow<List<Prize>> = drawQueries.getAllDraws()
+        .asFlow()
+        .mapToList(Dispatchers.IO)
+        .map { allDraws ->
+            Logger.i { "Mapping ${allDraws.size} draws to Prize objects" }
+            allDraws.map { draws ->
+                Prize(
+                    payout = BigInteger(draws.amount),
+                    timestamp = Instant.fromEpochSeconds(draws.timestamp),
+                    winner = Address.unsafeFrom(draws.walletAddress),
+                    transactionHash = draws.transactionHash,
+                    vault = Vault(
+                        address = Address.unsafeFrom(draws.vaultAddress),
+                        name = draws.name,
+                        symbol = draws.symbol,
+                        decimals = 18,
+                        network = draws.network,
+                    ),
+                )
             }
-    }
+        }
 
     suspend fun updateAllVaults() {
         val wallets = walletQueries.getAllWallets().executeAsList().map { it.address }
@@ -61,7 +59,8 @@ class PoolTogetherRepository(
                     vault.address.value,
                     vault.name,
                     vault.symbol,
-                    vault.network
+                    vault.network,
+                    vault.decimals.toLong(),
                 )
             }
 
@@ -70,7 +69,7 @@ class PoolTogetherRepository(
                     it.winner.value,
                     it.vault.address.value,
                     it.payout.toString(),
-                    it.transactionHash
+                    it.transactionHash,
                 )
             }
         }

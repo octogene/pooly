@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 class PoolyApiClientImpl(
     private val drawQueries: DrawQueries,
     httpClient: HttpClient,
-    private val base_url: String = "http://10.0.2.2:8080/api/v1"
+    private val base_url: String = "http://10.0.2.2:8080/api/v1",
 ) : PoolyApiClient {
 
     private val poolyClient: HttpClient = httpClient.config {

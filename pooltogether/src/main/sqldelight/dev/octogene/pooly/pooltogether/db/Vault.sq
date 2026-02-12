@@ -5,13 +5,14 @@ CREATE TABLE Vault (
   name TEXT NOT NULL,
   symbol TEXT NOT NULL,
   network TEXT AS ChainNetwork NOT NULL,
+  decimals INTEGER NOT NULL,
 
   FOREIGN KEY (network) REFERENCES NetworkState(name)
   );
 
 insertVault:
-INSERT OR IGNORE INTO Vault(address, name, symbol, network)
-VALUES (?, ?, ?, ?);
+INSERT OR IGNORE INTO Vault(address, name, symbol, network, decimals)
+VALUES (?, ?, ?, ?, ?);
 
 getAllVaultsAdresses:
 SELECT address, network FROM Vault;

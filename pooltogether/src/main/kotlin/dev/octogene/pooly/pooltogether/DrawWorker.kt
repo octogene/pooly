@@ -17,16 +17,14 @@ import dev.zacsweers.metro.binding
 class DrawWorker(
     appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    val repository: PoolTogetherRepository
+    val repository: PoolTogetherRepository,
 ) : CoroutineWorker(appContext, workerParams) {
-    override suspend fun doWork(): Result {
-        return try {
-            repository.updateAllVaults()
-            Result.success()
-        } catch (e: Throwable) {
-            Logger.e { "Failed to update vaults : ${e.message}" }
-            Result.failure()
-        }
+    override suspend fun doWork(): Result = try {
+        repository.updateAllVaults()
+        Result.success()
+    } catch (e: Throwable) {
+        Logger.e { "Failed to update vaults : ${e.message}" }
+        Result.failure()
     }
 
     @WorkerKey(DrawWorker::class)
