@@ -31,7 +31,7 @@ fun main() = SuspendApp {
     startKoin {
         modules(
             repositoriesModule,
-            workerModule(config)
+            workerModule(config),
         )
     }
 

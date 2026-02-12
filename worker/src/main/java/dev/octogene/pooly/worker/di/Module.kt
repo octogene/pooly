@@ -21,7 +21,8 @@ val workerModule = { config: AppConfig ->
                     jdbcUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MYSQL;"
                     driverClassName = config.database.driver
                 } else {
-                    jdbcUrl = "jdbc:postgresql://${config.database.host}:${config.database.port}/${config.database.name}"
+                    jdbcUrl =
+                        "jdbc:postgresql://${config.database.host}:${config.database.port}/${config.database.name}"
                     driverClassName = config.database.driver
                     username = config.database.username
                     password = config.database.password
@@ -51,16 +52,8 @@ val workerModule = { config: AppConfig ->
             MigrationManager(
                 dataSource = get(),
                 migrationsLocation = "migrations/",
-                baselineOnMigrate = false
+                baselineOnMigrate = false,
             )
-        }
-
-        // Dummy
-        single<(String) -> String>(named("password-hasher")) {
-            {
-                    rawPassword ->
-                rawPassword
-            }
         }
     }
 }

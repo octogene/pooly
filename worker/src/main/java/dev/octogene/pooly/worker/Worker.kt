@@ -27,7 +27,7 @@ class Worker(
     private val prizeRepository: PrizeRepository,
     private val walletRepository: WalletRepository,
     private val checkInterval: Duration,
-    private val logger: Logger = LoggerFactory.getLogger(Worker::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(Worker::class.java),
 ) {
     private var lastCheckTimeStamp: Instant? = null
     suspend fun run() = coroutineScope {
@@ -48,10 +48,7 @@ class Worker(
         }
     }
 
-    private suspend fun syncVaultsAndPrizes(
-        newVaults: List<Vault>,
-        draws: List<GraphDraw>
-    ) = either {
+    private suspend fun syncVaultsAndPrizes(newVaults: List<Vault>, draws: List<GraphDraw>) = either {
         vaultRepository.insertVaults(newVaults, ChainNetwork.BASE).bind()
         val drawsByVaultId = draws.filter { it.vault.isNotEmpty() }.groupBy { it.vault }
         val vaultById =
@@ -68,7 +65,7 @@ class Worker(
         val draws = graphClient.getAllDraws(
             addresses = addresses.map { it.value },
             chainNetwork = ChainNetwork.BASE,
-            after = null
+            after = null,
         )
         if (draws.isNotEmpty()) {
             lastCheckTimeStamp = Clock.System.now()
@@ -84,7 +81,7 @@ class Worker(
                 logger.warn(
                     "Got {} new vaults out of {} unknown",
                     newVaults.size,
-                    unknownVaultsAddresses.size
+                    unknownVaultsAddresses.size,
                 )
             }
             newVaults
