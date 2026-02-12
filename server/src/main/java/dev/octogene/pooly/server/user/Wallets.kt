@@ -1,6 +1,7 @@
 @file:UseSerializers(
     NonEmptyListSerializer::class,
 )
+
 package dev.octogene.pooly.server.user
 
 import arrow.core.NonEmptyList

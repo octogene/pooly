@@ -42,9 +42,9 @@ class PrizesRouteTest {
                             decimals = 18,
                             network = ChainNetwork.BASE,
                         ),
-                        transactionHash = "0x111"
-                    )
-                )
+                        transactionHash = "0x111",
+                    ),
+                ),
             )
         }
         val client = createClient { install(ContentNegotiation) { json() } }
@@ -52,7 +52,7 @@ class PrizesRouteTest {
         val loginResponse =
             client.loginUser("testuser", "password").body<Token>()
 
-        val prizesResponse = client.get("/api/v1/prizes") {
+        val prizesResponse = client.get("/api/v1/users/me/prizes") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             header(HttpHeaders.Authorization, "Bearer ${loginResponse.token}")
@@ -62,5 +62,4 @@ class PrizesRouteTest {
         val prizes = prizesResponse.body<List<Prize>>()
         assertEquals(1, prizes.size)
     }
-
 }

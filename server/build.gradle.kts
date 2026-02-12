@@ -30,10 +30,10 @@ application {
         "-XX:+UseCompactObjectHeaders",
         "-XX:+PrintFlagsFinal",
         "-XX:StartFlightRecording:" +
-                "jdk.SafepointLatency#enabled=true, + " +
-                "jdk.CPUTimeSample#enabled=true," +
-                "jdk.CPUTimeSample#throttle=500/s," +
-                "filename=pooly.jfr"
+            "jdk.SafepointLatency#enabled=true, + " +
+            "jdk.CPUTimeSample#enabled=true," +
+            "jdk.CPUTimeSample#throttle=500/s," +
+            "filename=pooly.jfr",
     )
 }
 
@@ -69,8 +69,8 @@ ktor {
 
         val javaToolOptions =
             application.applicationDefaultJvmArgs +
-                    "-javaagent:/extras/opentelemetry-javaagent.jar" +
-                    "-javaagent:/extras/pyroscope.jar"
+                "-javaagent:/extras/opentelemetry-javaagent.jar" +
+                "-javaagent:/extras/pyroscope.jar"
 
         val pyroscope = dockerCompose.servicesInfos["pyroscope"]?.host ?: "pyroscope"
         val loki = dockerCompose.servicesInfos["loki"]?.host ?: "loki"
@@ -83,7 +83,7 @@ ktor {
         environmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", "http://$otel:4318")
         environmentVariable(
             "OTEL_RESOURCE_ATTRIBUTES",
-            "service.namespace=pooly,service.name=pooly"
+            "service.namespace=pooly,service.name=pooly",
         )
         environmentVariable("PYROSCOPE_APPLICATION_NAME", "dev.octogene.pooly")
         environmentVariable("PYROSCOPE_SERVER_ADDRESS", "http://$pyroscope:4040")
@@ -138,7 +138,6 @@ dependencies {
     testImplementation(libs.kotlin.testJunit)
     testImplementation(libs.kotest.core)
     testImplementation(libs.kotest.extensions.ktor)
-
 }
 
 tasks.named("setupJibLocal") {
@@ -177,7 +176,7 @@ dockerCompose {
         "loki",
         "pyroscope",
         "prometheus",
-        "tempo"
+        "tempo",
     )
 }
 
@@ -185,4 +184,3 @@ dockerCompose {
 tasks.filter { it.name in setOf("jibDockerBuild", "jibBuildTar", "jib", "runDocker") }.onEach {
     it.notCompatibleWithConfigurationCache("Jib & runDocker are not compatible with configuration cache")
 }
-

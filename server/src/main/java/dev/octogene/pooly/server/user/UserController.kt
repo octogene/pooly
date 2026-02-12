@@ -9,6 +9,7 @@ import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.server.model.mapToResponse
 import dev.octogene.pooly.server.security.AuthenticationService
+import io.ktor.http.HttpStatusCode.Companion.Accepted
 import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
@@ -16,21 +17,20 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class UserController(
-    private val commonUserRepository: UserRepository,
+    private val userRepository: UserRepository,
     private val walletRepository: WalletRepository,
-    private val authenticationService: AuthenticationService
+    private val authenticationService: AuthenticationService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(UserController::class.java)
 
     context(_: Raise<Response>)
-    suspend fun createUser(name: String, email: String, password: String): Response {
-        return authenticationService.register(name, email, password)
+    suspend fun createUser(name: String, email: String, password: String): Response =
+        authenticationService.register(name, email, password)
             .map { Response(Created, "User $name created") }
             .mapLeft {
                 logger.error("Error creating user {} : {}", name, it)
                 mapToResponse(it)
             }.bind()
-    }
 
     context(_: Raise<Response>)
     suspend fun login(credential: LoginUserRequest): Response {
@@ -42,8 +42,16 @@ class UserController(
     }
 
     context(_: Raise<Response>)
+    suspend fun removeUser(username: String): Response {
+        authenticationService.removeUser(username).mapLeft {
+            mapToResponse(it)
+        }.bind()
+        return Response(Accepted)
+    }
+
+    context(_: Raise<Response>)
     suspend fun addWallets(username: String, rawAddresses: List<String>): Response {
-        val user = commonUserRepository.findUserByUsername(username).mapLeft {
+        val user = userRepository.findUserByUsername(username).mapLeft {
             Response(Unauthorized, "Unknown user, credentials must be outdated")
         }.bind()
         val addresses = rawAddresses.map { rawAddress ->
@@ -56,7 +64,7 @@ class UserController(
 
     context(_: Raise<Response>)
     suspend fun removeWallets(username: String, rawAddresses: List<String>): Response {
-        val user = commonUserRepository.findUserByUsername(username).mapLeft {
+        val user = userRepository.findUserByUsername(username).mapLeft {
             Response(Unauthorized, "Unknown user, credentials must be outdated")
         }.bind()
         val addresses = rawAddresses.map { rawAddress ->
@@ -69,7 +77,7 @@ class UserController(
 
     context(_: Raise<Response>)
     suspend fun getWallets(username: String): Response {
-        val user = commonUserRepository.findUserByUsername(username).mapLeft {
+        val user = userRepository.findUserByUsername(username).mapLeft {
             Response(Unauthorized, "Unknown user, credentials must be outdated")
         }.bind()
         return walletRepository.getWalletsForUser(user.username)

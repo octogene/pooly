@@ -18,7 +18,6 @@ import io.ktor.server.testing.testApplication
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
 class UsersRouteTest {
 
     @Test
@@ -27,7 +26,6 @@ class UsersRouteTest {
             testApp(testAppConfig)
         }
         val client = createClient { install(ContentNegotiation) { json() } }
-
 
         val response = client.registerUser("testUser", "password", "test@example.com")
 
@@ -57,7 +55,7 @@ class UsersRouteTest {
         application {
             testApp(
                 testAppConfig,
-                listOf(RegisterUserRequest("testuser", "password", "test@example.com"))
+                listOf(RegisterUserRequest("testuser", "password", "test@example.com")),
             )
         }
         val client = createClient { install(ContentNegotiation) { json() } }
@@ -71,7 +69,7 @@ class UsersRouteTest {
             ]
         """.trimIndent()
 
-        val walletsResponse = client.post("/api/v1/wallets") {
+        val walletsResponse = client.post("/api/v1/users/me/wallets") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             header(HttpHeaders.Authorization, "Bearer ${loginResponse.token}")
@@ -86,7 +84,7 @@ class UsersRouteTest {
         application {
             testApp(
                 testAppConfig,
-                listOf(RegisterUserRequest("testuser", "password", "test@example.com"))
+                listOf(RegisterUserRequest("testuser", "password", "test@example.com")),
             )
         }
         val client = createClient { install(ContentNegotiation) { json() } }
@@ -99,7 +97,7 @@ class UsersRouteTest {
             ]
         """.trimIndent()
 
-        val walletsResponse = client.post("/api/v1/wallets") {
+        val walletsResponse = client.post("/api/v1/users/me/wallets") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             header(HttpHeaders.Authorization, "Bearer ${loginResponse.token}")

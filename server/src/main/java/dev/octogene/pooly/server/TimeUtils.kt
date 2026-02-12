@@ -13,7 +13,7 @@ import kotlin.time.Instant
 fun getNextDayAt(
     time: LocalTime = LocalTime(0, 1),
     currentInstant: Instant = Clock.System.now(),
-    timeZone: TimeZone = TimeZone.UTC
+    timeZone: TimeZone = TimeZone.UTC,
 ): Instant {
     val todayLocalDate = currentInstant.toLocalDateTime(timeZone).date
     val nextDayLocalDate = todayLocalDate.plus(1, DateTimeUnit.DAY)

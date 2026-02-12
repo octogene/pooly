@@ -87,11 +87,21 @@ fun Application.app(config: AppConfig) {
                 }
             }
         }
+        jwt("auth-admin-jwt") {
+            realm = "Access to pooly application"
+            verifier(jwtVerifier)
+            validate { credential ->
+                if (credential.payload.getClaim("role").asString().lowercase() == "admin") {
+                    credential.payload.getClaim("username").asString()?.let {
+                        JWTPrincipal(credential.payload)
+                    }
+                }
+            }
+        }
         apiKey("auth-admin") {
             validate { keyFromHeader ->
                 // TODO: Use a DB
                 val expectedApiKey = config.security.apikey
-                application.environment.log.error("Key from admin $expectedApiKey")
                 keyFromHeader
                     .takeIf { it == expectedApiKey }
                     ?.let { ApiKeyPrincipal(keyFromHeader) }
@@ -101,7 +111,6 @@ fun Application.app(config: AppConfig) {
 
     routing()
     metrics(config.metrics)
-
 
     install(ContentNegotiation) {
         json()
@@ -119,7 +128,7 @@ fun Application.dependencies(config: AppConfig) {
             cacheModule(config.cache),
             repositoriesModule,
             controllerModule(config.cache.type),
-            securityModule(config.security)
+            securityModule(config.security),
         )
     }
 }
@@ -148,7 +157,7 @@ fun Application.routing() {
                 info = OpenApiInfo(
                     title = "Pooly API",
                     version = "1.0.0",
-                    description = "A PoolTogether prize checker API for the Pooly app"
+                    description = "A PoolTogether prize checker API for the Pooly app",
                 )
             }
             usersRoute()

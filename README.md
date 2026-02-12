@@ -96,6 +96,7 @@ add:
   "local": {
     "user": "YOUR-USERNAME",
     "password": "YOUR-PASSWORD"
+    "admin_api_key": "DEFAULT-ADMIN-API-KEY"
   }
 }
 ``

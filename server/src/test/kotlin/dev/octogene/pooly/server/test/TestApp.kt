@@ -34,7 +34,7 @@ import kotlin.time.Duration.Companion.seconds
 fun Application.testApp(
     config: AppConfig,
     users: List<RegisterUserRequest> = emptyList(),
-    prizes: List<Prize> = emptyList()
+    prizes: List<Prize> = emptyList(),
 ) {
     install(Koin) {
         slf4jLogger()
@@ -42,7 +42,7 @@ fun Application.testApp(
             persistenceModule(config.database),
             cacheModule(config.cache),
             testUserModule(users, prizes, config.cache.type),
-            securityModule(config.security)
+            securityModule(config.security),
         )
     }
 
@@ -83,18 +83,18 @@ val testAppConfig = AppConfig(
         name = "pooly_db",
         driver = "org.h2.Driver",
         username = "pooly",
-        password = "pooly"
+        password = "pooly",
     ),
     security = SecurityConfig(
         jwt = JwtConfig("test", "octogene.dev", "pooly-api", 10.seconds),
         hashing = HashingConfig("Argon2id", 2, 20000, 1),
-        apikey = "admin_api_key"
+        apikey = "admin_api_key",
     ),
     cache = CacheConfig(
         type = CacheType.INMEMORY,
         host = "localhost",
         port = 5437,
         defaultTTL = 2.minutes,
-        cleanupInterval = 1.minutes
-    )
+        cleanupInterval = 1.minutes,
+    ),
 )
