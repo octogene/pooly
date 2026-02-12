@@ -17,18 +17,15 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import sun.jvm.hotspot.HelloWorld.e
 import kotlin.time.Clock
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
 internal class ValkeyCacheClient(
     private val lettuceClient: RedisClient,
     private val json: Json,
-    val defaultTTL: Duration = 10.minutes,
-    val logger: Logger = LoggerFactory.getLogger(ValkeyCacheClient::class.java)
+    val logger: Logger = LoggerFactory.getLogger(ValkeyCacheClient::class.java),
 ) : CacheClient {
 
     private val connection = lettuceClient.connect()
@@ -49,28 +46,18 @@ internal class ValkeyCacheClient(
         }
     }
 
-    override suspend fun <T : Any> set(
-        key: String,
-        value: T,
-        ttl: Duration,
-        type: KSerializer<T>
-    ) {
+    override suspend fun <T : Any> set(key: String, value: T, ttl: Duration, type: KSerializer<T>) {
         set(key, value, Clock.System.now().plus(ttl), type)
     }
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
-    override suspend fun <T : Any> set(
-        key: String,
-        value: T,
-        expireAt: Instant,
-        type: KSerializer<T>
-    ) {
+    override suspend fun <T : Any> set(key: String, value: T, expireAt: Instant, type: KSerializer<T>) {
         logger.debug("Setting value for key {} (expireAt: {})", key, expireAt)
         try {
             connection.sync().set(
                 key,
                 json.encodeToString(serializer = type, value),
-                SetArgs.Builder.exAt(expireAt.toJavaInstant())
+                SetArgs.Builder.exAt(expireAt.toJavaInstant()),
             )
         } catch (error: RedisException) {
             logger.error("Failed to set $key: {}", error.message)
