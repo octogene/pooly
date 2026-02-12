@@ -30,7 +30,7 @@ private fun Project.setupDetekt() {
             parallel.set(true)
             buildUponDefaultConfig.set(true)
             config.from(file("$rootDir/config/detekt.yml"))
-            baseline.set(file("${rootProject.rootDir}/config/baseline.xml"))
+            baseline.set(file("$rootDir/config/baseline.xml"))
         }
 
         tasks.register("detektAll") {
@@ -41,6 +41,7 @@ private fun Project.setupDetekt() {
         tasks.register<Detekt>("detektFormat") {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             config.from(file("$rootDir/config/detekt.yml"))
+            baseline.set(file("$rootDir/config/baseline.xml"))
             buildUponDefaultConfig.set(true)
             autoCorrect.set(true)
         }

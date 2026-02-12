@@ -1,5 +1,13 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
-  <ManuallySuppressedIssues/>
-  <CurrentIssues/>
+  <ManuallySuppressedIssues>
+    <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.ARBITRUM$42161L</ID>
+    <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.BASE$8453L</ID>
+    <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.GNOSIS$100L</ID>
+    <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.OPTIMISM$10L</ID>
+    <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.SCROLL$534352L</ID>
+    <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.WORLD$480L</ID>
+  </ManuallySuppressedIssues>
+  <CurrentIssues>
+  </CurrentIssues>
 </SmellBaseline>
