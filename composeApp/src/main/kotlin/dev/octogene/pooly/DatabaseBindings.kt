@@ -25,9 +25,9 @@ class DatabaseBindings {
     fun provideDatabase(sqlDriver: SqlDriver): Database = Database(
         sqlDriver,
         NetworkStateAdapter = NetworkState.Adapter(
-            nameAdapter = EnumColumnAdapter<ChainNetwork>()
+            nameAdapter = EnumColumnAdapter<ChainNetwork>(),
         ),
-        VaultAdapter = Vault.Adapter(networkAdapter = EnumColumnAdapter<ChainNetwork>())
+        VaultAdapter = Vault.Adapter(networkAdapter = EnumColumnAdapter<ChainNetwork>()),
     )
 
     @Provides
@@ -35,18 +35,14 @@ class DatabaseBindings {
         AndroidSqliteDriver(Database.Schema, context, "pooly.db")
 
     @Provides
-    fun provideNetworkStateQueries(database: Database): NetworkStateQueries =
-        database.networkStateQueries
+    fun provideNetworkStateQueries(database: Database): NetworkStateQueries = database.networkStateQueries
 
     @Provides
-    fun provideVaultQueries(database: Database): VaultQueries =
-        database.vaultQueries
+    fun provideVaultQueries(database: Database): VaultQueries = database.vaultQueries
 
     @Provides
-    fun provideDrawQueries(database: Database): DrawQueries =
-        database.drawQueries
+    fun provideDrawQueries(database: Database): DrawQueries = database.drawQueries
 
     @Provides
-    fun provideWalletQueries(database: Database): WalletQueries =
-        database.walletQueries
+    fun provideWalletQueries(database: Database): WalletQueries = database.walletQueries
 }

@@ -39,10 +39,7 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-private class Destination(
-    val name: String,
-    val ui: @Composable () -> Unit
-)
+private class Destination(val name: String, val ui: @Composable () -> Unit)
 
 private class Heading(val name: String)
 
@@ -57,15 +54,13 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
             topBar = {
                 CenterAlignedTopAppBar(
                     title = {
-                        Text(
-                            "Navigation example",
-                        )
+                        Text("Current winnings")
                     },
                     navigationIcon = {
                         IconButton(onClick = { backStack.removeLastOrNull() }) {
                             Icon(
                                 painterResource(R.drawable.baseline_arrow_back_24),
-                                contentDescription = "Localized description"
+                                contentDescription = "Localized description",
                             )
                         }
                     },
@@ -73,16 +68,16 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
                         IconButton(
                             onClick = {
                                 backStack.add(Destination("settings") { SettingsScreen() })
-                            }
+                            },
                         ) {
                             Icon(
                                 painterResource(R.drawable.baseline_add_24),
-                                contentDescription = "Localized description"
+                                contentDescription = "Localized description",
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { innerPadding ->
             AppNavContainer(innerPadding, backStack, allDraws)
         }
@@ -93,12 +88,12 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
 private fun AppNavContainer(
     innerPadding: PaddingValues,
     backStack: SnapshotStateList<Any>,
-    draws: LazyPagingItems<Prize>
+    draws: LazyPagingItems<Prize>,
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = innerPadding.calculateTopPadding())
+            .padding(top = innerPadding.calculateTopPadding()),
     ) {
         NavDisplay(
             backStack = backStack,
@@ -119,17 +114,13 @@ private fun AppNavContainer(
                         error("Unknown route: $key")
                     }
                 }
-            }
+            },
         )
     }
 }
 
 @Composable
-private fun RootUi(
-    draws: LazyPagingItems<Prize>,
-    modifier: Modifier = Modifier,
-    onNavigate: (Destination) -> Unit
-) {
+private fun RootUi(draws: LazyPagingItems<Prize>, modifier: Modifier = Modifier, onNavigate: (Destination) -> Unit) {
     Column(
         modifier = modifier
             .safeContentPadding()
@@ -160,7 +151,7 @@ private fun RootUi(
                                     .divide(BigDecimal.TEN.pow(16))
                                     .setScale(5, RoundingMode.HALF_DOWN)
                                     .toPlainString()
-                            } ${draws[index]?.vault?.symbol}"
+                            } ${draws[index]?.vault?.symbol}",
                         )
                     }
                 }
@@ -169,7 +160,7 @@ private fun RootUi(
                     item {
                         CircularProgressIndicator(
                             modifier =
-                            Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)
+                            Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally),
                         )
                     }
                 }

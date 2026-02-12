@@ -25,8 +25,8 @@ android {
             excludes.addAll(
                 listOf(
                     "/META-INF/{AL2.0,LGPL2.1}",
-                    "/META-INF/DEPENDENCIES"
-                )
+                    "/META-INF/DEPENDENCIES",
+                ),
             )
         }
     }
@@ -41,7 +41,7 @@ android {
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -58,23 +58,19 @@ android {
 
     kotlin {
         jvmToolchain(24)
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_24
-            targetCompatibility = JavaVersion.VERSION_24
-        }
+
         compilerOptions {
             freeCompilerArgs.add("-Xexplicit-backing-fields")
         }
     }
 
-    sourceSets {
-        val main = getByName("main")
-        main.kotlin.srcDirs(file("build/generated/source/ethers/main/kotlin"))
+    sourceSets.named("main") {
+        kotlin.directories += "build/generated/source/ethers/main/kotlin"
     }
 
     composeCompiler {
         stabilityConfigurationFiles.add(
-            rootProject.layout.projectDirectory.file("compose_stability.conf")
+            rootProject.layout.projectDirectory.file("compose_stability.conf"),
         )
     }
 }

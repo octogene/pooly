@@ -13,13 +13,16 @@ import dev.zacsweers.metrox.android.MetroAppComponentProviders
 import dev.zacsweers.metrox.android.MetroApplication
 import java.util.concurrent.TimeUnit
 
-class PoolyApp : Application(), MetroApplication, Configuration.Provider {
+class PoolyApp :
+    Application(),
+    MetroApplication,
+    Configuration.Provider {
 
     private val appGraph by lazy {
         createGraphFactory<AppGraph.Factory>()
             .create(
                 application = this,
-                databaseBindings = DatabaseBindings()
+                databaseBindings = DatabaseBindings(),
             )
     }
 

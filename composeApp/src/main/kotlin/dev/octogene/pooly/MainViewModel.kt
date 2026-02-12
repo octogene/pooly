@@ -9,6 +9,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -18,14 +19,17 @@ import kotlinx.coroutines.flow.stateIn
 @Inject
 class MainViewModel(
     private val poolTogetherRepository: PoolTogetherRepository,
-    private val drawsRepository: DrawsRepository
+    private val drawsRepository: DrawsRepository,
 ) : ViewModel() {
     val draws: StateFlow<List<Prize>> = poolTogetherRepository.getAllDraws()
         .stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
-            emptyList()
+            emptyList(),
         )
+
+    val city: StateFlow<String>
+        field = MutableStateFlow("")
 
     val alldraws = drawsRepository.getAllDrawsPaged()
 }

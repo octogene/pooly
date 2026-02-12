@@ -45,29 +45,30 @@ private fun KotlinTarget.disableCompilations() {
     }
 }
 
-private fun KotlinTarget.isCompilationAllowed(): Boolean =
-    when (platformType) {
-        KotlinPlatformType.common -> true
-        KotlinPlatformType.jvm,
-        KotlinPlatformType.js,
-        KotlinPlatformType.androidJvm,
-        KotlinPlatformType.wasm -> Compilations.isGenericEnabled
+private fun KotlinTarget.isCompilationAllowed(): Boolean = when (platformType) {
+    KotlinPlatformType.common -> true
 
-        KotlinPlatformType.native -> (this as KotlinNativeTarget).isCompilationAllowed()
-    }
+    KotlinPlatformType.jvm,
+    KotlinPlatformType.js,
+    KotlinPlatformType.androidJvm,
+    KotlinPlatformType.wasm,
+    -> Compilations.isGenericEnabled
 
-private fun KotlinNativeTarget.isCompilationAllowed(): Boolean =
-    konanTarget.family.isCompilationAllowed()
+    KotlinPlatformType.native -> (this as KotlinNativeTarget).isCompilationAllowed()
+}
 
-internal fun Family.isCompilationAllowed(): Boolean =
-    when (this) {
-        Family.OSX,
-        Family.IOS,
-        Family.TVOS,
-        Family.WATCHOS -> Compilations.isDarwinEnabled
+private fun KotlinNativeTarget.isCompilationAllowed(): Boolean = konanTarget.family.isCompilationAllowed()
 
-        Family.LINUX,
-        Family.ANDROID -> Compilations.isGenericEnabled
+internal fun Family.isCompilationAllowed(): Boolean = when (this) {
+    Family.OSX,
+    Family.IOS,
+    Family.TVOS,
+    Family.WATCHOS,
+    -> Compilations.isDarwinEnabled
 
-        Family.MINGW -> Compilations.isWindowsEnabled
-    }
+    Family.LINUX,
+    Family.ANDROID,
+    -> Compilations.isGenericEnabled
+
+    Family.MINGW -> Compilations.isWindowsEnabled
+}

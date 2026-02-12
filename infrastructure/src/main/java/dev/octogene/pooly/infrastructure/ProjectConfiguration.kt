@@ -5,5 +5,5 @@ data class ProjectConfiguration(
     val serverLocation: String,
     val serverType: String,
     val createIp: Boolean,
-    val createServer: Boolean
+    val createServer: Boolean,
 )

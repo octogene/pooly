@@ -32,5 +32,5 @@ fun poolyButtonColors() = ButtonDefaults.buttonColors(
     containerColor = lightColorScheme.tertiary,
     contentColor = lightColorScheme.onTertiary,
     disabledContentColor = lightColorScheme.primary.copy(alpha = 0.5f),
-    disabledContainerColor = lightColorScheme.onPrimary.copy(alpha = 0.5f)
+    disabledContainerColor = lightColorScheme.onPrimary.copy(alpha = 0.5f),
 )

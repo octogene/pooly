@@ -17,7 +17,9 @@ import dev.zacsweers.metrox.viewmodel.ViewModelGraph
 import kotlin.reflect.KClass
 
 @DependencyGraph(AppScope::class)
-interface AppGraph : MetroAppComponentProviders, ViewModelGraph {
+interface AppGraph :
+    MetroAppComponentProviders,
+    ViewModelGraph {
 
     @Provides
     fun provideApplicationContext(application: Application): Context = application
@@ -25,9 +27,7 @@ interface AppGraph : MetroAppComponentProviders, ViewModelGraph {
     val workManager: WorkManager
 
     @Provides
-    fun providesWorkManager(application: Context): WorkManager {
-        return WorkManager.getInstance(application)
-    }
+    fun providesWorkManager(application: Context): WorkManager = WorkManager.getInstance(application)
 
     @Multibinds
     val workerProviders:
@@ -37,9 +37,6 @@ interface AppGraph : MetroAppComponentProviders, ViewModelGraph {
 
     @DependencyGraph.Factory
     interface Factory {
-        fun create(
-            @Provides application: Application,
-            @Includes databaseBindings: DatabaseBindings
-        ): AppGraph
+        fun create(@Provides application: Application, @Includes databaseBindings: DatabaseBindings): AppGraph
     }
 }
