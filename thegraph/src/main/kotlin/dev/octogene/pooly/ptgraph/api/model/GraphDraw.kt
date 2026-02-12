@@ -15,16 +15,13 @@ constructor(
     val timestamp: Instant,
     val winner: String,
     val vault: String,
-    val transactionHash: String
+    val transactionHash: String,
 )
 
-fun GraphDraw.toPrize(
-    draw: GraphDraw,
-    vault: Vault
-): Prize = Prize(
+fun GraphDraw.toPrize(draw: GraphDraw, vault: Vault): Prize = Prize(
     winner = Address.unsafeFrom(draw.winner),
     payout = draw.payout,
     transactionHash = draw.transactionHash,
     timestamp = draw.timestamp,
-    vault = vault
+    vault = vault,
 )

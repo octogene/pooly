@@ -25,7 +25,7 @@ private const val MAX_CONCURRENCY = 3
 class PoolTogetherGraphQLClient(
     chainNetworks: List<ChainNetwork> = ChainNetwork.entries,
     builder: ApolloClient.Builder = ApolloClient.Builder(),
-    private val logger: Logger = LoggerFactory.getLogger(PoolTogetherGraphQLClient::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(PoolTogetherGraphQLClient::class.java),
 ) {
     private val clients = chainNetworks.associateWith { network ->
         with(builder) {
@@ -38,19 +38,20 @@ class PoolTogetherGraphQLClient(
         client: ApolloClient,
         addresses: List<String>,
         skip: Int,
-        after: Long?
+        after: Long?,
     ): Either<GraphQLServiceError, List<GraphDraw>> = either {
         val afterTimestamp = Optional.presentIfNotNull(after?.toString())
         logger.debug(
             "Fetching draws for {} addresses with skip {} and after {}",
             addresses.size,
             skip,
-            after
+            after,
         )
         client.query(DrawsByAddressesQuery(addresses, skip, afterTimestamp)).execute()
             .toEither().map { response ->
                 when (response) {
                     is GraphQLResponse.Success -> response.data.prizeClaims
+
                     is GraphQLResponse.PartialSuccess -> {
                         logger.error("Partial success: {}", response.errors)
                         response.data.prizeClaims
@@ -59,16 +60,14 @@ class PoolTogetherGraphQLClient(
             }.onLeft { error ->
                 if (error is GraphQLServiceError.HttpError) {
                     handleHttpErrorException(error)
-                } else logger.error("Error fetching draws: {}", error)
+                } else {
+                    logger.error("Error fetching draws: {}", error)
+                }
             }.bind()
     }
 
     @OptIn(ExperimentalTime::class)
-    suspend fun getAllDraws(
-        addresses: List<String>,
-        chainNetwork: ChainNetwork,
-        after: Long? = null
-    ): List<GraphDraw> {
+    suspend fun getAllDraws(addresses: List<String>, chainNetwork: ChainNetwork, after: Long? = null): List<GraphDraw> {
         logger.info("Fetching draws for ${addresses.size} addresses on $chainNetwork")
         val client = clients.getValue(chainNetwork)
         return buildList {
@@ -89,14 +88,11 @@ class PoolTogetherGraphQLClient(
     suspend fun getAllDraws(
         addresses: List<String>,
         after: Long? = null,
-        chainNetworks: List<ChainNetwork>
-    ): DrawResult {
-        return chainNetworks.parMap(concurrency = MAX_CONCURRENCY) { chainNetwork ->
-            val draws = getAllDraws(addresses, chainNetwork, after)
-            chainNetwork to draws
-        }.toMap()
-    }
-
+        chainNetworks: List<ChainNetwork>,
+    ): DrawResult = chainNetworks.parMap(concurrency = MAX_CONCURRENCY) { chainNetwork ->
+        val draws = getAllDraws(addresses, chainNetwork, after)
+        chainNetwork to draws
+    }.toMap()
 
     private fun DrawsByAddressesQuery.PrizeClaim.toGraphDraw(): GraphDraw? {
         val instant = timestamp.toInstant()
@@ -111,7 +107,7 @@ class PoolTogetherGraphQLClient(
                 timestamp = it,
                 winner = winner,
                 vault = prizeVault.id,
-                transactionHash = draw.txHash
+                transactionHash = draw.txHash,
             )
         }
     }
@@ -126,7 +122,7 @@ class PoolTogetherGraphQLClient(
                 "Rate limit reached : {} / {} (resets on {})",
                 xRateLimitRemaining,
                 xRateLimitLimit,
-                xRateLimitReset
+                xRateLimitReset,
             )
             error.headers["retry-after"]?.toIntOrNull()?.seconds?.let { retryAfter ->
                 logger.info("Retrying after {}", retryAfter)
@@ -136,20 +132,18 @@ class PoolTogetherGraphQLClient(
             logger.debug(
                 "Rate limit status : {} / {}",
                 xRateLimitRemaining,
-                xRateLimitLimit
+                xRateLimitLimit,
             )
             logger.error("Error fetching draws headers: {}", error.message)
             logger.debug(
                 "Request headers {}",
                 error.headers
                     .map { (key, value) -> "$key : $value" }
-                    .joinToString("\n")
+                    .joinToString("\n"),
             )
         }
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun String.toInstant(): Instant? {
-        return this.toLongOrNull()?.let { Instant.fromEpochSeconds(it) }
-    }
+    private fun String.toInstant(): Instant? = this.toLongOrNull()?.let { Instant.fromEpochSeconds(it) }
 }
