@@ -42,7 +42,7 @@ class Infrastructure {
                         .image(dockerImageId)
                         .publicNets(publicNetArgs)
                         .location(projectConfiguration.serverLocation)
-                        .build()
+                        .build(),
                 )
             }
         }
@@ -55,7 +55,7 @@ class Infrastructure {
 
     private fun createPublicNetArgs(
         primaryIpv4: Output<out Any?>?,
-        primaryIpv6: Output<out Any?>
+        primaryIpv6: Output<out Any?>,
     ): ServerPublicNetArgs = ServerPublicNetArgs.builder().apply {
         if (primaryIpv4 != null) {
             ipv4Enabled(true)
@@ -67,13 +67,13 @@ class Infrastructure {
         ipv6(
             primaryIpv6.applyValue {
                 it.toString().toInt()
-            }
+            },
         )
     }.build()
 
     private fun getDockerImageId(): Output<String?>? {
         val dockerImageId = getImage(
-            GetImageArgs.builder().name("docker-ce").withArchitecture("x86").build()
+            GetImageArgs.builder().name("docker-ce").withArchitecture("x86").build(),
         ).applyValue {
             it.name()
         }
@@ -83,7 +83,7 @@ class Infrastructure {
     private fun setSshKeys(): Output<List<String?>?>? {
         val standardSshKeys =
             getSshKeys(
-                GetSshKeysArgs.builder().withSelector("pooly-infra").build()
+                GetSshKeysArgs.builder().withSelector("pooly-infra").build(),
             ).applyValue {
                 it.sshKeys().stream().map { element -> element.name() }.toList()
             }
@@ -94,7 +94,7 @@ class Infrastructure {
             SshKeyArgs.builder()
                 .name("pooly-deploy")
                 .publicKey(sshKey)
-                .build()
+                .build(),
         )
 
         return standardSshKeys.applyValue { keys ->
@@ -115,7 +115,7 @@ class Infrastructure {
                         .location(projectConfiguration.serverLocation)
                         .autoDelete(true)
                         .type("ipv4")
-                        .build()
+                        .build(),
                 )
             } else {
                 null
@@ -127,14 +127,14 @@ class Infrastructure {
                     .location(projectConfiguration.serverLocation)
                     .autoDelete(true)
                     .type("ipv6")
-                    .build()
+                    .build(),
             )
             primaryIpv6.id() to primaryIpv4?.id()
         } else {
             val primaryIpv4 = if (projectConfiguration.enableIpv4) {
                 getPrimaryIp(
                     GetPrimaryIpArgs.builder()
-                        .name("$prefix-primary_ip-v4").build()
+                        .name("$prefix-primary_ip-v4").build(),
                 )
             } else {
                 null
