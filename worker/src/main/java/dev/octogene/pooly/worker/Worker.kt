@@ -34,7 +34,9 @@ class Worker(
         logger.info("Starting worker")
 
         while (isActive) {
-            val addresses = walletRepository.getAllWalletAddresses().getOrNull()
+            val addresses = walletRepository.getAllWalletAddresses().onLeft {
+                logger.error("Failed to retrieve wallet addresses : {}", it)
+            }.getOrNull()
             if (addresses != null) {
                 val (draws, newVaults) = fetchDrawsAndVaults(addresses)
                 syncVaultsAndPrizes(newVaults, draws).onLeft {
