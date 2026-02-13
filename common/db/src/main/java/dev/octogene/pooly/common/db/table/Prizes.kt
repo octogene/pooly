@@ -2,7 +2,6 @@ package dev.octogene.pooly.common.db.table
 
 import dev.octogene.pooly.common.db.ADDRESS_LENGTH
 import dev.octogene.pooly.common.db.MAX_AMOUNT_LENGTH
-import dev.octogene.pooly.common.db.NETWORK_NAME_LENGTH
 import dev.octogene.pooly.common.db.TX_HASH_LENGTH
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.core.ChainNetwork
@@ -16,7 +15,7 @@ import org.jetbrains.exposed.v1.datetime.timestamp
 
 object Prizes : LongIdTable("prizes") {
     val amount = varchar("amount", MAX_AMOUNT_LENGTH)
-    val network = varchar("network", NETWORK_NAME_LENGTH).index()
+    val network = enumeration<ChainNetwork>("network").index()
     val timestamp = timestamp("timestamp").index()
     val transactionHash = varchar("transaction_hash", TX_HASH_LENGTH)
     val vaultId = varchar("vault_id", ADDRESS_LENGTH).references(Vaults.id).index()
@@ -30,34 +29,32 @@ object Prizes : LongIdTable("prizes") {
 class PrizeEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<PrizeEntity>(Prizes)
 
-    var amount by Prizes.amount
+    var amount by Prizes.amount.memoizedTransform(
+        unwrap = { it.toString() },
+        wrap = { it.toBigInteger() },
+    )
     var network by Prizes.network
     var timestamp by Prizes.timestamp
     var transactionHash by Prizes.transactionHash
     var vaultId by Prizes.vaultId
-    var winnerAddress by Prizes.winnerAddress
+    var winnerAddress by Prizes.winnerAddress.transform(
+        unwrap = { it.value },
+        wrap = { Address.unsafeFrom(it) },
+    )
 
     val vault by VaultEntity referencedOn Prizes.vaultId
 }
 
 internal fun PrizeEntity.toPrize(): Prize = Prize(
-    payout = amount.toBigInteger(),
+    payout = amount,
     timestamp = timestamp,
-    winner = Address.unsafeFrom(winnerAddress),
+    winner = winnerAddress,
     transactionHash = transactionHash,
     vault = Vault(
         address = Address.unsafeFrom(vault.id.value),
         name = vault.name,
         symbol = vault.tokenSymbol,
         decimals = vault.tokenDecimals,
-        network = ChainNetwork.valueOf(network),
+        network = network,
     ),
-)
-
-internal fun PrizeEntity.toPrize(vault: Vault): Prize = Prize(
-    payout = amount.toBigInteger(),
-    timestamp = timestamp,
-    winner = Address.unsafeFrom(winnerAddress),
-    transactionHash = transactionHash,
-    vault = vault,
 )

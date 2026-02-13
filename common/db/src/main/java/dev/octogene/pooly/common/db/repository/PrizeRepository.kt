@@ -126,7 +126,7 @@ internal class PrizeRepositoryImpl(
                 set(amount, prize.payout.toString())
                 set(transactionHash, prize.transactionHash)
                 set(Prizes.timestamp, prize.timestamp)
-                set(network, prize.vault.network.name)
+                set(network, prize.vault.network)
             }
         }
 }

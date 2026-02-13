@@ -5,7 +5,6 @@ import arrow.core.raise.context.ensureNotNull
 import dev.octogene.pooly.common.db.suspendTransactionOrRaise
 import dev.octogene.pooly.common.db.table.UserEntity
 import dev.octogene.pooly.common.db.table.Users
-import dev.octogene.pooly.common.db.table.WalletEntity
 import dev.octogene.pooly.common.db.table.Wallets
 import dev.octogene.pooly.common.db.table.Wallets.address
 import dev.octogene.pooly.common.db.table.Wallets.userId
@@ -64,9 +63,9 @@ internal class WalletRepositoryImpl(private val database: Database) : WalletRepo
         suspendTransactionOrRaise(database) {
             val user = UserEntity.find { Users.username eq username }.firstOrNull()
             ensureNotNull(user) { RepositoryError.NotFound("User", username) }
-            WalletEntity
-                .find { Wallets.userId eq userId }
-                .map { Address.unsafeFrom(it.address.value) }
+            Wallets.select(address)
+                .where { userId eq user.id }
+                .map { Address.unsafeFrom(it[address].value) }
                 .toList()
         }
 }

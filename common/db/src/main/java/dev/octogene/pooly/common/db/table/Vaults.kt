@@ -4,6 +4,7 @@ import dev.octogene.pooly.common.db.ADDRESS_LENGTH
 import dev.octogene.pooly.common.db.MAX_TOKEN_LENGTH
 import dev.octogene.pooly.common.db.MAX_VARCHAR_LENGTH
 import dev.octogene.pooly.common.db.NETWORK_NAME_LENGTH
+import dev.octogene.pooly.core.Address
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.IdTable
@@ -24,11 +25,15 @@ object Vaults : IdTable<String>("vaults") {
 
 class VaultEntity(id: EntityID<String>) : Entity<String>(id) {
     companion object : EntityClass<String, VaultEntity>(Vaults)
+
     val prizes by PrizeEntity referrersOn Prizes.vaultId
     var chainNetwork by Vaults.chainNetwork
     var createdAt by Vaults.createdAt
     var name by Vaults.name
-    var tokenAddress by Vaults.tokenAddress
+    var tokenAddress by Vaults.tokenAddress.transform(
+        unwrap = { it.value },
+        wrap = { Address.unsafeFrom(it) },
+    )
     var tokenDecimals by Vaults.tokenDecimals
     var tokenSymbol by Vaults.tokenSymbol
 }
