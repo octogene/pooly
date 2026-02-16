@@ -44,6 +44,7 @@ internal class PrizeRepositoryImpl(
     private val logger: Logger = LoggerFactory.getLogger(PrizeRepository::class.java),
 ) : PrizeRepository {
 
+    // TODO: Test Exposed caching for Vault by using the DAO
     override suspend fun getAllPrizes(wallets: List<Address>): Either<RepositoryError, List<Prize>> =
         suspendTransactionOrRaise(database, readOnly = true) {
             val walletRawAddresses = wallets.map { it.value }
@@ -54,21 +55,26 @@ internal class PrizeRepositoryImpl(
                 joinType = JoinType.INNER,
             ).selectAll()
                 .where { winnerAddress inList walletRawAddresses }
+                .orderBy(Prizes.timestamp to SortOrder.DESC)
 
-            allPrizesWithVaultsQuery.map {
-                val vault = Vault(
-                    address = Address.unsafeFrom(it[Vaults.id].value),
-                    name = it[Vaults.name],
-                    symbol = it[Vaults.tokenSymbol],
-                    decimals = it[Vaults.tokenDecimals],
-                    network = ChainNetwork.valueOf(it[Vaults.chainNetwork]),
-                )
+            val vaults = mutableMapOf<String, Vault>()
+            allPrizesWithVaultsQuery.map { resultRow ->
+                val vaultId = resultRow[Vaults.id].value
+                val vault = vaults.getOrPut(vaultId) {
+                    Vault(
+                        address = Address.unsafeFrom(resultRow[Vaults.id].value),
+                        name = resultRow[Vaults.name],
+                        symbol = resultRow[Vaults.tokenSymbol],
+                        decimals = resultRow[Vaults.tokenDecimals],
+                        network = ChainNetwork.valueOf(resultRow[Vaults.chainNetwork]),
+                    )
+                }
                 Prize(
-                    payout = BigInteger(it[amount]),
-                    timestamp = it[Prizes.timestamp],
-                    winner = Address.unsafeFrom(it[winnerAddress]),
+                    payout = BigInteger(resultRow[amount]),
+                    timestamp = resultRow[Prizes.timestamp],
+                    winner = Address.unsafeFrom(resultRow[winnerAddress]),
                     vault = vault,
-                    transactionHash = it[transactionHash],
+                    transactionHash = resultRow[transactionHash],
                 )
             }
         }
