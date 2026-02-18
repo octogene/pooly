@@ -32,7 +32,7 @@ internal class WalletRepositoryImpl(private val database: Database) : WalletRepo
 
     override suspend fun getAllWalletAddresses(): Either<RepositoryError, List<Address>> = Either.catch {
         suspendTransaction(database) {
-            Wallets.select(Wallets.address).withDistinct(true)
+            Wallets.select(Wallets.address).withDistinctOn(Wallets.address)
                 .map { Address.unsafeFrom(it[Wallets.address].value) }
                 .toList()
         }
