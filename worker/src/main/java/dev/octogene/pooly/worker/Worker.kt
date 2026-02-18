@@ -1,12 +1,13 @@
 package dev.octogene.pooly.worker
 
+import arrow.core.Either
 import arrow.core.raise.either
 import dev.octogene.pooly.common.db.repository.PrizeRepository
+import dev.octogene.pooly.common.db.repository.RepositoryError
 import dev.octogene.pooly.common.db.repository.VaultRepository
 import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.core.ChainNetwork
-import dev.octogene.pooly.core.Vault
 import dev.octogene.pooly.ptgraph.api.PoolTogetherGraphQLClient
 import dev.octogene.pooly.ptgraph.api.model.GraphDraw
 import dev.octogene.pooly.ptgraph.api.model.toPrize
@@ -38,23 +39,37 @@ class Worker(
                 logger.error("Failed to retrieve wallet addresses : {}", it)
             }.getOrNull()
             if (addresses != null) {
-                val (draws, newVaults) = fetchDrawsAndVaults(addresses)
-                syncVaultsAndPrizes(newVaults, draws).onLeft {
-                    logger.error("Error syncing vaults and prizes: {}", it)
+                fetchAndSync(addresses).mapLeft {
+                    logger.error("Failed to fetch and sync data : {}", it)
                 }
             } else {
                 logger.info("No wallets found in database")
             }
-            lastCheckTimeStamp = Clock.System.now()
             delay(checkInterval)
         }
     }
 
-    private suspend fun syncVaultsAndPrizes(newVaults: List<Vault>, draws: List<GraphDraw>) = either {
-        vaultRepository.insertVaults(newVaults, ChainNetwork.BASE).bind()
-        val drawsByVaultId = draws.filter { it.vault.isNotEmpty() }.groupBy { it.vault }
+    private suspend fun fetchAndSync(addresses: List<Address>): Either<RepositoryError, Unit> = either {
+        logger.info("Getting draws for {} addresses", addresses.size)
+        val drawsByVaultId = graphClient.getAllDrawsByVault(
+            addresses = addresses.map { it.value },
+            chainNetwork = ChainNetwork.BASE,
+            after = lastCheckTimeStamp?.toEpochMilliseconds(),
+        )
+
+        if (drawsByVaultId.values.any { it.isNotEmpty() }) {
+            lastCheckTimeStamp = Clock.System.now()
+        }
+
+        syncVaults(drawsByVaultId.keys).bind()
+        syncPrizes(drawsByVaultId).bind()
+    }
+
+    private suspend fun syncPrizes(drawsByVaultId: Map<String, List<GraphDraw>>) = either {
         val vaultById =
-            drawsByVaultId.keys.associateWith { vault -> vaultRepository.getVaultFromAddress(vault).bind() }
+            drawsByVaultId.keys.associateWith { vault ->
+                vaultRepository.getVaultFromAddress(vault).bind()
+            }
         val prizes = drawsByVaultId.flatMap { (vault, draws) ->
             val vault = vaultById.getValue(vault)
             draws.map { draw -> draw.toPrize(draw, vault) }
@@ -62,21 +77,13 @@ class Worker(
         prizeRepository.insertPrizes(prizes).bind()
     }
 
-    private suspend fun fetchDrawsAndVaults(addresses: List<Address>): Pair<List<GraphDraw>, List<Vault>> {
-        logger.info("Getting draws for {} addresses", addresses.size)
-        val draws = graphClient.getAllDraws(
-            addresses = addresses.map { it.value },
-            chainNetwork = ChainNetwork.BASE,
-            after = null,
-        )
-        if (draws.isNotEmpty()) {
-            lastCheckTimeStamp = Clock.System.now()
-        }
-        val vaults = draws.map { it.vault }.distinct()
-        val unknownVaultsAddresses = vaultRepository.findUnknownVaults(vaults).onLeft {
+    private suspend fun syncVaults(
+        vaultIds: Iterable<String>
+    ): Either<RepositoryError, Unit> = either {
+        val unknownVaultsAddresses = vaultRepository.findUnknownVaults(vaultIds).onLeft {
             logger.error("Error finding unknown vaults: {}", it)
         }.getOrNull()
-        val newVaults = if (unknownVaultsAddresses?.isNotEmpty() == true) {
+        if (unknownVaultsAddresses?.isNotEmpty() == true) {
             logger.info("Found {} unknown vaults", unknownVaultsAddresses.size)
             val newVaults = rpcClient.getVaultInfoFromAdresses(unknownVaultsAddresses)
             if (unknownVaultsAddresses.size != newVaults.size) {
@@ -86,10 +93,7 @@ class Worker(
                     unknownVaultsAddresses.size,
                 )
             }
-            newVaults
-        } else {
-            emptyList()
+            vaultRepository.insertVaults(newVaults, ChainNetwork.BASE).bind()
         }
-        return draws to newVaults
     }
 }
