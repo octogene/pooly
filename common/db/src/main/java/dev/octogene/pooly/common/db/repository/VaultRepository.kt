@@ -20,7 +20,7 @@ import kotlin.time.Clock
 interface VaultRepository {
     suspend fun getVaultFromAddress(address: String): Either<RepositoryError, Vault>
     suspend fun getVaultsFromAddress(addresses: Iterable<String>): Either<RepositoryError, List<Vault>>
-    suspend fun findUnknownVaults(expectedVaultAddresses: List<String>): Either<RepositoryError, List<String>>
+    suspend fun findUnknownVaults(expectedVaultAddresses: Iterable<String>): Either<RepositoryError, List<String>>
     suspend fun insertVaults(vaults: List<Vault>, network: ChainNetwork): Either<RepositoryError, Unit>
 }
 
@@ -36,7 +36,7 @@ internal class VaultRepositoryImpl(
                 vault.name,
                 vault.tokenSymbol,
                 vault.tokenDecimals,
-                ChainNetwork.valueOf(vault.chainNetwork),
+                vault.chainNetwork,
             )
         }
 
@@ -48,13 +48,13 @@ internal class VaultRepositoryImpl(
                     vault.name,
                     vault.tokenSymbol,
                     vault.tokenDecimals,
-                    ChainNetwork.valueOf(vault.chainNetwork),
+                    vault.chainNetwork,
                 )
             }
         }
 
     override suspend fun findUnknownVaults(
-        expectedVaultAddresses: List<String>,
+        expectedVaultAddresses: Iterable<String>,
     ): Either<RepositoryError, List<String>> = suspendTransactionOrRaise(database, readOnly = true) {
         val knownVaultIds = Vaults
             .select(Vaults.id)
@@ -79,7 +79,7 @@ internal class VaultRepositoryImpl(
             ) { vault ->
                 set(Vaults.id, vault.address.value)
                 set(Vaults.name, vault.name)
-                set(Vaults.chainNetwork, network.name)
+                set(Vaults.chainNetwork, network)
                 set(Vaults.tokenAddress, vault.address.value)
                 set(Vaults.tokenSymbol, vault.symbol)
                 set(Vaults.tokenDecimals, vault.decimals)
@@ -93,5 +93,5 @@ internal fun VaultEntity.toVault() = Vault(
     name = name,
     symbol = tokenSymbol,
     decimals = tokenDecimals,
-    network = ChainNetwork.valueOf(this.chainNetwork),
+    network = chainNetwork,
 )

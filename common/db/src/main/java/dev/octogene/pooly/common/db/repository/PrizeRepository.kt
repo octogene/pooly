@@ -66,7 +66,7 @@ internal class PrizeRepositoryImpl(
                         name = resultRow[Vaults.name],
                         symbol = resultRow[Vaults.tokenSymbol],
                         decimals = resultRow[Vaults.tokenDecimals],
-                        network = ChainNetwork.valueOf(resultRow[Vaults.chainNetwork]),
+                        network = resultRow[Vaults.chainNetwork],
                     )
                 }
                 Prize(
