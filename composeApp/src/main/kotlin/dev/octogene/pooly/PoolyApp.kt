@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composer
 import androidx.compose.runtime.tooling.ComposeStackTraceMode
 import androidx.work.Configuration
 import androidx.work.Data
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import dev.octogene.pooly.di.AppGraph
 import dev.octogene.pooly.pooltogether.DrawWorker
@@ -52,6 +53,10 @@ class PoolyApp :
             PeriodicWorkRequestBuilder<DrawWorker>(1, TimeUnit.MINUTES)
                 .setInputData(Data.Builder().putString("workName", "onCreate").build())
                 .build()
-        appGraph.workManager.enqueue(workRequest)
+        appGraph.workManager.enqueueUniquePeriodicWork(
+            "updateDraws",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }
