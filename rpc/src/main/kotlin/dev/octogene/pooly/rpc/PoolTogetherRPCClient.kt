@@ -8,10 +8,10 @@ import io.ethers.providers.Provider
 import java.math.BigInteger
 import io.ethers.core.types.Address as EthersAddress
 
-class PoolTogetherRPCClient(
-    rpcUrl: String = "https://base-mainnet.g.alchemy.com/v2/$ALCHEMY_KEY"
-) {
-    private val provider = Provider.fromUrl(rpcUrl).unwrap()
+class PoolTogetherRPCClient(rpcUrl: String = "https://base-mainnet.g.alchemy.com/v2/$ALCHEMY_KEY") {
+    // TODO: Initialization without a chainId can cause an exception since it calls
+    //  directly the chain to fetch an id
+    private val provider = Provider.fromUrl(rpcUrl, chainId = ChainNetwork.BASE.id).unwrap()
 
     fun getVaultInfoFromAdresses(addresses: List<String>): List<Vault> {
         val currentBlockNumber = provider.getBlockNumber().sendAwait().unwrap()
@@ -33,7 +33,7 @@ class PoolTogetherRPCClient(
                 symbol as String,
                 // TODO: Check why BigInteger is returned by contract. Really not required.
                 (decimals as BigInteger).toInt(),
-                ChainNetwork.BASE
+                ChainNetwork.BASE,
             )
         }
     }

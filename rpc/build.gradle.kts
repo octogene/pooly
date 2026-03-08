@@ -18,6 +18,8 @@ kotlin {
 
 dependencies {
     implementation(project(":common:core"))
+    implementation(project.dependencies.platform(libs.arrow.stack))
+    implementation(libs.arrow.core)
     implementation(project.dependencies.platform(libs.ethers.bom))
     implementation(libs.ethers.core)
     implementation(libs.ethers.providers)
