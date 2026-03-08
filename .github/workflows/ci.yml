@@ -10,14 +10,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  POOLY_USER: ${{ secrets.POOLY_USER }}
+  POOLY_PASSWORD: ${{ secrets.POOLY_PASSWORD }}
+  ALCHEMY_KEY: ${{ secrets.ALCHEMY_KEY }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      POOLY_USER: ${{ secrets.POOLY_USER }}
-      POOLY_PASSWORD: ${{ secrets.POOLY_PASSWORD }}
-      ALCHEMY_KEY: ${{ secrets.ALCHEMY_KEY }}
 
     steps:
       - name: Checkout code
