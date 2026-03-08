@@ -59,7 +59,7 @@ services:
       - DB_DRIVER=org.postgresql.Driver
       - DB_PASSWORD=pooly_password
       - DB_USERNAME=pooly_user
-      - CHECK_INTERVAL=60m
+      - CHECK_INTERVAL=10m
       - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
