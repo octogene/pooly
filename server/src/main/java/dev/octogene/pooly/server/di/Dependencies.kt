@@ -24,6 +24,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 import javax.sql.DataSource
 
 val persistenceModule = { dbConfig: DbConfig ->
@@ -44,6 +45,8 @@ val persistenceModule = { dbConfig: DbConfig ->
                 }
             }
             HikariDataSource(config)
+        }.onClose {
+            it?.close()
         } bind DataSource::class
 
         single { Database.connect(datasource = get<HikariDataSource>()) }
