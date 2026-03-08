@@ -8,7 +8,6 @@ import dev.octogene.pooly.rpc.PoolTogetherRPCClient
 import dev.octogene.pooly.worker.Worker
 import dev.octogene.pooly.worker.model.AppConfig
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource

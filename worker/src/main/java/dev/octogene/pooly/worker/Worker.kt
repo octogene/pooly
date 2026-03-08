@@ -9,7 +9,7 @@ import dev.octogene.pooly.common.db.repository.WalletRepository
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.ptgraph.api.PoolTogetherGraphQLClient
-import dev.octogene.pooly.ptgraph.api.model.GraphDraw
+import dev.octogene.pooly.ptgraph.api.model.IndexedPrize
 import dev.octogene.pooly.ptgraph.api.model.toPrize
 import dev.octogene.pooly.rpc.PoolTogetherRPCClient
 import kotlinx.coroutines.coroutineScope
@@ -54,7 +54,7 @@ class Worker(
         val drawsByVaultId = graphClient.getAllDrawsByVault(
             addresses = addresses.map { it.value },
             chainNetwork = ChainNetwork.BASE,
-            after = lastCheckTimeStamp?.toEpochMilliseconds(),
+            after = lastCheckTimeStamp?.epochSeconds,
         )
 
         if (drawsByVaultId.values.any { it.isNotEmpty() }) {
@@ -65,7 +65,7 @@ class Worker(
         syncPrizes(drawsByVaultId).bind()
     }
 
-    private suspend fun syncPrizes(drawsByVaultId: Map<String, List<GraphDraw>>) = either {
+    private suspend fun syncPrizes(drawsByVaultId: Map<String, List<IndexedPrize>>) = either {
         val vaultById =
             drawsByVaultId.keys.associateWith { vault ->
                 vaultRepository.getVaultFromAddress(vault).bind()
@@ -77,9 +77,7 @@ class Worker(
         prizeRepository.insertPrizes(prizes).bind()
     }
 
-    private suspend fun syncVaults(
-        vaultIds: Iterable<String>
-    ): Either<RepositoryError, Unit> = either {
+    private suspend fun syncVaults(vaultIds: Iterable<String>): Either<RepositoryError, Unit> = either {
         val unknownVaultsAddresses = vaultRepository.findUnknownVaults(vaultIds).onLeft {
             logger.error("Error finding unknown vaults: {}", it)
         }.getOrNull()
