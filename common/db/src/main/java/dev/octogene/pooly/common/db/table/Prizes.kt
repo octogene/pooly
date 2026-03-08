@@ -4,6 +4,7 @@ import dev.octogene.pooly.common.db.ADDRESS_LENGTH
 import dev.octogene.pooly.common.db.MAX_AMOUNT_LENGTH
 import dev.octogene.pooly.common.db.TX_HASH_LENGTH
 import dev.octogene.pooly.core.Address
+import dev.octogene.pooly.core.Amount
 import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.core.Vault
@@ -31,7 +32,7 @@ class PrizeEntity(id: EntityID<Long>) : LongEntity(id) {
 
     var amount by Prizes.amount.memoizedTransform(
         unwrap = { it.toString() },
-        wrap = { it.toBigInteger() },
+        wrap = { Amount.from(it) },
     )
     var network by Prizes.network
     var timestamp by Prizes.timestamp

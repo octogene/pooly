@@ -14,7 +14,7 @@ import dev.octogene.pooly.common.db.table.VaultEntity
 import dev.octogene.pooly.common.db.table.Vaults
 import dev.octogene.pooly.common.db.table.toPrize
 import dev.octogene.pooly.core.Address
-import dev.octogene.pooly.core.ChainNetwork
+import dev.octogene.pooly.core.Amount
 import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.core.Vault
 import org.jetbrains.exposed.v1.core.JoinType
@@ -25,7 +25,6 @@ import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.math.BigInteger
 
 interface PrizeRepository {
 
@@ -70,7 +69,7 @@ internal class PrizeRepositoryImpl(
                     )
                 }
                 Prize(
-                    payout = BigInteger(resultRow[amount]),
+                    payout = Amount.from(resultRow[amount]),
                     timestamp = resultRow[Prizes.timestamp],
                     winner = Address.unsafeFrom(resultRow[winnerAddress]),
                     vault = vault,

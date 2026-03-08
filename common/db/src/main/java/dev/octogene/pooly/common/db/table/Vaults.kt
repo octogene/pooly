@@ -3,16 +3,13 @@ package dev.octogene.pooly.common.db.table
 import dev.octogene.pooly.common.db.ADDRESS_LENGTH
 import dev.octogene.pooly.common.db.MAX_TOKEN_LENGTH
 import dev.octogene.pooly.common.db.MAX_VARCHAR_LENGTH
-import dev.octogene.pooly.common.db.NETWORK_NAME_LENGTH
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.core.ChainNetwork
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.IdTable
 import org.jetbrains.exposed.v1.dao.Entity
-import org.jetbrains.exposed.v1.dao.EntityClass
 import org.jetbrains.exposed.v1.dao.ImmutableCachedEntityClass
-import org.jetbrains.exposed.v1.dao.ImmutableEntityClass
 import org.jetbrains.exposed.v1.datetime.timestamp
 
 object Vaults : IdTable<String>("vaults") {
