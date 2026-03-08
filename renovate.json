@@ -1,0 +1,40 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "gradle": {
+    "enabled": true
+  },
+  "kotlin": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Group all non-major dependencies together",
+      "matchDatasources": ["maven"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    },
+    {
+      "description": "Separate major updates for review",
+      "matchDatasources": ["maven"],
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["major-update"]
+    },
+    {
+      "description": "Auto-merge patch updates after CI passes",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    }
+  ],
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "labels": ["dependencies"],
+  "commitMessagePrefix": "chore(deps):",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2
+}
