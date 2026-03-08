@@ -26,19 +26,15 @@ dependencies {
     api(libs.kotlinx.datetime)
 }
 
+fun getSecret(key: String, envVar: String): String =
+    gradleLocalProperties(rootProject.rootDir, providers).getProperty(key)
+        ?: System.getenv(envVar)
+        ?: error("Missing $key")
+
 buildConfig {
     packageName("dev.octogene.pooly.common.core")
     useKotlinOutput { internalVisibility = false }
-    buildConfigField(
-        "ALCHEMY_KEY",
-        gradleLocalProperties(rootProject.rootDir, providers).getProperty("alchemy.key"),
-    )
-    buildConfigField(
-        "POOLY_USER",
-        gradleLocalProperties(rootProject.rootDir, providers).getProperty("pooly.user"),
-    )
-    buildConfigField(
-        "POOLY_PASSWORD",
-        gradleLocalProperties(rootProject.rootDir, providers).getProperty("pooly.password"),
-    )
+    buildConfigField("ALCHEMY_KEY", getSecret("alchemy.key", "ALCHEMY_KEY"))
+    buildConfigField("POOLY_USER", getSecret("pooly.user", "POOLY_USER"))
+    buildConfigField("POOLY_PASSWORD", getSecret("pooly.password", "POOLY_PASSWORD"))
 }
