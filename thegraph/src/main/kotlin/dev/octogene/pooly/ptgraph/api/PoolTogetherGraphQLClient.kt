@@ -8,14 +8,13 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.ptgraph.api.model.DrawResult
-import dev.octogene.pooly.ptgraph.api.model.GraphDraw
 import dev.octogene.pooly.ptgraph.api.model.GraphQLResponse
-import dev.octogene.pooly.ptgraph.api.model.GraphQLServiceError
+import dev.octogene.pooly.ptgraph.api.model.IndexedPrize
+import dev.octogene.pooly.ptgraph.api.model.QueryError
 import dev.octogene.pooly.thegraph.DrawsByAddressesQuery
 import kotlinx.coroutines.delay
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.math.BigInteger
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -39,7 +38,7 @@ class PoolTogetherGraphQLClient(
         addresses: List<String>,
         skip: Int,
         after: Long?,
-    ): Either<GraphQLServiceError, List<GraphDraw>> = either {
+    ): Either<QueryError, List<IndexedPrize>> = either {
         val afterTimestamp = Optional.presentIfNotNull(after?.toString())
         logger.debug(
             "Fetching draws for {} addresses with skip {} and after {}",
@@ -58,29 +57,75 @@ class PoolTogetherGraphQLClient(
                     }
                 }.mapNotNull { prizeClaim -> prizeClaim.toGraphDraw() }
             }.onLeft { error ->
-                if (error is GraphQLServiceError.HttpError) {
-                    handleHttpErrorException(error)
-                } else {
-                    logger.error("Error fetching draws: {}", error)
-                }
+                handleQueryError(error)
             }.bind()
     }
 
-    @OptIn(ExperimentalTime::class)
-    suspend fun getAllDraws(addresses: List<String>, chainNetwork: ChainNetwork, after: Long? = null): List<GraphDraw> {
+    private suspend fun handleQueryError(error: QueryError) {
+        when (error) {
+            is QueryError.HttpError -> {
+                handleHttpErrorException(error)
+            }
+
+            is QueryError.NetworkError -> {
+                logger.error("Network error fetching draws: {}", error.error.cause ?: "No cause")
+            }
+
+            is QueryError.GraphQLErrors -> {
+                logger.error("GraphQL error fetching draws: {}", error.errors)
+            }
+
+            else -> {
+                logger.error("Error fetching draws: {}", error)
+            }
+        }
+    }
+
+    suspend fun getAllDraws(
+        addresses: List<String>,
+        chainNetwork: ChainNetwork,
+        after: Long? = null,
+    ): List<IndexedPrize> = buildList {
+        accumulateAllDraws(addresses, chainNetwork, after) { draws ->
+            addAll(draws)
+        }
+    }
+
+    suspend fun getAllDrawsByVault(
+        addresses: List<String>,
+        chainNetwork: ChainNetwork,
+        after: Long? = null,
+    ): Map<String, List<IndexedPrize>> {
+        val drawsByVault = mutableMapOf<String, MutableList<IndexedPrize>>()
+        accumulateAllDraws(addresses, chainNetwork, after) { draws ->
+            for (draw in draws) {
+                drawsByVault[draw.vault] =
+                    drawsByVault.getOrDefault(
+                        key = draw.vault,
+                        defaultValue = mutableListOf(),
+                    ).apply { add(draw) }
+            }
+        }
+        return drawsByVault
+    }
+
+    private suspend fun accumulateAllDraws(
+        addresses: List<String>,
+        chainNetwork: ChainNetwork,
+        after: Long? = null,
+        accumulate: (List<IndexedPrize>) -> Unit,
+    ) {
         logger.info("Fetching draws for ${addresses.size} addresses on $chainNetwork")
         val client = clients.getValue(chainNetwork)
-        return buildList {
-            var skip = 0
-            while (true) {
-                val draws = getDraws(client, addresses, skip, after).getOrNull()
-                logger.debug("Found ${draws?.size} draws")
-                if (draws.isNullOrEmpty()) {
-                    break
-                }
-                addAll(draws)
-                skip += draws.size
+        var skip = 0
+        while (true) {
+            val draws = getDraws(client, addresses, skip, after).getOrNull()
+            logger.debug("Found ${draws?.size} draws")
+            if (draws.isNullOrEmpty()) {
+                break
             }
+            accumulate(draws)
+            skip += draws.size
         }
     }
 
@@ -94,25 +139,7 @@ class PoolTogetherGraphQLClient(
         chainNetwork to draws
     }.toMap()
 
-    private fun DrawsByAddressesQuery.PrizeClaim.toGraphDraw(): GraphDraw? {
-        val instant = timestamp.toInstant()
-        if (instant == null) {
-            logger.error("Failed to map prize claim {} to graph draw", this)
-        }
-
-        return instant?.let {
-            GraphDraw(
-                id = draw.drawId,
-                payout = BigInteger(payout),
-                timestamp = it,
-                winner = winner,
-                vault = prizeVault.id,
-                transactionHash = draw.txHash,
-            )
-        }
-    }
-
-    private suspend fun handleHttpErrorException(error: GraphQLServiceError.HttpError) {
+    private suspend fun handleHttpErrorException(error: QueryError.HttpError) {
         val xRateLimitRemaining = error.headers["x-ratelimit-remaining"]?.toIntOrNull()
         val xRateLimitLimit = error.headers["x-ratelimit-limit"]?.toIntOrNull()
         val xRateLimitReset = error.headers["x-ratelimit-reset"]?.toLongOrNull()
@@ -143,7 +170,4 @@ class PoolTogetherGraphQLClient(
             )
         }
     }
-
-    @OptIn(ExperimentalTime::class)
-    private fun String.toInstant(): Instant? = this.toLongOrNull()?.let { Instant.fromEpochSeconds(it) }
 }
