@@ -6,25 +6,35 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,25 +51,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.octogene.pooly.common.mobile.R
 import dev.octogene.pooly.core.ChainNetwork
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = metroViewModel()) {
-    val activeNetworks by viewModel.activeNetworks.collectAsStateWithLifecycle(emptyList<ChainNetwork>())
+    val activeNetworks by viewModel.activeNetworks.collectAsStateWithLifecycle(emptyList())
     val trackedWallets by viewModel.trackedWallets.collectAsState()
+    var showAddWalletDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = { showAddWalletDialog = true },
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
                 Icon(
-                    painterResource(dev.octogene.pooly.common.mobile.R.drawable.baseline_add_24),
-                    contentDescription = null,
+                    painterResource(R.drawable.baseline_add_24),
+                    contentDescription = "Add Wallet",
                     tint = MaterialTheme.colorScheme.onTertiaryContainer,
                 )
             }
@@ -76,7 +88,58 @@ fun SettingsScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel =
             Text("Wallets")
             Wallets(trackedWallets)
         }
+
+        if (showAddWalletDialog) {
+            AddWalletDialog(
+                onDismiss = { showAddWalletDialog = false },
+                onConfirm = { address, name ->
+                    viewModel.addWallet(address, name)
+                    showAddWalletDialog = false
+                },
+            )
+        }
     }
+}
+
+@Composable
+fun AddWalletDialog(onDismiss: () -> Unit, onConfirm: (CharSequence, CharSequence?) -> Unit) {
+    val address = rememberTextFieldState()
+    val name = rememberTextFieldState()
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add Wallet") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    state = address,
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    label = { Text("Address") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    state = name,
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    label = { Text("Name (Optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(address.text, name.text.takeIf { it.isNotBlank() }) },
+                enabled = address.text.isNotBlank(),
+            ) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -93,12 +156,12 @@ fun Chains(networks: List<ChainNetwork>, onNetwork: (ChainNetwork) -> Unit, modi
     ) {
         for (i in 0 until allNetworks.size) {
             val icon = when (allNetworks[i]) {
-                ChainNetwork.BASE -> dev.octogene.pooly.common.mobile.R.drawable.bc_base
-                ChainNetwork.OPTIMISM -> dev.octogene.pooly.common.mobile.R.drawable.bc_optimism
-                ChainNetwork.ARBITRUM -> dev.octogene.pooly.common.mobile.R.drawable.bc_arbitrum_one
-                ChainNetwork.SCROLL -> dev.octogene.pooly.common.mobile.R.drawable.bc_scroll
-                ChainNetwork.GNOSIS -> dev.octogene.pooly.common.mobile.R.drawable.bc_gnosis
-                ChainNetwork.WORLD -> dev.octogene.pooly.common.mobile.R.drawable.bc_world
+                ChainNetwork.BASE -> R.drawable.bc_base
+                ChainNetwork.OPTIMISM -> R.drawable.bc_optimism
+                ChainNetwork.ARBITRUM -> R.drawable.bc_arbitrum_one
+                ChainNetwork.SCROLL -> R.drawable.bc_scroll
+                ChainNetwork.GNOSIS -> R.drawable.bc_gnosis
+                ChainNetwork.WORLD -> R.drawable.bc_world
             }
             NetworkButton(
                 icon,
@@ -175,7 +238,7 @@ fun Wallets(wallets: List<String>, modifier: Modifier = Modifier) {
                     onClick = { /*TODO*/ },
                 ) {
                     Icon(
-                        painterResource(dev.octogene.pooly.common.mobile.R.drawable.baseline_delete_24),
+                        painterResource(R.drawable.baseline_delete_24),
                         contentDescription = null,
                     )
                 }

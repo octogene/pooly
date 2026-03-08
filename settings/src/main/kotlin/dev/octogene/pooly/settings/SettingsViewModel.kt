@@ -26,7 +26,7 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
         repository.toggleNetwork(network)
     }
 
-    fun addWallet(address: String, name: String? = null) {
-        repository.addWallet(address, name)
+    fun addWallet(address: CharSequence, name: CharSequence? = null) {
+        repository.addWallet(address.toString(), name?.toString())
     }
 }
