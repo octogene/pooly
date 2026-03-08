@@ -3,7 +3,6 @@ package dev.octogene.pooly.server.user
 import arrow.core.raise.context.bind
 import arrow.raise.ktor.server.routing.deleteOrRaise
 import arrow.raise.ktor.server.routing.getOrRaise
-import arrow.raise.ktor.server.routing.patchOrRaise
 import arrow.raise.ktor.server.routing.postOrRaise
 import dev.octogene.pooly.core.UserRole
 import dev.octogene.pooly.server.receiveOrRaise
@@ -34,38 +33,36 @@ fun Route.usersRoute() {
     }
 
     authenticate("auth-jwt") {
-        route("/users") {
-            route("/me") {
-                deleteOrRaise {
+        route("/users/me") {
+            deleteOrRaise {
+                val username = getUsername()
+                userController.removeUser(username)
+            }.describe {
+                summary = "Remove user"
+            }
+
+            route("/wallets") {
+                getOrRaise {
                     val username = getUsername()
-                    userController.removeUser(username)
+                    userController.getWallets(username)
                 }.describe {
-                    summary = "Remove user"
+                    summary = "Get user wallets"
                 }
 
-                route("/wallets") {
-                    getOrRaise {
-                        val username = getUsername()
-                        userController.getWallets(username)
-                    }.describe {
-                        summary = "Get user wallets"
-                    }
+                postOrRaise {
+                    val username = getUsername()
+                    val wallets = call.receiveOrRaise<Wallets>("Invalid wallets").bind()
+                    userController.addWallets(username, wallets.content)
+                }.describe {
+                    summary = "Add wallets for user"
+                }
 
-                    postOrRaise {
-                        val username = getUsername()
-                        val wallets = call.receiveOrRaise<Wallets>("Invalid wallets").bind()
-                        userController.addWallets(username, wallets.content)
-                    }.describe {
-                        summary = "Add wallets for user"
-                    }
-
-                    deleteOrRaise {
-                        val username = getUsername()
-                        val wallets = call.receiveOrRaise<Wallets>("Invalid wallets").bind()
-                        userController.removeWallets(username, wallets.content)
-                    }.describe {
-                        summary = "Remove wallets for user"
-                    }
+                deleteOrRaise {
+                    val username = getUsername()
+                    val wallets = call.receiveOrRaise<Wallets>("Invalid wallets").bind()
+                    userController.removeWallets(username, wallets.content)
+                }.describe {
+                    summary = "Remove wallets for user"
                 }
             }
         }

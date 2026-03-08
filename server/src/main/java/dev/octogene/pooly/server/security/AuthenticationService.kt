@@ -26,61 +26,58 @@ class AuthenticationService(
     private val jwtManager: JwtManager,
     private val logger: Logger = LoggerFactory.getLogger(AuthenticationService::class.java),
 ) {
-    suspend fun login(username: String, plainPassword: String): Either<AuthenticationError, User> =
-        either {
-            val user = userRepository.findUserByUsername(username).mapLeft {
-                UserNotFound(username)
-            }.bind()
+    suspend fun login(username: String, plainPassword: String): Either<AuthenticationError, User> = either {
+        val user = userRepository.findUserByUsername(username).mapLeft {
+            UserNotFound(username)
+        }.bind()
 
-            ensure(
-                passwordVerifier.verify(
-                    plain = plainPassword,
-                    hash = user.passwordHash,
-                ),
-            ) {
-                InvalidCredentials
-            }
-            user
-        }.onLeft {
-            logger.error("Failed to login user {}", username)
+        ensure(
+            passwordVerifier.verify(
+                plain = plainPassword,
+                hash = user.passwordHash,
+            ),
+        ) {
+            InvalidCredentials
         }
+        user
+    }.onLeft {
+        logger.error("Failed to login user {}", username)
+    }
 
     suspend fun register(
         username: String,
         email: String,
         plainPassword: String,
-        role: UserRole = UserRole.USER
-    ): Either<AuthenticationError, Unit> =
-        either {
-            val user = userRepository.findUserByUsername(username).getOrNull()
-            ensure(user == null) { UserAlreadyExists(username) }
-            val hashedPassword = passwordHasher.hash(plainPassword)
-            return userRepository.createUser(username, email, hashedPassword, role)
-                .mapLeft { error ->
-                    when (error) {
-                        is RepositoryError.AlreadyExists -> UserAlreadyExists(username)
-                        is RepositoryError.DatabaseError -> InternalError(error.message)
-                        is RepositoryError.NotFound -> UserNotFound(error.identifier)
-                    }
+        role: UserRole = UserRole.USER,
+    ): Either<AuthenticationError, Unit> = either {
+        val user = userRepository.findUserByUsername(username).getOrNull()
+        ensure(user == null) { UserAlreadyExists(username) }
+        val hashedPassword = passwordHasher.hash(plainPassword)
+        return userRepository.createUser(username, email, hashedPassword, role)
+            .mapLeft { error ->
+                when (error) {
+                    is RepositoryError.AlreadyExists -> UserAlreadyExists(username)
+                    is RepositoryError.DatabaseError -> InternalError(error.message)
+                    is RepositoryError.NotFound -> UserNotFound(error.identifier)
                 }
-        }.onLeft {
-            logger.error("Failed registration of user {}", username)
-        }
+            }
+    }.onLeft {
+        logger.error("Failed registration of user {}", username)
+    }
 
-    suspend fun removeUser(username: String): Either<AuthenticationError, Unit> =
-        either {
-            val user = userRepository.findUserByUsername(username).getOrNull()
-            ensureNotNull(user) { UserNotFound(username) }
-            return userRepository.removeUser(username)
-                .mapLeft { error ->
-                    when (error) {
-                        is RepositoryError.AlreadyExists -> UserAlreadyExists(username)
-                        is RepositoryError.DatabaseError -> InternalError(error.message)
-                        is RepositoryError.NotFound -> UserNotFound(error.identifier)
-                    }
+    suspend fun removeUser(username: String): Either<AuthenticationError, Unit> = either {
+        val user = userRepository.findUserByUsername(username).getOrNull()
+        ensureNotNull(user) { UserNotFound(username) }
+        return userRepository.removeUser(username)
+            .mapLeft { error ->
+                when (error) {
+                    is RepositoryError.AlreadyExists -> UserAlreadyExists(username)
+                    is RepositoryError.DatabaseError -> InternalError(error.message)
+                    is RepositoryError.NotFound -> UserNotFound(error.identifier)
                 }
-        }.onLeft {
-            logger.error("Failed to remove user {}", username)
-        }
+            }
+    }.onLeft {
+        logger.error("Failed to remove user {}", username)
+    }
     fun generateToken(user: User): Token = jwtManager.createToken(user.username, user.role)
 }

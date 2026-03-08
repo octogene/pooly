@@ -32,7 +32,6 @@ import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.getAs
 import io.ktor.server.engine.EngineConnectorBuilder
-import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.HttpRequestLifecycle
 import io.ktor.server.netty.Netty
@@ -61,10 +60,12 @@ fun main(args: Array<String>) {
         .getAs<AppConfig>()
 
     embeddedServer(Netty, configure = {
-        connectors.add(EngineConnectorBuilder().apply {
+        connectors.add(
+            EngineConnectorBuilder().apply {
             host = config.host
             port = config.port
-        })
+        }
+        )
         enableHttp2 = true
         tcpKeepAlive = true
     }) {

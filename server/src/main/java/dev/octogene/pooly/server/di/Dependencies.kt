@@ -74,7 +74,7 @@ val controllerModule = { cacheType: CacheType ->
         single {
             AdminController(
                 cacheClient = get(named(cacheType)),
-                authenticationService = get()
+                authenticationService = get(),
             )
         }
     }

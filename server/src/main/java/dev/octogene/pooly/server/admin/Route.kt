@@ -8,7 +8,6 @@ import dev.octogene.pooly.server.receiveOrRaise
 import dev.octogene.pooly.server.user.RegisterUserRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
-import io.ktor.server.request.receive
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
@@ -29,7 +28,7 @@ fun Route.adminRoutes() {
                     adminController.createAdmin(
                         request.username,
                         request.password,
-                        request.email
+                        request.email,
                     )
                 }
 
@@ -37,7 +36,9 @@ fun Route.adminRoutes() {
                     val username = call.pathParameters["username"]
                     if (username == null) {
                         Response(HttpStatusCode.BadRequest)
-                    } else adminController.removeUser(username)
+                    } else {
+                        adminController.removeUser(username)
+                    }
                 }
             }
         }

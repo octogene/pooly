@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 class AdminController(
     private val cacheClient: CacheClient,
     private val authenticationService: AuthenticationService,
-    private val logger: Logger = LoggerFactory.getLogger(AdminController::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(AdminController::class.java),
 ) {
     context(_: Raise<Response>)
     suspend fun clearCache(request: ClearCacheRequest): Response {
@@ -40,11 +40,10 @@ class AdminController(
             }.bind()
 
     context(_: Raise<Response>)
-    suspend fun removeUser(username: String): Response =
-        authenticationService.removeUser(username)
-            .map { Response(Accepted, "$username removed") }
-            .mapLeft {
-                logger.error("Error removing user {} : {}", username, it)
-                mapToResponse(it)
-            }.bind()
+    suspend fun removeUser(username: String): Response = authenticationService.removeUser(username)
+        .map { Response(Accepted, "$username removed") }
+        .mapLeft {
+            logger.error("Error removing user {} : {}", username, it)
+            mapToResponse(it)
+        }.bind()
 }
