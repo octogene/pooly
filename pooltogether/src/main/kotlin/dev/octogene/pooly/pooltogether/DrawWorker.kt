@@ -14,16 +14,18 @@ import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.binding
 
 @AssistedInject
-class DrawWorker(
-    appContext: Context,
-    @Assisted workerParams: WorkerParameters,
-    val repository: PoolTogetherRepository,
-) : CoroutineWorker(appContext, workerParams) {
+class DrawWorker(appContext: Context, @Assisted params: WorkerParameters, val repository: PoolTogetherRepository) :
+    CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result = try {
-        repository.updateAllVaults()
-        Result.success()
+        repository.updateAllVaults().fold(
+            ifLeft = { error ->
+                Logger.e { "Failed to update vaults: $error" }
+                Result.failure()
+            },
+            ifRight = { Result.success() },
+        )
     } catch (e: Throwable) {
-        Logger.e { "Failed to update vaults : ${e.message}" }
+        Logger.e(e) { "Unexpected error updating vaults" }
         Result.failure()
     }
 

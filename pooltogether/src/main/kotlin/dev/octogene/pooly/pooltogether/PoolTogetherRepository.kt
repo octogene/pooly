@@ -2,19 +2,21 @@ package dev.octogene.pooly.pooltogether
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import arrow.core.Either
+import arrow.core.raise.either
 import co.touchlab.kermit.Logger
 import dev.octogene.pooly.core.Address
+import dev.octogene.pooly.core.Amount
 import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.core.Prize
-import dev.octogene.pooly.core.Vault
 import dev.octogene.pooly.pooltogether.db.DrawQueries
 import dev.octogene.pooly.pooltogether.db.VaultQueries
+import dev.octogene.pooly.pooltogether.model.CallError
 import dev.octogene.pooly.settings.db.WalletQueries
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.math.BigInteger
 import kotlin.time.Instant
 
 @Inject
@@ -32,24 +34,18 @@ class PoolTogetherRepository(
             Logger.i { "Mapping ${allDraws.size} draws to Prize objects" }
             allDraws.map { draws ->
                 Prize(
-                    payout = BigInteger(draws.amount),
+                    payout = Amount.from(draws.amount),
                     timestamp = Instant.fromEpochSeconds(draws.timestamp),
                     winner = Address.unsafeFrom(draws.walletAddress),
                     transactionHash = draws.transactionHash,
-                    vault = Vault(
-                        address = Address.unsafeFrom(draws.vaultAddress),
-                        name = draws.name,
-                        symbol = draws.symbol,
-                        decimals = 18,
-                        network = draws.network,
-                    ),
+                    vault = draws.toVault(),
                 )
             }
         }
 
-    suspend fun updateAllVaults() {
+    suspend fun updateAllVaults(): Either<CallError, Unit> = either {
         val wallets = walletQueries.getAllWallets().executeAsList().map { it.address }
-        val draws = client.getAllDraws(wallets, ChainNetwork.BASE)
+        val draws = client.getAllDraws(wallets, ChainNetwork.BASE).bind()
         drawQueries.transaction {
             afterRollback { Logger.e("No draws were inserted.") }
             afterCommit { Logger.i("${draws.size} draws were inserted.") }

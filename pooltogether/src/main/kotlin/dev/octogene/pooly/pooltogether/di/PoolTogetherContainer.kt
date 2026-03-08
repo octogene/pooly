@@ -1,5 +1,8 @@
-package dev.octogene.pooly.pooltogether
+package dev.octogene.pooly.pooltogether.di
 
+import dev.octogene.pooly.pooltogether.PoolTogetherRepository
+import dev.octogene.pooly.pooltogether.PoolyApiClient
+import dev.octogene.pooly.pooltogether.PoolyApiClientImpl
 import dev.octogene.pooly.pooltogether.db.DrawQueries
 import dev.octogene.pooly.pooltogether.db.VaultQueries
 import dev.octogene.pooly.settings.db.WalletQueries
@@ -22,7 +25,7 @@ class PoolTogetherContainer {
 
     @Provides
     fun providePoolTogetherRepository(
-        client: PoolyApiClientImpl,
+        client: PoolyApiClient,
         walletQueries: WalletQueries,
         drawQueries: DrawQueries,
         vaultQueries: VaultQueries,
@@ -40,7 +43,7 @@ class PoolTogetherContainer {
             json()
         }
         install(Logging) {
-            logger = Logger.Companion.DEFAULT
+            logger = Logger.DEFAULT
             level = LogLevel.HEADERS
             sanitizeHeader { header -> header == HttpHeaders.Authorization }
         }

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.metro)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.gradle.buildconfig)
 }
 android {
     namespace = "dev.octogene.pooly.pooltogether"
@@ -56,6 +57,9 @@ sqldelight {
 dependencies {
     implementation(project(":common:mobile"))
     implementation(project(":settings"))
+    implementation(platform(libs.arrow.stack))
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.resilience.ktor.client)
     implementation(libs.androidx.paging3.runtime)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
@@ -66,4 +70,13 @@ dependencies {
     implementation(libs.sqldelight.coroutines)
     implementation(libs.sqldelight.androidx.paging3)
     implementation(libs.androidx.workmanager)
+}
+
+buildConfig {
+    packageName("dev.octogene.pooly.pooltogether")
+    useKotlinOutput { internalVisibility = true }
+    buildConfigField(
+        "POOLY_BASE_URL",
+        System.getenv("POOLY_BASE_URL") ?: "http://10.0.2.2:8080/api/v1",
+    )
 }

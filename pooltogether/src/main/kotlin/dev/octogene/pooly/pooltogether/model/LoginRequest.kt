@@ -8,3 +8,6 @@ data class LoginRequest(val username: String, val password: String)
 
 @Serializable
 data class LoginResponse(val token: String, val expiration: Instant)
+
+@Serializable
+data class CreateUserRequest(val username: String, val password: String, val email: String)
