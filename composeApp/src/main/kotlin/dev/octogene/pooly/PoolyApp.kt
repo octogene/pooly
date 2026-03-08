@@ -50,13 +50,13 @@ class PoolyApp :
 
     private fun scheduleBackgroundWork() {
         val workRequest =
-            PeriodicWorkRequestBuilder<DrawWorker>(1, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<DrawWorker>(5, TimeUnit.MINUTES)
                 .setInputData(Data.Builder().putString("workName", "onCreate").build())
                 .build()
         appGraph.workManager.enqueueUniquePeriodicWork(
             "updateDraws",
             ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
+            workRequest,
         )
     }
 }

@@ -17,27 +17,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import dev.octogene.pooly.core.Prize
+import dev.octogene.pooly.model.PrizeUi
 import dev.octogene.pooly.settings.SettingsScreen
 import dev.octogene.pooly.ui.lightColorScheme
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import java.math.BigDecimal
-import java.math.RoundingMode
+import kotlinx.datetime.LocalDate
 
 private class Destination(val name: String, val ui: @Composable () -> Unit)
 
@@ -47,8 +47,7 @@ private class Heading(val name: String)
 @Composable
 fun App(viewModel: MainViewModel = metroViewModel()) {
     MaterialTheme(colorScheme = lightColorScheme) {
-        val draws by viewModel.draws.collectAsState()
-        val allDraws = viewModel.alldraws.collectAsLazyPagingItems()
+        val allDraws = viewModel.prizes.collectAsLazyPagingItems()
         val backStack = remember { mutableStateListOf<Any>("root") }
         Scaffold(
             topBar = {
@@ -88,7 +87,7 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
 private fun AppNavContainer(
     innerPadding: PaddingValues,
     backStack: SnapshotStateList<Any>,
-    draws: LazyPagingItems<Prize>,
+    draws: LazyPagingItems<PrizeUi>,
 ) {
     Box(
         modifier = Modifier
@@ -120,7 +119,7 @@ private fun AppNavContainer(
 }
 
 @Composable
-private fun RootUi(draws: LazyPagingItems<Prize>, modifier: Modifier = Modifier, onNavigate: (Destination) -> Unit) {
+private fun RootUi(draws: LazyPagingItems<PrizeUi>, modifier: Modifier = Modifier, onNavigate: (Destination) -> Unit) {
     Column(
         modifier = modifier
             .safeContentPadding()
@@ -133,25 +132,51 @@ private fun RootUi(draws: LazyPagingItems<Prize>, modifier: Modifier = Modifier,
                 Text("Nothing to see here")
             }
         } else {
+            val drawsByDate = remember(draws.itemCount) {
+                val map = mutableMapOf<LocalDate, MutableList<PrizeUi>>()
+                for (i in 0 until draws.itemCount) {
+                    val prize = draws[i]
+                    if (prize != null) {
+                        map[prize.date] = map.getOrDefault(prize.date, mutableListOf()).apply {
+                            add(prize)
+                        }
+                    }
+                }
+                map.toMap()
+            }
             LazyColumn {
                 if (draws.loadState.refresh == LoadState.Loading) {
                     item {
                         Text(
                             text = "Waiting for items to load from the backend",
                             modifier =
-                            Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally),
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally),
                         )
                     }
                 }
-                items(draws.itemCount) { index ->
-                    draws[index]?.payout?.let { amount ->
+                drawsByDate.forEach { (date, dailyDraws) ->
+                    stickyHeader {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.surface,
+                        ) {
+                            Text(
+                                text = date.toString(),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                            )
+                        }
+                    }
+                    items(dailyDraws.size) { index ->
+                        val prize = dailyDraws[index]
                         Text(
-                            "${draws[index]?.timestamp} ${
-                                BigDecimal(amount)
-                                    .divide(BigDecimal.TEN.pow(16))
-                                    .setScale(5, RoundingMode.HALF_DOWN)
-                                    .toPlainString()
-                            } ${draws[index]?.vault?.symbol}",
+                            "${prize.formattedPayout} ${prize.vaultSymbol}",
+                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
                         )
                     }
                 }
@@ -160,7 +185,9 @@ private fun RootUi(draws: LazyPagingItems<Prize>, modifier: Modifier = Modifier,
                     item {
                         CircularProgressIndicator(
                             modifier =
-                            Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally),
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally),
                         )
                     }
                 }
