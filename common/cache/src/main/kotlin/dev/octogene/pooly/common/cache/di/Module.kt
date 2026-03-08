@@ -21,7 +21,7 @@ val cacheModule = { config: CacheConfig ->
             ValkeyCacheClient(get(), get())
         }
         single<CacheClient>(named(CacheType.INMEMORY)) {
-            InMemoryCacheClient(cleanupInterval = config.cleanupInterval,)
+            InMemoryCacheClient(cleanupInterval = config.cleanupInterval)
         }
     }
 }
