@@ -33,6 +33,15 @@ plugins {
     alias(libs.plugins.gradle.buildconfig)
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty" && requested.version == "4.2.5.Final") {
+            useVersion("4.2.9.Final")
+            because("Aligning Ktor & Lettuce netty versions")
+        }
+    }
+}
+
 moduleGraphConfig {
     readmePath.set("README.md")
     heading.set("### Module Graph")
