@@ -51,5 +51,9 @@ gradlePlugin {
             id = libs.plugins.pooly.detekt.get().pluginId
             implementationClass = "DetektConventionPlugin"
         }
+        register("kotlinConvention") {
+            id = libs.plugins.pooly.kotlin.get().pluginId
+            implementationClass = "KotlinConventionPlugin"
+        }
     }
 }
