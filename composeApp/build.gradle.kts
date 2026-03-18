@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.metro)
+    alias(libs.plugins.pooly.kotlin)
 }
 
 android {
@@ -56,14 +57,6 @@ android {
         buildConfig = true
     }
 
-    kotlin {
-        jvmToolchain(24)
-
-        compilerOptions {
-            freeCompilerArgs.add("-Xexplicit-backing-fields")
-        }
-    }
-
     sourceSets.named("main") {
         kotlin.directories += "build/generated/source/ethers/main/kotlin"
     }
@@ -89,6 +82,7 @@ dependencies {
     implementation(project(":common:mobile"))
     implementation(project(":pooltogether"))
     implementation(project(":settings"))
+    implementation(project(":login"))
     // Glance
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)

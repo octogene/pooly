@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.gradle.buildconfig)
+    alias(libs.plugins.pooly.kotlin)
 }
 android {
     namespace = "dev.octogene.pooly.pooltogether"
@@ -34,14 +35,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_24
         targetCompatibility = JavaVersion.VERSION_24
-    }
-
-    kotlin {
-        jvmToolchain(24)
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_24
-            targetCompatibility = JavaVersion.VERSION_24
-        }
     }
 }
 

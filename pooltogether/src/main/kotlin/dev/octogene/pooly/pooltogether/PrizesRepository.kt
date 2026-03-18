@@ -1,9 +1,9 @@
 package dev.octogene.pooly.pooltogether
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
-import app.cash.paging.map
+import androidx.paging.map
 import app.cash.sqldelight.paging3.QueryPagingSource
 import dev.octogene.pooly.core.Address
 import dev.octogene.pooly.core.Amount

@@ -27,6 +27,7 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.pooly.detekt)
+    alias(libs.plugins.pooly.kotlin)
     alias(libs.plugins.moduleGraph)
     alias(libs.plugins.jetbrains.changelog)
     alias(libs.plugins.violations)

@@ -5,6 +5,7 @@ import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.core.Vault
 import dev.octogene.pooly.pooltogether.model.CallError
+import dev.octogene.pooly.pooltogether.model.LoginResponse
 
 interface PoolyApiClient {
     suspend fun registerUser(username: String, password: String, email: String): Either<CallError, Unit>
@@ -12,4 +13,6 @@ interface PoolyApiClient {
     suspend fun registerWallets(addresses: List<String>): Either<CallError, Unit>
     suspend fun getAllDraws(address: List<String>, network: ChainNetwork): Either<CallError, List<Prize>>
     suspend fun getVaultsInfo(addresses: List<String>): Either<CallError, List<Vault>>
+    suspend fun loginUser(username: String, password: String): Either<CallError, LoginResponse>
+    suspend fun getWallets(): Either<CallError, List<String>>
 }

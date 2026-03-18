@@ -34,11 +34,14 @@ plugins {
 }
 
 include(
+    ":common:backend",
+    ":common:cache",
     ":common:core",
     ":common:db",
     ":common:mobile",
     ":composeApp",
     ":infrastructure",
+    ":login",
     ":pooltogether",
     ":rpc",
     ":server",
@@ -46,5 +49,4 @@ include(
     ":thegraph",
     ":worker",
 )
-include(":common:cache")
-include(":common:backend")
+

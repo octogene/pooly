@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.metro)
+    alias(libs.plugins.pooly.kotlin)
 }
 
 android {
@@ -28,13 +29,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_24
         targetCompatibility = JavaVersion.VERSION_24
-    }
-    kotlin {
-        jvmToolchain(24)
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_24
-            targetCompatibility = JavaVersion.VERSION_24
-        }
     }
 }
 

@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -8,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.octogene.pooly.settings"
+    namespace = "dev.octogene.pooly.login"
     compileSdk {
         version = release(36)
     }
@@ -36,23 +37,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_24
         targetCompatibility = JavaVersion.VERSION_24
     }
-}
-
-sqldelight {
-    databases {
-        create("Database") {
-            packageName.set("dev.octogene.pooly.settings.db")
-        }
+    kotlin {
+        jvmToolchain(24)
     }
 }
 
 dependencies {
     implementation(project(":common:mobile"))
+    implementation(project(":pooltogether"))
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.runtime)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.graphics.shapes)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui)

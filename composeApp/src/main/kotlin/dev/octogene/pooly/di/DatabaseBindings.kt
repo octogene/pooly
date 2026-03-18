@@ -1,4 +1,4 @@
-package dev.octogene.pooly
+package dev.octogene.pooly.di
 
 import android.content.Context
 import app.cash.sqldelight.EnumColumnAdapter
@@ -22,7 +22,7 @@ import dev.zacsweers.metro.SingleIn
 class DatabaseBindings {
     @Provides
     @SingleIn(AppScope::class)
-    fun provideDatabase(sqlDriver: SqlDriver): Database = Database(
+    fun provideDatabase(sqlDriver: SqlDriver): Database = Database.Companion(
         sqlDriver,
         NetworkStateAdapter = NetworkState.Adapter(
             nameAdapter = EnumColumnAdapter<ChainNetwork>(),
@@ -32,7 +32,7 @@ class DatabaseBindings {
 
     @Provides
     fun provideSqlDriver(@Includes context: Context): SqlDriver =
-        AndroidSqliteDriver(Database.Schema, context, "pooly.db")
+        AndroidSqliteDriver(Database.Companion.Schema, context, "pooly.db")
 
     @Provides
     fun provideNetworkStateQueries(database: Database): NetworkStateQueries = database.networkStateQueries

@@ -21,8 +21,8 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlinx.serialization.json)
-    implementation(platform(libs.arrow.stack))
-    implementation(libs.arrow.core)
+    api(platform(libs.arrow.stack))
+    api(libs.arrow.core)
     api(libs.kotlinx.datetime)
 }
 

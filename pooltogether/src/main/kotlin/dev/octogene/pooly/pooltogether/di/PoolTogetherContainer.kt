@@ -1,5 +1,6 @@
 package dev.octogene.pooly.pooltogether.di
 
+import dev.octogene.pooly.common.mobile.CredentialRepository
 import dev.octogene.pooly.pooltogether.PoolTogetherRepository
 import dev.octogene.pooly.pooltogether.PoolyApiClient
 import dev.octogene.pooly.pooltogether.PoolyApiClientImpl
@@ -32,10 +33,11 @@ class PoolTogetherContainer {
     ): PoolTogetherRepository = PoolTogetherRepository(client, walletQueries, vaultQueries, drawQueries)
 
     @Provides
-    fun providesPoolyApiClient(drawQueries: DrawQueries, httpClient: HttpClient): PoolyApiClient = PoolyApiClientImpl(
-        drawQueries = drawQueries,
-        httpClient = httpClient,
-    )
+    fun providesPoolyApiClient(credentialRepository: CredentialRepository, httpClient: HttpClient): PoolyApiClient =
+        PoolyApiClientImpl(
+            httpClient = httpClient,
+            credentialRepository = credentialRepository,
+        )
 
     @Provides
     fun provideHttpClient(): HttpClient = HttpClient {

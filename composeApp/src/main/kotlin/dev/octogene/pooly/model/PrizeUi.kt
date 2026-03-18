@@ -19,7 +19,7 @@ fun Prize.toUiModel(): PrizeUi {
     val date = timestamp.toLocalDateTime(TimeZone.currentSystemDefault()).date
 
     return PrizeUi(
-        id = this.transactionHash,
+        id = "${this.winner.value}-${this.transactionHash}-${this.vault.address}",
         timestamp = timestamp,
         formattedPayout = formattedPayout,
         vaultSymbol = vault.symbol,

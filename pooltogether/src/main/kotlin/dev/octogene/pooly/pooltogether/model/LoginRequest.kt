@@ -7,7 +7,7 @@ import kotlin.time.Instant
 data class LoginRequest(val username: String, val password: String)
 
 @Serializable
-data class LoginResponse(val token: String, val expiration: Instant)
+data class LoginResponse(val token: String, val expiration: Instant, val refreshToken: String? = null)
 
 @Serializable
 data class CreateUserRequest(val username: String, val password: String, val email: String)

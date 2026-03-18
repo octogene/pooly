@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkManager
-import dev.octogene.pooly.DatabaseBindings
 import dev.octogene.pooly.common.mobile.di.MetroWorkerFactory
+import dev.octogene.pooly.di.DatabaseBindings
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Includes
