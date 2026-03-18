@@ -62,9 +62,9 @@ fun main(args: Array<String>) {
     embeddedServer(Netty, configure = {
         connectors.add(
             EngineConnectorBuilder().apply {
-            host = config.host
-            port = config.port
-        }
+                host = config.host
+                port = config.port
+            },
         )
         enableHttp2 = true
         tcpKeepAlive = true
