@@ -2,7 +2,7 @@ package dev.octogene.pooly.worker.model
 
 import kotlin.time.Duration
 
-data class AppConfig(val database: DbConfig, val checkInterval: Duration)
+data class AppConfig(val alchemyKey: String, val database: DbConfig, val checkInterval: Duration)
 
 data class DbConfig(
     val host: String,

@@ -1,4 +1,5 @@
 app:
+  alchemyKey: "${ALCHEMY_KEY:-}"
   checkInterval: "${CHECK_INTERVAL:-PT1H}"
   database:
     driver: "${DB_DRIVER:-org.h2.Driver}"
