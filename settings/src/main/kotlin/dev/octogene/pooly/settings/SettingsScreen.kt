@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.octogene.pooly.common.mobile.R
+import dev.octogene.pooly.common.mobile.ui.Destination
+import dev.octogene.pooly.common.mobile.ui.PoolyTopAppBar
 import dev.octogene.pooly.core.ChainNetwork
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
@@ -257,4 +260,16 @@ fun ChainsPreview() {
             modifier = Modifier.fillMaxWidth(),
         )
     }
+}
+
+val settingsDestination = { backStack: SnapshotStateList<Destination> ->
+    Destination(
+        name = "settings",
+        topBar = {
+            PoolyTopAppBar(
+                title = "Settings",
+                backStack = backStack
+            )
+        }
+    ) { SettingsScreen() }
 }
