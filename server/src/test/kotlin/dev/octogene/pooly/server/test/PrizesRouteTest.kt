@@ -1,6 +1,7 @@
 package dev.octogene.pooly.server.test
 
 import dev.octogene.pooly.core.Address
+import dev.octogene.pooly.core.Amount
 import dev.octogene.pooly.core.ChainNetwork
 import dev.octogene.pooly.core.Prize
 import dev.octogene.pooly.core.Vault
@@ -32,7 +33,7 @@ class PrizesRouteTest {
                 listOf(RegisterUserRequest("testuser", "password", "test@example.com")),
                 listOf(
                     Prize(
-                        payout = BigInteger("223338444"),
+                        payout = Amount.from("223338444"),
                         timestamp = Clock.System.now(),
                         winner = Address.unsafeFrom("0x4d864b0ddec2a861506c8baa676e2d99a4c30a84"),
                         vault = Vault(
