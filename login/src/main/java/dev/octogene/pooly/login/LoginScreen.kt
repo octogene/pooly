@@ -22,11 +22,14 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import dev.octogene.pooly.common.mobile.ui.Destination
+import dev.octogene.pooly.common.mobile.ui.DestinationBuilder
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
@@ -129,5 +132,11 @@ fun LoginScreen(loginViewModel: LoginViewModel = metroViewModel()) {
                 )
             }
         }
+    }
+}
+
+val loginScreenDestination = DestinationBuilder { backStack: SnapshotStateList<Destination> ->
+    Destination("Login") {
+        LoginScreen()
     }
 }
