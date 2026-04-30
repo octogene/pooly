@@ -95,7 +95,7 @@ services:
     networks:
       - common-net
   cache:
-    image: valkey/valkey:9.0.1-alpine
+    image: valkey/valkey:9.1-alpine
     command: valkey-server --port 6379 --loglevel debug
     ports:
       - "6379:6379"
@@ -123,7 +123,7 @@ services:
     networks:
       - common-net
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.144.0
+    image: otel/opentelemetry-collector-contrib:0.149.0
     command: ["--config=/etc/otel-agent-config.yaml"]
     ports:
       - "4317:4317"
@@ -161,7 +161,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
   tempo:
-    image: grafana/tempo:2.10.0
+    image: grafana/tempo:2.10.4
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - "./config/tempo/tempo.yaml:/etc/tempo.yaml:z"
@@ -174,7 +174,7 @@ services:
       - monitor-net
       - common-net
   grafana:
-    image: grafana/grafana:12.3.1
+    image: grafana/grafana:12.4.3
     container_name: grafana
     volumes:
       - grafana_data:/var/lib/grafana
@@ -194,7 +194,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
   loki:
-    image: grafana/loki:3.6.4
+    image: grafana/loki:3.7.1
     ports:
       - "3100:3100"
     volumes:
@@ -205,7 +205,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
   pyroscope:
-    image: grafana/pyroscope:1.18.0
+    image: grafana/pyroscope:2.0.0
     ports:
       - "4040:4040"
     networks:
