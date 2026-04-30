@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.metro)
     alias(libs.plugins.pooly.kotlin)
+    alias(libs.plugins.composeCompiler)
 }
 
 android {
@@ -15,6 +16,10 @@ android {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     buildTypes {
@@ -34,6 +39,9 @@ android {
 
 dependencies {
     api(project(":common:core"))
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.material3)
     implementation(libs.androidx.workmanager)
     api(libs.kermit)
 }
