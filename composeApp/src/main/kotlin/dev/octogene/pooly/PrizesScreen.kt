@@ -9,19 +9,27 @@ import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import dev.octogene.pooly.common.mobile.ui.Destination
+import dev.octogene.pooly.common.mobile.ui.PoolyTopAppBar
 import dev.octogene.pooly.model.PrizeUi
+import dev.octogene.pooly.settings.SettingsScreen
+import dev.octogene.pooly.settings.settingsDestination
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
 import androidx.compose.ui.Modifier.Companion as Modifier
 
 @Composable
@@ -46,8 +54,7 @@ fun PrizesScreen(
                     item {
                         Text(
                             text = "Loading prizes",
-                            modifier =
-                            Modifier
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentWidth(Alignment.CenterHorizontally),
                         )
@@ -80,9 +87,9 @@ fun PrizesScreen(
                     item {
                         CircularProgressIndicator(
                             modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(Alignment.CenterHorizontally),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentWidth(Alignment.CenterHorizontally),
                         )
                     }
                 }
@@ -124,5 +131,31 @@ private fun EmptyPrizesContent() {
     Column {
         Image(painterResource(R.drawable.pooly), null)
         Text("Nothing to see here")
+    }
+}
+
+val prizeScreenDestination = { backStack: SnapshotStateList<Destination> ->
+    Destination(
+        name = "Prize Screen",
+        topBar = {
+            PoolyTopAppBar(
+                title = "Current winnings",
+                backStack = backStack,
+                actions = {
+                    IconButton(
+                        onClick = {
+                            backStack.add(settingsDestination(backStack))
+                        },
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.baseline_add_24),
+                            contentDescription = "Settings",
+                        )
+                    }
+                }
+            )
+        }
+    ) {
+        PrizesScreen { backStack.add(it) }
     }
 }

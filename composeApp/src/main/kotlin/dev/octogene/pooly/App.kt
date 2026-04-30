@@ -1,103 +1,75 @@
 package dev.octogene.pooly
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import dev.octogene.pooly.login.LoginScreen
-import dev.octogene.pooly.settings.SettingsScreen
-import dev.octogene.pooly.ui.lightColorScheme
+import dev.octogene.pooly.common.mobile.ui.Destination
+import dev.octogene.pooly.login.loginScreenDestination
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
-class Destination(val name: String, val ui: @Composable () -> Unit)
-
-internal class Heading(val name: String)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScaffold(viewModel: MainViewModel = metroViewModel()) {
-    val backStack = remember { mutableStateListOf<Any>("root") }
+fun MainScaffold(backStack: SnapshotStateList<Destination>) {
+    val currentDestination by remember {
+        derivedStateOf { backStack.lastOrNull() }
+    }
 
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text("Current winnings")
-                },
-                navigationIcon = {
-                    if (backStack.size > 1) {
-                        IconButton(onClick = { backStack.removeAt(backStack.size - 1) }) {
-                            Icon(
-                                painterResource(R.drawable.baseline_arrow_back_24),
-                                contentDescription = "Localized description",
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            backStack.add(Destination("settings") { SettingsScreen() })
-                        },
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.baseline_add_24),
-                            contentDescription = "Localized description",
-                        )
-                    }
-                },
-            )
-        },
+        topBar = { currentDestination?.topBar?.invoke() },
     ) { innerPadding ->
         AppNavContainer(innerPadding, backStack)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(viewModel: MainViewModel = metroViewModel()) {
-    val isLoggedIn by viewModel.state.collectAsState()
+    val backStack = remember {
+        mutableStateListOf(loadingScreenDestination())
+    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    MaterialTheme(colorScheme = lightColorScheme) {
-        when (isLoggedIn) {
-            MainUiState.Loading -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-
+    LaunchedEffect(state) {
+        when (state) {
             MainUiState.LoggedIn -> {
-                MainScaffold(viewModel)
+                backStack.clear()
+                backStack.add(prizeScreenDestination(backStack))
             }
 
             MainUiState.LoggedOut -> {
-                LoginScreen()
+                backStack.clear()
+                backStack.add(loginScreenDestination(backStack))
+            }
+
+            MainUiState.Loading -> {
+                backStack.clear()
+                backStack.add(loadingScreenDestination())
             }
         }
     }
+
+    MainScaffold(backStack)
 }
 
 @Composable
-private fun AppNavContainer(innerPadding: PaddingValues, backStack: SnapshotStateList<Any>) {
+private fun AppNavContainer(
+    innerPadding: PaddingValues,
+    backStack: SnapshotStateList<Destination>
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -110,21 +82,21 @@ private fun AppNavContainer(innerPadding: PaddingValues, backStack: SnapshotStat
                     backStack.removeAt(backStack.size - 1)
                 }
             },
+            transitionSpec = {
+                slideInHorizontally(initialOffsetX = { it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popTransitionSpec = {
+                slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it })
+            },
+            predictivePopTransitionSpec = {
+                slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it })
+            },
             entryProvider = { key ->
-                when (key) {
-                    "root" -> NavEntry(key) {
-                        PrizesScreen {
-                            backStack.add(it)
-                        }
-                    }
-
-                    is Destination -> NavEntry(key, contentKey = key.name) {
-                        key.ui()
-                    }
-
-                    else -> {
-                        error("Unknown route: $key")
-                    }
+                NavEntry(key, contentKey = key.name) {
+                    key.ui()
                 }
             },
         )

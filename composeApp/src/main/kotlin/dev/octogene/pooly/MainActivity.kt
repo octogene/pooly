@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +35,9 @@ class MainActivity(private val metroVmf: MetroViewModelFactory) : ComponentActiv
 @Composable
 fun AppEntry(metroVmf: MetroViewModelFactory) {
     CompositionLocalProvider(LocalMetroViewModelFactory provides metroVmf) {
-        App()
+        MaterialTheme {
+            App()
+        }
     }
 }
 
