@@ -17,7 +17,7 @@ suspend fun HttpClient.registerUser(username: String, password: String, email: S
         email,
     )
 
-    val response = post("/api/v1/users/me") {
+    val response = post("/api/v1/users") {
         contentType(ContentType.Application.Json)
         accept(ContentType.Application.Json)
         setBody(newUserJson)

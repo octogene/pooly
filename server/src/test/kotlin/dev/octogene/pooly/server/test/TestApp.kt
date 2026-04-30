@@ -58,6 +58,17 @@ fun Application.testApp(
                 }
             }
         }
+        jwt("auth-admin-jwt") {
+            realm = "Access to pooly application"
+            verifier(jwtVerifier)
+            validate { credential ->
+                if (credential.payload.getClaim("role").asString().lowercase() == "admin") {
+                    credential.payload.getClaim("username").asString()?.let {
+                        JWTPrincipal(credential.payload)
+                    }
+                }
+            }
+        }
         apiKey("auth-admin") {
             validate { apiKeyFromHeader ->
                 apiKeyFromHeader == "admin_api_key"

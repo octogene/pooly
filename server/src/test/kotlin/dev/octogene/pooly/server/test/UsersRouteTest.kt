@@ -47,7 +47,7 @@ class UsersRouteTest {
         assertEquals(HttpStatusCode.Unauthorized, loginResponse.status)
 
         val apiError = loginResponse.body<ApiError>()
-        assertEquals("Invalid password", apiError.message)
+        assertEquals("Invalid credentials", apiError.message)
     }
 
     @Test
