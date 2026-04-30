@@ -8,6 +8,11 @@ buildscript {
             classpath("org.apache.commons:commons-compress:1.26.0") {
                 because("Fixes Jib plugin conflict with older versions pulled by other plugins")
             }
+            classpath("org.jetbrains.kotlin:kotlin-compiler-embeddable:2.3.21")
+            classpath("org.jetbrains.kotlin:kotlin-build-common:2.3.21")
+            classpath("org.jetbrains.kotlin:kotlin-build-statistics:2.3.21")
+            classpath("org.jetbrains.kotlin:kotlin-build-tools-api:2.3.21")
+            classpath("org.jetbrains.kotlin:kotlin-gradle-plugin-api:2.3.21")
         }
     }
 }
