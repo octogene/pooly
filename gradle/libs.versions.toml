@@ -55,6 +55,7 @@ material = "1.13.0"
 material3 = "1.5.0-alpha18"
 metro = "1.0.0"
 moduleGraph = "0.13.0"
+otel-android = "1.3.0"
 postgresql = "42.7.11"
 protobuf-gradle = "0.10.0"
 protobufJavalite = "4.34.1"
@@ -187,6 +188,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 metrox = { module = "dev.zacsweers.metro:metrox-android", version.ref = "metro" }
 metrox-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref = "metro" }
 metrox-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metro" }
+otel-android-agent = { module = "io.opentelemetry.android:android-agent", version.ref = "otel-android" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
 pulumi = { module = "com.pulumi:pulumi", version.ref = "pulumi" }

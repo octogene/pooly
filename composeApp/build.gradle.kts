@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.metro)
     alias(libs.plugins.pooly.kotlin)
+    alias(libs.plugins.gradle.buildconfig)
 }
 
 android {
@@ -130,7 +131,19 @@ dependencies {
     implementation(libs.metrox)
     implementation(libs.metrox.viewmodel.compose)
 
+    // OTEL
+    implementation(libs.otel.android.agent)
+
     // Testing
     testImplementation(libs.kotlin.test)
     testImplementation(libs.junit)
+}
+
+buildConfig {
+    packageName("dev.octogene.pooly.app")
+    useKotlinOutput { internalVisibility = true }
+    buildConfigField(
+        "OTEL_BASE_URL",
+        System.getenv("OTEL_BASE_URL") ?: "http://10.0.2.2:4318",
+    )
 }
