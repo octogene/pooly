@@ -1,3 +1,8 @@
+# Pooly
+
+> [!IMPORTANT]
+> This is essentially a **playground project** for experimentation with modern Android development (Compose, KMP), backend services (Ktor), and the PoolTogether ecosystem. It is not intended for production use.
+
 Pooly is an Android application designed for the [PoolTogether](https://pooltogether.com)
 decentralized finance (DeFi) ecosystem.
 It serves as a mobile dashboard for interacting with "no-loss" prize savings protocols across
@@ -140,6 +145,8 @@ graph LR
   end
   :common:db --> :common:core
   :common:db --> :common:backend
+  :login --> :common:mobile
+  :login --> :pooltogether
   :thegraph --> :common:core
   :rpc --> :common:core
   :settings --> :common:mobile
@@ -147,6 +154,7 @@ graph LR
   :composeApp --> :common:mobile
   :composeApp --> :pooltogether
   :composeApp --> :settings
+  :composeApp --> :login
   :pooltogether --> :common:mobile
   :pooltogether --> :settings
   :server --> :common:core
