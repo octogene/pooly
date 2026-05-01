@@ -25,11 +25,11 @@ fun LoadingScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painterResource(R.drawable.poolfloaty),
-            contentDescription = "Loading"
+            contentDescription = "Loading",
         )
         LoadingIndicator()
     }

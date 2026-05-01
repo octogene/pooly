@@ -49,4 +49,3 @@ include(
     ":thegraph",
     ":worker",
 )
-

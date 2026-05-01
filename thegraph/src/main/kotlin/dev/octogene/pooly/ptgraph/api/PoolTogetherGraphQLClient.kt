@@ -20,6 +20,8 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 private const val MAX_CONCURRENCY = 3
+private const val BASE_GRAPH_ID = 41211
+private const val DEFAULT_GRAPH_ID = 63100
 
 class PoolTogetherGraphQLClient(
     chainNetworks: List<ChainNetwork> = ChainNetwork.entries,
@@ -28,7 +30,7 @@ class PoolTogetherGraphQLClient(
 ) {
     private val clients = chainNetworks.associateWith { network ->
         with(builder) {
-            val id = if (network == ChainNetwork.BASE) 41211 else 63100
+            val id = if (network == ChainNetwork.BASE) BASE_GRAPH_ID else DEFAULT_GRAPH_ID
             serverUrl("https://api.studio.thegraph.com/query/$id/pt-v5-${network.name.lowercase()}/version/latest")
         }.build()
     }

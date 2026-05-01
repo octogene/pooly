@@ -42,13 +42,12 @@ class CredentialRepositoryImpl(private val dataStore: DataStore<Preferences>) : 
         val user = prefs[KEY_USERNAME] ?: return@runBlocking null
         val encryptedPassword = prefs[KEY_PASSWORD] ?: return@runBlocking null
 
-        try {
+        runCatching {
             val decryptedPassword = CryptoManager.decrypt(Base64.decode(encryptedPassword))
             user to decryptedPassword
-        } catch (e: Exception) {
-            Logger.e { "Failed to decrypt password: ${e.message}" }
-            null
-        }
+        }.onFailure {
+            Logger.e { "Failed to decrypt password: ${it.message}" }
+        }.getOrNull()
     }
 
     override fun getToken(): Pair<String, String?>? = runBlocking {

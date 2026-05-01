@@ -31,7 +31,7 @@ class KotlinConventionPlugin : Plugin<Project> {
     private fun Project.configureKotlinAndroidCompilerArgs() {
         configureKotlin<KotlinAndroidProjectExtension>()
         configure<KotlinAndroidProjectExtension> {
-            jvmToolchain(24)
+            jvmToolchain(JvmTarget.JVM_24.target.toInt())
             compilerOptions {
                 freeCompilerArgs.add("-Xexplicit-backing-fields")
             }
@@ -42,14 +42,14 @@ class KotlinConventionPlugin : Plugin<Project> {
         when (this) {
             is KotlinAndroidProjectExtension -> compilerOptions
             is KotlinJvmProjectExtension -> compilerOptions
-            else -> throw Exception("Unsupported Kotlin project type")
+            else -> error("Unsupported Kotlin project type")
         }.apply {
             jvmTarget.set(JvmTarget.JVM_24)
 
             freeCompilerArgs.addAll(
                 "-Xcontext-parameters",
                 "-Xreturn-value-checker=check",
-                "-Xname-based-destructuring=complete"
+                "-Xname-based-destructuring=complete",
             )
         }
     }

@@ -268,8 +268,8 @@ val settingsDestination = { backStack: SnapshotStateList<Destination> ->
         topBar = {
             PoolyTopAppBar(
                 title = "Settings",
-                backStack = backStack
+                backStack = backStack,
             )
-        }
+        },
     ) { SettingsScreen() }
 }

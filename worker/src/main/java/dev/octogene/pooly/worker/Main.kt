@@ -17,6 +17,8 @@ import org.koin.java.KoinJavaComponent.getKoin
 import org.slf4j.LoggerFactory
 import kotlin.time.Duration.Companion.seconds
 
+private const val MAX_RETRIES = 3L
+
 @OptIn(ExperimentalHoplite::class)
 fun main() = SuspendApp {
     val logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)
@@ -42,15 +44,10 @@ fun main() = SuspendApp {
 }
 
 private suspend fun initializeDatabase(koin: Koin, logger: org.slf4j.Logger) {
-    val retrySchedule = Schedule.recurs<Throwable>(3)
+    val retrySchedule = Schedule.recurs<Throwable>(MAX_RETRIES)
         .and(Schedule.spaced(20.seconds))
-    try {
-        retrySchedule.retry<Throwable, Unit> {
-            koin.get<MigrationManager>().migrate()
-        }
-        logger.info("Database initialized successfully.")
-    } catch (e: Throwable) {
-        logger.error("Failed to initialize database after multiple retries: ${e.message}", e)
-        throw e
+    retrySchedule.retry<Throwable, Unit> {
+        koin.get<MigrationManager>().migrate()
     }
+    logger.info("Database initialized successfully.")
 }

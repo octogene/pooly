@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
+private const val WORKER_REPEAT_INTERVAL_MIN = 5
 class PoolyApp :
     Application(),
     MetroApplication,
@@ -63,7 +64,7 @@ class PoolyApp :
 
     private fun scheduleBackgroundWork() {
         val workRequest =
-            PeriodicWorkRequestBuilder<DrawWorker>(5, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<DrawWorker>(WORKER_REPEAT_INTERVAL_MIN, TimeUnit.MINUTES)
                 .setInputData(Data.Builder().putString("workName", "onCreate").build())
                 .build()
         appGraph.workManager.enqueueUniquePeriodicWork(
@@ -74,32 +75,31 @@ class PoolyApp :
     }
 }
 
-private fun initOTel(context: Context): OpenTelemetryRum? =
-    runCatching {
-        OpenTelemetryRumInitializer.initialize(
-            context = context,
-            configuration = {
-                httpExport {
-                    baseUrl = OTEL_BASE_URL
-                    baseHeaders = mapOf("foo" to "bar")
+private fun initOTel(context: Context): OpenTelemetryRum? = runCatching {
+    OpenTelemetryRumInitializer.initialize(
+        context = context,
+        configuration = {
+            httpExport {
+                baseUrl = OTEL_BASE_URL
+                baseHeaders = mapOf("foo" to "bar")
+            }
+            instrumentations {
+                activity {
+                    enabled(true)
                 }
-                instrumentations {
-                    activity {
-                        enabled(true)
-                    }
-                    fragment {
-                        enabled(false)
-                    }
-                }
-                session {
-                    backgroundInactivityTimeout = 5.minutes
-                    maxLifetime = 1.days
-                }
-                globalAttributes {
-                    Attributes.of(stringKey("pooly-otel"), "test")
+                fragment {
+                    enabled(false)
                 }
             }
-        )
-    }.onFailure {
-        Log.e("OpenTelemetryRumInitializer", "Initialization failed", it)
-    }.getOrNull()
+            session {
+                backgroundInactivityTimeout = 5.minutes
+                maxLifetime = 1.days
+            }
+            globalAttributes {
+                Attributes.of(stringKey("pooly-otel"), "test")
+            }
+        },
+    )
+}.onFailure {
+    Log.e("OpenTelemetryRumInitializer", "Initialization failed", it)
+}.getOrNull()

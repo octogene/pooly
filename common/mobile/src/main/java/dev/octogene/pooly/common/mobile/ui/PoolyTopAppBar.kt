@@ -16,7 +16,7 @@ import dev.octogene.pooly.common.mobile.R
 fun PoolyTopAppBar(
     title: String,
     backStack: SnapshotStateList<Destination>,
-    actions: @Composable RowScope.() -> Unit = {}
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
         title = { Text(title) },
@@ -30,6 +30,6 @@ fun PoolyTopAppBar(
                 }
             }
         },
-        actions = actions
+        actions = actions,
     )
 }

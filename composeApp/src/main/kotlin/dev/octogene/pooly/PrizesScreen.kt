@@ -25,7 +25,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import dev.octogene.pooly.common.mobile.ui.Destination
 import dev.octogene.pooly.common.mobile.ui.PoolyTopAppBar
 import dev.octogene.pooly.model.PrizeUi
-import dev.octogene.pooly.settings.SettingsScreen
 import dev.octogene.pooly.settings.settingsDestination
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.datetime.LocalDate
@@ -33,11 +32,7 @@ import kotlinx.datetime.minus
 import androidx.compose.ui.Modifier.Companion as Modifier
 
 @Composable
-fun PrizesScreen(
-    prizeViewModel: PrizeViewModel = metroViewModel(),
-    modifier: Modifier = Modifier,
-    onNavigate: (Destination) -> Unit
-) {
+fun PrizesScreen(prizeViewModel: PrizeViewModel = metroViewModel(), modifier: Modifier = Modifier) {
     val items = prizeViewModel.prizes.collectAsLazyPagingItems()
 
     Column(
@@ -87,9 +82,9 @@ fun PrizesScreen(
                     item {
                         CircularProgressIndicator(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.CenterHorizontally),
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally),
                         )
                     }
                 }
@@ -152,10 +147,10 @@ val prizeScreenDestination = { backStack: SnapshotStateList<Destination> ->
                             contentDescription = "Settings",
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) {
-        PrizesScreen { backStack.add(it) }
+        PrizesScreen()
     }
 }

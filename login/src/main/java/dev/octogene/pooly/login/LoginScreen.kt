@@ -18,7 +18,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,7 +57,7 @@ fun LoginScreen(loginViewModel: LoginViewModel = metroViewModel()) {
                 label = { Text("Username") },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    unfocusedTextColor = Color.White,
                 ),
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -72,7 +71,7 @@ fun LoginScreen(loginViewModel: LoginViewModel = metroViewModel()) {
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
+                        unfocusedTextColor = Color.White,
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 )
@@ -85,7 +84,7 @@ fun LoginScreen(loginViewModel: LoginViewModel = metroViewModel()) {
                 label = { Text("Password") },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    unfocusedTextColor = Color.White,
                 ),
                 modifier = Modifier.fillMaxWidth(),
             )

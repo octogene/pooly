@@ -25,11 +25,9 @@ class Argon2PasswordHasher(
         return PasswordHash(hash)
     }
 
-    override fun verify(plain: String, hash: PasswordHash): Boolean = try {
+    override fun verify(plain: String, hash: PasswordHash): Boolean = runCatching {
         argon2.verify(hash.content, plain.toByteArray())
-    } catch (e: Exception) {
-        false
-    }
+    }.getOrElse { false }
 
     private fun getType(type: String): Argon2Types = Argon2Types.entries.find { it.name == type }
         ?: Argon2Types.ARGON2id

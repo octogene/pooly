@@ -12,6 +12,8 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
+private const val MAX_DB_POOL_SIZE = 6
+
 val workerModule = { config: AppConfig ->
     module {
         single<HikariDataSource> {
@@ -25,7 +27,7 @@ val workerModule = { config: AppConfig ->
                     driverClassName = config.database.driver
                     username = config.database.username
                     password = config.database.password
-                    maximumPoolSize = 6
+                    maximumPoolSize = MAX_DB_POOL_SIZE
                     isReadOnly = false
                     transactionIsolation = "TRANSACTION_SERIALIZABLE"
                 }

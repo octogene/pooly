@@ -19,12 +19,13 @@ import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlinx.datetime.LocalTime
 import kotlin.time.Instant
 
+private const val DEFAULT_CACHE_EXPIRATION_HOUR = 21
 class PrizeController(
     private val cacheClient: CacheClient,
     private val prizeRepository: PrizeRepository,
     private val walletRepository: WalletRepository,
     private val userRepository: UserRepository,
-    private val defaultCacheExpirationAt: Instant = getNextDayAt(LocalTime(21, 0)),
+    private val defaultCacheExpirationAt: Instant = getNextDayAt(LocalTime(DEFAULT_CACHE_EXPIRATION_HOUR, 0)),
 ) {
     context(_: Raise<Response>)
     suspend fun getAllPrizes(username: String): Response {

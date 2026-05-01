@@ -7,6 +7,23 @@
     <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.OPTIMISM$10L</ID>
     <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.SCROLL$534352L</ID>
     <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.WORLD$480L</ID>
+    <ID>MagicNumber:CryptoManager.kt:CryptoManager$12</ID>
+    <ID>MagicNumber:CryptoManager.kt:CryptoManager$128</ID>
+    <ID>ForbiddenComment:PoolTogetherRPCClient.kt:PoolTogetherRPCClient$// TODO: Check why BigInteger is returned by contract. Really not required.</ID>
+    <ID>ForbiddenComment:PoolTogetherRPCClient.kt:PoolTogetherRPCClient$// TODO: Initialization without a chainId can cause an exception since it calls</ID>
+    <ID>ForbiddenComment:PoolTogetherRPCClient.kt:PoolTogetherRPCClient$// TODO: make calls async or use multi-call</ID>
+    <ID>ForbiddenComment:PoolyApiClientImpl.kt:PoolyApiClientImpl$// TODO: Should be paged</ID>
+    <ID>TooGenericExceptionCaught:DrawWorker.kt:DrawWorker$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:e: Exception</ID>
+    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:error: Throwable</ID>
+    <ID>LongMethod:LoginScreen.kt:@Composable fun LoginScreen</ID>
+    <ID>ForbiddenComment:Application.kt:// TODO: Use a DB</ID>
+    <ID>ForbiddenComment:JwtGenerator.kt:JwtManager$// TODO: store token &amp; implement PKCE</ID>
+    <ID>ForbiddenComment:Route.kt:// TODO: Check for conditional fields</ID>
+    <ID>MagicNumber:SettingsScreen.kt:0.5f</ID>
+    <ID>ForbiddenComment:PrizeRepository.kt:PrizeRepositoryImpl$// TODO: Test Exposed caching for Vault by using the DAO</ID>
+    <ID>UnusedParameter:Infrastructure.kt:Infrastructure$args: Array&lt;String&gt;</ID>
   </ManuallySuppressedIssues>
   <CurrentIssues>
   </CurrentIssues>

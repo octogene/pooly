@@ -66,10 +66,7 @@ fun App(viewModel: MainViewModel = metroViewModel()) {
 }
 
 @Composable
-private fun AppNavContainer(
-    innerPadding: PaddingValues,
-    backStack: SnapshotStateList<Destination>
-) {
+private fun AppNavContainer(innerPadding: PaddingValues, backStack: SnapshotStateList<Destination>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -84,15 +81,15 @@ private fun AppNavContainer(
             },
             transitionSpec = {
                 slideInHorizontally(initialOffsetX = { it }) togetherWith
-                        slideOutHorizontally(targetOffsetX = { -it })
+                    slideOutHorizontally(targetOffsetX = { -it })
             },
             popTransitionSpec = {
                 slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                        slideOutHorizontally(targetOffsetX = { it })
+                    slideOutHorizontally(targetOffsetX = { it })
             },
             predictivePopTransitionSpec = {
                 slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                        slideOutHorizontally(targetOffsetX = { it })
+                    slideOutHorizontally(targetOffsetX = { it })
             },
             entryProvider = { key ->
                 NavEntry(key, contentKey = key.name) {
