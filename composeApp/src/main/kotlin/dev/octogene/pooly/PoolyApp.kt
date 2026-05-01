@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
-private const val WORKER_REPEAT_INTERVAL_MIN = 5
+private const val WORKER_REPEAT_INTERVAL_MIN = 5L
 class PoolyApp :
     Application(),
     MetroApplication,
