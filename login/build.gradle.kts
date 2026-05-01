@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "dev.octogene.pooly.login"
     compileSdk {
-        version = release(36)
+        version = release(libs.versions.android.compileSdk.get().toInt())
     }
 
     defaultConfig {
