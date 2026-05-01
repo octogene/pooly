@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @ContributesIntoMap(AppScope::class)
-@ViewModelKey(MainViewModel::class)
+@ViewModelKey()
 @Inject
 class MainViewModel(credentialRepository: CredentialRepository) : ViewModel() {
     private val _state =  MutableStateFlow<MainUiState>(MainUiState.Loading)

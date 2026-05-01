@@ -31,7 +31,7 @@ interface AppGraph :
 
     @Multibinds
     val workerProviders:
-        Map<KClass<out ListenableWorker>, Provider<MetroWorkerFactory.WorkerInstanceFactory<*>>>
+            Map<KClass<out ListenableWorker>, () -> MetroWorkerFactory.WorkerInstanceFactory<*>>
 
     val workerFactory: MetroWorkerFactory
 

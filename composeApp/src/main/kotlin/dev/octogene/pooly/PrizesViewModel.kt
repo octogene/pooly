@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 
 @ContributesIntoMap(AppScope::class)
-@ViewModelKey(PrizeViewModel::class)
+@ViewModelKey()
 @Inject
 class PrizeViewModel(prizesRepository: PrizesRepository) : ViewModel() {
     val prizes: Flow<PagingData<PrizeListItem>> = prizesRepository.getAllDrawsPaged()
