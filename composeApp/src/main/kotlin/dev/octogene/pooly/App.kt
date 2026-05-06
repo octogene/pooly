@@ -88,8 +88,8 @@ private fun AppNavContainer(innerPadding: PaddingValues, backStack: SnapshotStat
                     slideOutHorizontally(targetOffsetX = { it })
             },
             predictivePopTransitionSpec = {
-                slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { it })
+                slideInHorizontally(initialOffsetX = { swipeEdge -> -swipeEdge }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { swipeEdge -> swipeEdge })
             },
             entryProvider = { key ->
                 NavEntry(key, contentKey = key.name) {

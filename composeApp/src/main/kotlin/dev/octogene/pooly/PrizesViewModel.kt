@@ -43,7 +43,7 @@ class PrizeViewModel(prizesRepository: PrizesRepository) : ViewModel() {
         .cachedIn(viewModelScope)
 }
 
-sealed class PrizeListItem {
-    data class Header(val date: LocalDate) : PrizeListItem()
-    data class Prize(val prize: PrizeUi) : PrizeListItem()
+sealed interface PrizeListItem {
+    data class Header(val date: LocalDate) : PrizeListItem
+    data class Prize(val prize: PrizeUi) : PrizeListItem
 }

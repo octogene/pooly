@@ -36,8 +36,8 @@ class MainViewModel(credentialRepository: CredentialRepository) : ViewModel() {
     }
 }
 
-sealed class MainUiState {
-    object Loading : MainUiState()
-    object LoggedOut : MainUiState()
-    object LoggedIn : MainUiState()
+sealed interface MainUiState {
+    object Loading : MainUiState
+    object LoggedOut : MainUiState
+    object LoggedIn : MainUiState
 }
