@@ -61,10 +61,11 @@ private fun Project.setupDetekt() {
         }
 
         tasks.withType<Detekt>().configureEach {
-            setSource(files(projectDir))
+            source(files(projectDir))
             include("**/*.kt", "**/*.kts")
-            exclude("**/resources/**", "**/build/**", ".gradle")
-
+            val buildDir = layout.buildDirectory
+            exclude { it.file.startsWith(buildDir.get().asFile) }
+            
             reports {
                 html.required.set(false)
                 sarif.required.set(true)
@@ -72,9 +73,6 @@ private fun Project.setupDetekt() {
             }
         }
 
-        tasks.withType<Detekt>().configureEach {
-            jvmTarget.set("25")
-        }
         tasks.withType<DetektCreateBaselineTask>().configureEach {
             jvmTarget.set("25")
         }
