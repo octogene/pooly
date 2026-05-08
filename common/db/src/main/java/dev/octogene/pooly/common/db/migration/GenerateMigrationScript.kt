@@ -37,13 +37,13 @@ fun main() {
 const val MIGRATIONS_DIRECTORY = "src/main/resources/migrations"
 
 fun generateMigrationScript(name: String? = null, tableNames: List<String>) {
-    val tables = tableNames.map { name ->
-        when (name.lowercase()) {
+    val tables = tableNames.map { tableName ->
+        when (tableName.lowercase()) {
             "users" -> Users
             "prizes" -> Prizes
             "vaults" -> Vaults
             "wallets" -> Wallets
-            else -> throw IllegalArgumentException("Unknown table name $name")
+            else -> throw IllegalArgumentException("Unknown table name $tableName")
         }
     }.toTypedArray()
 

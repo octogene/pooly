@@ -40,6 +40,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.openapi.openAPI
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -177,8 +178,8 @@ fun Application.routing() {
     }
 }
 
-fun Application.metrics(metrics: Metrics) {
-    val healthChecks = HealthCheckRegistry(Dispatchers.Default) {
+fun Application.metrics(metrics: Metrics, dispatcher: CoroutineDispatcher = Dispatchers.Default) {
+    val healthChecks = HealthCheckRegistry(dispatcher) {
         register(FreememHealthCheck.mb(metrics.minFreeMem), 30.seconds, 1.minutes)
         register(ProcessCpuHealthCheck(metrics.maxLoad), 30.seconds, 1.minutes)
     }

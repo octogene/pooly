@@ -13,15 +13,15 @@ import dev.octogene.pooly.server.user.UserController
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val testUserModule = { users: List<RegisterUserRequest>, prizes: List<Prize>, cacheType: CacheType ->
+val testUserModule = { userRequests: List<RegisterUserRequest>, prizes: List<Prize>, cacheType: CacheType ->
     module {
         single<UserRepository> {
             val passwordHasher = get<PasswordHasher>()
-            val userByUsername = users.associate {
-                it.username to dev.octogene.pooly.core.User(
-                    it.username,
-                    it.email,
-                    passwordHasher.hash(it.password),
+            val userByUsername = userRequests.associate { userRequest ->
+                userRequest.username to dev.octogene.pooly.core.User(
+                    userRequest.username,
+                    userRequest.email,
+                    passwordHasher.hash(userRequest.password),
                     UserRole.USER,
                 )
             }.toMutableMap()

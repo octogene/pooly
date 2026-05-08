@@ -2,6 +2,7 @@ package dev.octogene.pooly.common.cache
 
 import arrow.core.Either
 import arrow.core.Option
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,7 +20,7 @@ interface CacheClient {
     suspend fun <T : Any> set(key: String, value: T, expireAt: Instant, type: KSerializer<T>)
     suspend fun clearByPattern(pattern: String): Either<Throwable, Long>
 
-    suspend fun initialize() = withContext(Dispatchers.IO) {
+    suspend fun initialize(dispatcher: CoroutineDispatcher = Dispatchers.IO) = withContext(dispatcher) {
         when (this@CacheClient) {
             is InMemoryCacheClient -> launch { runBackgroundCleanup() }
             else -> {}

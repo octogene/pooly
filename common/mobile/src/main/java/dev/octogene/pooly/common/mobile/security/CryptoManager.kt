@@ -8,6 +8,9 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
+private const val GCM_IV_LENGTH_BYTES = 12
+private const val GCM_AUTH_TAG_LENGTH_BITS = 128
+
 object CryptoManager {
     private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
     private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
@@ -43,10 +46,10 @@ object CryptoManager {
     }
 
     fun decrypt(encryptedData: ByteArray): String {
-        val iv = encryptedData.copyOfRange(0, 12) // GCM IV is 12 bytes
-        val data = encryptedData.copyOfRange(12, encryptedData.size)
+        val iv = encryptedData.copyOfRange(0, GCM_IV_LENGTH_BYTES) // GCM IV is 12 bytes
+        val data = encryptedData.copyOfRange(GCM_IV_LENGTH_BYTES, encryptedData.size)
         val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), GCMParameterSpec(128, iv))
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), GCMParameterSpec(GCM_AUTH_TAG_LENGTH_BITS, iv))
         return String(cipher.doFinal(data))
     }
 }

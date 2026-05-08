@@ -25,5 +25,5 @@ class FakeWalletRepository(private val wallets: MutableMap<String, MutableList<A
     }
 
     override suspend fun getWalletsForUser(username: String): Either<RepositoryError, List<Address>> =
-        Either.Right(wallets[username] ?: emptyList())
+        Either.Right(wallets[username].orEmpty())
 }

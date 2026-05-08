@@ -30,7 +30,7 @@ class SettingsRepositoryImpl(private val queries: NetworkStateQueries, private v
     SettingsRepository {
 
     override fun setNetworks(networks: List<String>) {
-        val db = queries.selectAllNetworks()
+        TODO("Needs to be implemented")
     }
 
     override fun toggleNetwork(network: ChainNetwork) {

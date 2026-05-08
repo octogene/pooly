@@ -5,6 +5,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.raise.either
 import arrow.core.toOption
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -26,7 +27,7 @@ internal class InMemoryCacheClient(
     private val cleanupInterval: Duration = 10.minutes,
     private val logger: Logger = LoggerFactory.getLogger(InMemoryCacheClient::class.java),
 ) : CacheClient {
-    suspend fun runBackgroundCleanup() = withContext(Dispatchers.IO) {
+    suspend fun runBackgroundCleanup(dispatcher: CoroutineDispatcher = Dispatchers.IO) = withContext(dispatcher) {
         logger.info("Starting background cleanup")
         while (isActive) {
             delay(cleanupInterval)

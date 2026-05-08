@@ -26,62 +26,86 @@ private fun Project.setupDetekt() {
     allprojects {
         plugins.apply("dev.detekt")
 
-        extensions.configure<DetektExtension> {
-            parallel.set(true)
-            buildUponDefaultConfig.set(true)
-            config.from(file("$rootDir/config/detekt.yml"))
-            baseline.set(file("$rootDir/config/baseline.xml"))
-        }
-
-        tasks.register("detektAll") {
-            group = LifecycleBasePlugin.VERIFICATION_GROUP
-            dependsOn(tasks.withType<Detekt>().filter { !it.name.contains("Format") })
-        }
-
-        tasks.register<Detekt>("detektFormat") {
-            group = LifecycleBasePlugin.VERIFICATION_GROUP
-            config.from(file("$rootDir/config/detekt.yml"))
-            baseline.set(file("$rootDir/config/baseline.xml"))
-            buildUponDefaultConfig.set(true)
-            autoCorrect.set(true)
-        }
-
-        tasks.register("detektFormatAll") {
-            group = LifecycleBasePlugin.VERIFICATION_GROUP
-            dependsOn(tasks.withType<Detekt>().filter { it.name == "detektFormat" })
-        }
-
-        tasks.configureEach {
-            if (name == "build") {
-                dependsOn("detektAll")
-            } else if (name.startsWith("detekt")) {
-                enabled = getFamily()?.isCompilationAllowed() != false
-                logger.info("Detekt $this, enabled: $enabled")
-            }
-        }
-
-        tasks.withType<Detekt>().configureEach {
-            source(files(projectDir))
-            include("**/*.kt", "**/*.kts")
-            val buildDir = layout.buildDirectory
-            exclude { it.file.startsWith(buildDir.get().asFile) }
-            
-            reports {
-                html.required.set(false)
-                sarif.required.set(true)
-                markdown.required.set(false)
-            }
-        }
-
-        tasks.withType<DetektCreateBaselineTask>().configureEach {
-            jvmTarget.set("25")
-        }
+        configureDetektExtension()
+        registerDetektTasks()
+        configureDetektTaskInputs()
 
         dependencies {
             catalog?.findLibrary("detekt-rules-ktlint-wrapper")?.ifPresent {
                 "detektPlugins"(it)
             }
         }
+    }
+}
+
+private fun Project.configureDetektExtension() {
+    extensions.configure<DetektExtension> {
+        parallel.set(true)
+        buildUponDefaultConfig.set(true)
+        config.from(file("$rootDir/config/detekt.yml"))
+        baseline.set(file("$rootDir/config/baseline.xml"))
+    }
+}
+
+private fun Project.registerDetektTasks() {
+    tasks.register("detektAll") {
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
+        dependsOn(tasks.withType<Detekt>().filter { !it.name.contains("Format") })
+    }
+
+    tasks.register<Detekt>("detektFormat") {
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
+        config.from(file("$rootDir/config/detekt.yml"))
+        baseline.set(file("$rootDir/config/baseline.xml"))
+        buildUponDefaultConfig.set(true)
+        autoCorrect.set(true)
+    }
+
+    tasks.register("detektFormatAll") {
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
+        dependsOn(tasks.withType<Detekt>().filter { it.name == "detektFormat" })
+    }
+
+    tasks.configureEach {
+        if (name == "build") {
+            dependsOn("detektAll")
+        } else if (name.startsWith("detekt")) {
+            enabled = getFamily()?.isCompilationAllowed() != false
+            logger.info("Detekt $this, enabled: $enabled")
+        }
+    }
+}
+
+private fun Project.configureDetektTaskInputs() {
+    tasks.withType<Detekt>().configureEach {
+        source(files(projectDir))
+        include("**/*.kt", "**/*.kts")
+        exclude("**/build/**")
+        val buildDir = layout.buildDirectory
+        exclude { it.file.startsWith(buildDir.get().asFile) }
+        if (project == rootProject) {
+            subprojects.forEach { sub ->
+                exclude("${sub.projectDir.relativeTo(projectDir).path}/**")
+            }
+        }
+
+        reports {
+            html.required.set(false)
+            sarif.required.set(true)
+            markdown.required.set(false)
+        }
+    }
+
+    tasks.withType<DetektCreateBaselineTask>().configureEach {
+        exclude("**/build/**")
+        val buildDir = layout.buildDirectory
+        exclude { it.file.startsWith(buildDir.get().asFile) }
+        if (project == rootProject) {
+            subprojects.forEach { sub ->
+                exclude("${sub.projectDir.relativeTo(projectDir).path}/**")
+            }
+        }
+        jvmTarget.set("25")
     }
 }
 

@@ -17,7 +17,7 @@ private const val MAX_DB_POOL_SIZE = 6
 val workerModule = { config: AppConfig ->
     module {
         single<HikariDataSource> {
-            val config = HikariConfig().apply {
+            val hikariConfig = HikariConfig().apply {
                 if (config.database.driver == "org.h2.Driver") {
                     jdbcUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MYSQL;"
                     driverClassName = config.database.driver
@@ -32,7 +32,7 @@ val workerModule = { config: AppConfig ->
                     transactionIsolation = "TRANSACTION_SERIALIZABLE"
                 }
             }
-            HikariDataSource(config)
+            HikariDataSource(hikariConfig)
         } bind DataSource::class
 
         single { Database.connect(datasource = get<HikariDataSource>()) }

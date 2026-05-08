@@ -28,7 +28,6 @@ import dev.octogene.pooly.model.PrizeUi
 import dev.octogene.pooly.settings.settingsDestination
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.minus
 import androidx.compose.ui.Modifier.Companion as Modifier
 
 @Composable
@@ -101,7 +100,7 @@ private fun PrizeHeader(date: LocalDate) {
     ) {
         Text(
             text = date.toString(),
-            textAlign = TextAlign.Companion.Center,
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .fillMaxWidth()

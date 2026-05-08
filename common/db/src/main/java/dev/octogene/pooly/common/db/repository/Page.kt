@@ -11,11 +11,11 @@ data class PageRequest(val page: Int, val pageSize: Int) {
         private const val DEFAULT_MIN_PAGE = 1
         private const val DEFAULT_MAX_PAGE_SIZE = 1
         fun create(page: Int, pageSize: Int?) = either {
-            val pageSize = pageSize ?: DEFAULT_PAGE_SIZE
+            val currentPageSize = pageSize ?: DEFAULT_PAGE_SIZE
             ensure(page >= DEFAULT_MIN_PAGE) { "Page must be >= 1" }
-            ensure(pageSize >= DEFAULT_MIN_PAGE) { "Page size must be >= 1" }
-            ensure(pageSize <= DEFAULT_MAX_PAGE_SIZE) { "Page size must be <= 1000" }
-            PageRequest(page, pageSize)
+            ensure(currentPageSize >= DEFAULT_MIN_PAGE) { "Page size must be >= 1" }
+            ensure(currentPageSize <= DEFAULT_MAX_PAGE_SIZE) { "Page size must be <= 1000" }
+            PageRequest(page, currentPageSize)
         }
     }
 

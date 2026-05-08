@@ -16,7 +16,7 @@ import dev.zacsweers.metro.binding
 @AssistedInject
 class DrawWorker(appContext: Context, @Assisted params: WorkerParameters, val repository: PoolTogetherRepository) :
     CoroutineWorker(appContext, params) {
-    override suspend fun doWork(): Result = try {
+    override suspend fun doWork(): Result = runCatching {
         repository.updateAllVaults().fold(
             ifLeft = { error ->
                 Logger.e { "Failed to update vaults: $error" }
@@ -24,8 +24,8 @@ class DrawWorker(appContext: Context, @Assisted params: WorkerParameters, val re
             },
             ifRight = { Result.success() },
         )
-    } catch (e: Throwable) {
-        Logger.e(e) { "Unexpected error updating vaults" }
+    }.getOrElse { error ->
+        Logger.e(error) { "Unexpected error updating vaults" }
         Result.failure()
     }
 
