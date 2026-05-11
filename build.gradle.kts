@@ -22,7 +22,6 @@ plugins {
     // in each subproject's classloader
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
-    alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.composeHotReload) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.apollo) apply false

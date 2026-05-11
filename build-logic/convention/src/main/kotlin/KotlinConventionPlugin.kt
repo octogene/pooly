@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.builtins.StandardNames.FqNames.target
 
 class KotlinConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -18,9 +17,17 @@ class KotlinConventionPlugin : Plugin<Project> {
             val androidExtension = target.extensions.getByType<KotlinAndroidProjectExtension>()
             target.configureKotlinAndroidCompilerArgs()
         }
+        target.plugins.withId("com.android.application") {
+            val androidExtension = target.extensions.getByType<KotlinAndroidProjectExtension>()
+            target.configureKotlinAndroidCompilerArgs()
+        }
         target.plugins.withId("org.jetbrains.kotlin.jvm") {
             val jvmExtension = target.extensions.getByType<KotlinJvmProjectExtension>()
             target.configureKotlinJvmCompilerArgs()
+        }
+        target.plugins.withId("com.android.library") {
+            val androidExtension = target.extensions.getByType<KotlinAndroidProjectExtension>()
+            target.configureKotlinAndroidCompilerArgs()
         }
     }
 

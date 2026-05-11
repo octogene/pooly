@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.metro)
     alias(libs.plugins.sqldelight)

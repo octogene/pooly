@@ -1,10 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.ethers.abigen)
     alias(libs.plugins.sqldelight)
-    alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.metro)
     alias(libs.plugins.pooly.kotlin)
     alias(libs.plugins.gradle.buildconfig)
@@ -56,16 +53,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-
-    sourceSets.named("main") {
-        kotlin.directories += "build/generated/source/ethers/main/kotlin"
-    }
-
-    composeCompiler {
-        stabilityConfigurationFiles.add(
-            rootProject.layout.projectDirectory.file("stability_config.conf"),
-        )
     }
 }
 
@@ -146,30 +133,4 @@ buildConfig {
         "OTEL_BASE_URL",
         System.getenv("OTEL_BASE_URL") ?: "http://10.0.2.2:4318",
     )
-}
-
-composeStabilityAnalyzer {
-
-    stabilityValidation {
-        enabled.set(true) // Enable or disable stability validation
-        outputDir.set(layout.projectDirectory.dir("stability")) // set the output directory
-        includeTests.set(false) // Exclude test code from stability reports (default)
-
-        // Exclude specific sub-projects/modules (useful for multi-module projects)
-        ignoredProjects.set(listOf("benchmarks", "examples", "samples"))
-
-        // Control build failure behavior on stability changes (default: true)
-        failOnStabilityChange.set(true)
-
-        // Do not report any stable changes from the baseline (default: false)
-        ignoreNonRegressiveChanges.set(false)
-
-        // Allow the check to run, even if the baseline does not exist (default: false)
-        allowMissingBaseline.set(false)
-
-        // Add stability configuration file
-        // Matches compose's identical property
-        // (see https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
-        stabilityConfigurationFiles.add(rootProject.layout.projectDirectory.file("stability_config.conf"))
-    }
 }

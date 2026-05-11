@@ -87,8 +87,17 @@ private fun initOTel(context: Context): OpenTelemetryRum? = runCatching {
                 activity {
                     enabled(true)
                 }
+                crashReporter {
+                    enabled(true)
+                }
                 fragment {
                     enabled(false)
+                }
+                anrReporter {
+                    enabled(true)
+                }
+                slowRenderingReporter {
+                    enabled(true)
                 }
             }
             session {
