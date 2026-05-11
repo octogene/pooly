@@ -25,20 +25,16 @@
     <ID>ForbiddenComment:PrizeRepository.kt:PrizeRepositoryImpl$// TODO: Test Exposed caching for Vault by using the DAO</ID>
     <ID>UnusedParameter:Infrastructure.kt:Infrastructure$args: Array&lt;String&gt;</ID>
     <ID>UnsafeCallOnNullableType:Route.kt:principal!!</ID>
-    <ID>ForbiddenComment:PoolyApiClientImpl.kt:PoolyApiClientImpl$// TODO: Should be paged</ID>
-    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:e: Exception</ID>
-    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:e: Throwable</ID>
-    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:error: Throwable</ID>
     <ID>AbstractClassCanBeInterface:CallError.kt:CallError$CallError</ID>
     <ID>AbstractClassCanBeInterface:DrawWorker.kt:DrawWorker.Factory$Factory</ID>
-    <ID>ForbiddenComment:PoolyApiClientImpl.kt:PoolyApiClientImpl$// TODO: Should be paged</ID>
     <ID>InjectDispatcher:PoolTogetherRepository.kt:PoolTogetherRepository$IO</ID>
     <ID>InjectDispatcher:PoolyApiClientImpl.kt:PoolyApiClientImpl$IO</ID>
     <ID>InjectDispatcher:PrizesRepository.kt:PrizesRepository$IO</ID>
-    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:e: Exception</ID>
-    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:e: Throwable</ID>
-    <ID>TooGenericExceptionCaught:HttpClientExtension.kt:error: Throwable</ID>
     <ID>UnusedVariable:PoolyApiClientImpl.kt:PoolyApiClientImpl$expiration</ID>
+    <ID>LongParameterList:Worker.kt:Worker</ID>
+    <ID>MagicNumber:ChainNetwork.kt:ChainNetwork.ARBITRUM$42161L</ID>
+    <ID>AbstractClassCanBeInterface:RepositoryError.kt:RepositoryError$RepositoryError</ID>
+    <ID>RedundantSuspendModifier:LoginViewModel.kt:LoginViewModel$suspend</ID>
   </ManuallySuppressedIssues>
   <CurrentIssues>
   </CurrentIssues>

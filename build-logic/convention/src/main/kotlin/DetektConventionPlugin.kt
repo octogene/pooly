@@ -82,6 +82,7 @@ private fun Project.configureDetektTaskInputs() {
         include("**/*.kt", "**/*.kts")
         exclude("**/build/**")
         val buildDir = layout.buildDirectory
+        baseline.set(file("$rootDir/config/baseline.xml"))
         exclude { it.file.startsWith(buildDir.get().asFile) }
         if (project == rootProject) {
             subprojects.forEach { sub ->
@@ -99,6 +100,7 @@ private fun Project.configureDetektTaskInputs() {
     tasks.withType<DetektCreateBaselineTask>().configureEach {
         exclude("**/build/**")
         val buildDir = layout.buildDirectory
+        baseline.set(file("$rootDir/config/baseline.xml"))
         exclude { it.file.startsWith(buildDir.get().asFile) }
         if (project == rootProject) {
             subprojects.forEach { sub ->
