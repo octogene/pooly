@@ -33,7 +33,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
-          gradle-version: '9.3.1'
+          gradle-version: '9.4.1'
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
