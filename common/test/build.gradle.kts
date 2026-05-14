@@ -24,4 +24,3 @@ dependencies {
     testFixturesApi(libs.kotest.property)
     testFixturesImplementation(project(":common:core"))
 }
-

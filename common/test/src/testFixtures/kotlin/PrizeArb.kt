@@ -1,19 +1,30 @@
-import dev.octogene.pooly.core.*
+import arrow.core.raise.context.bind
+import dev.octogene.pooly.core.Address
+import dev.octogene.pooly.core.Amount
+import dev.octogene.pooly.core.ChainNetwork
+import dev.octogene.pooly.core.Prize
+import dev.octogene.pooly.core.Vault
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.*
+import io.kotest.property.arbitrary.Codepoint
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.bigInt
+import io.kotest.property.arbitrary.enum
+import io.kotest.property.arbitrary.hex
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.long
+import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.string
 import kotlin.time.Instant
 
 /**
  * Property generator for [dev.octogene.pooly.core.Address].
  */
-fun Arb.Companion.address(): Arb<Address> =
-    Arb.string(40, Codepoint.hex()).map { Address.unsafeFrom("0x$it") }
+fun Arb.Companion.address(): Arb<Address> = Arb.string(40, Codepoint.hex()).map { Address.unsafeFrom("0x$it") }
 
 /**
  * Property generator for [dev.octogene.pooly.core.Amount].
  */
-fun Arb.Companion.amount(): Arb<Amount> =
-    Arb.bigInt(maxNumBits = 256).map { Amount.from(it.abs().toString()) }
+fun Arb.Companion.amount(): Arb<Amount> = Arb.bigInt(maxNumBits = 256).map { Amount.from(it.abs().toString()) }
 
 /**
  * Property generator for [dev.octogene.pooly.core.Vault].
