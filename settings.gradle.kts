@@ -39,6 +39,7 @@ include(
     ":common:core",
     ":common:db",
     ":common:mobile",
+    ":common:test",
     ":composeApp",
     ":infrastructure",
     ":login",
