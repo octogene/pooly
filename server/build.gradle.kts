@@ -137,7 +137,9 @@ dependencies {
     testImplementation(libs.ktor.client.content.negotiation)
     testImplementation(libs.kotlin.testJunit)
     testImplementation(libs.kotest.core)
+    testImplementation(libs.kotest.property)
     testImplementation(libs.kotest.extensions.ktor)
+    testImplementation(testFixtures(project(":common:test")))
 }
 
 tasks.named("setupJibLocal") {
